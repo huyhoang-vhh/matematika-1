@@ -684,6 +684,108 @@ details.sol.flash { animation: solflash 2s ease-out; border-radius: 10px; }
 /* ---------- výkon: posuvník jen u přetékajících vzorců (třídu .ovx dává markOverflow v app.js) ---------- */
 .ovx { overflow-x: auto !important; overflow-y: hidden; }
 
+/* =================== FX v1: pohyb a světlo (jen opacity/transform, bez blur pod lištami) =================== */
+:root { --ease-out: cubic-bezier(.16, 1, .3, 1); --ease-io: cubic-bezier(.65, 0, .35, 1); }
+
+/* --- vynoření při scrollu --- */
+.fx .rv { opacity: 0; transform: translate3d(0, 22px, 0) scale(.985); transition: opacity .7s var(--ease-out), transform .9s var(--ease-out); transition-delay: calc(var(--d, 0) * 60ms); }
+.fx .rv.in { opacity: 1; transform: none; }
+.fx .tl-i.rv::before { transform: scaleY(0); transform-origin: top; transition: transform 1s var(--ease-out) .25s; }
+.fx .tl-i.rv.in::before { transform: none; }
+.meter i { transform-origin: left center; transition: transform 1.2s var(--ease-out) .3s; }
+.fx .rv:not(.in) .meter i { transform: scaleX(0); }
+
+/* --- úvodní pás: světelná mlha + technická mřížka, která se rozsvítí pod kurzorem --- */
+#view > section.band:first-of-type { position: relative; isolation: isolate; overflow: hidden; }
+#view > section.band:first-of-type::before {
+  content: ""; position: absolute; inset: -35% -20%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(closest-side at 28% 42%, rgba(41, 151, 255, .30), transparent 72%),
+    radial-gradient(closest-side at 72% 30%, rgba(163, 92, 255, .24), transparent 72%),
+    radial-gradient(closest-side at 56% 82%, rgba(255, 106, 61, .14), transparent 72%);
+  animation: fx-aurora 22s var(--ease-io) infinite alternate;
+}
+#view > section.band:first-of-type::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--ink) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--ink) 9%, transparent) 1px, transparent 1px);
+  background-size: 44px 44px; background-position: center top;
+  -webkit-mask-image: radial-gradient(560px circle at var(--mx, 50%) var(--my, 38%), #000 0%, rgba(0,0,0,.35) 45%, transparent 75%);
+  mask-image: radial-gradient(560px circle at var(--mx, 50%) var(--my, 38%), #000 0%, rgba(0,0,0,.35) 45%, transparent 75%);
+}
+#view > section.band.fx-off:first-of-type::before { animation-play-state: paused; }
+@keyframes fx-aurora {
+  0% { transform: translate3d(-5%, -3%, 0) rotate(0deg) scale(1); }
+  50% { transform: translate3d(3%, 2%, 0) rotate(6deg) scale(1.06); }
+  100% { transform: translate3d(6%, -2%, 0) rotate(-4deg) scale(1.1); }
+}
+/* přelévající se gradient v hlavním nadpisu */
+.display .grad { background-image: linear-gradient(90deg, #2997ff 0%, #a35cff 25%, #ff6a3d 50%, #a35cff 75%, #2997ff 100%); background-size: 200% 100%; animation: fx-shine 9s linear infinite; }
+.fx-off .display .grad { animation-play-state: paused; }
+@keyframes fx-shine { to { background-position: -200% 0; } }
+
+/* --- tenký ukazatel postupu stránkou pod horní lištou --- */
+@supports (animation-timeline: scroll()) {
+  .gnav::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--grad); transform-origin: 0 50%; transform: scaleX(0); animation: fx-progress linear both; animation-timeline: scroll(root block); pointer-events: none; }
+  @keyframes fx-progress { to { transform: scaleX(1); } }
+}
+
+/* --- tlačítka: jemné zvednutí, záře a odlesk --- */
+.pill { position: relative; overflow: hidden; transition: transform .25s var(--ease-out), box-shadow .35s var(--ease-out), filter .2s; }
+.pill:not(.ghost):not(:disabled):hover { transform: translateY(-1px); box-shadow: 0 10px 28px -10px color-mix(in srgb, var(--blue) 80%, transparent); }
+.pill.end:not(:disabled):hover { box-shadow: 0 10px 28px -10px color-mix(in srgb, var(--new) 80%, transparent); }
+.pill:not(:disabled):active { transform: scale(.97); }
+.pill::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .32) 50%, transparent 70%); transform: translateX(-120%); }
+.pill:not(:disabled):hover::after { transform: translateX(120%); transition: transform .8s var(--ease-out); }
+.more { transition: color .2s; }
+.more::after { display: inline-block; transition: transform .3s var(--ease-out); }
+.more:hover::after { transform: translateX(3px); }
+
+/* --- dlaždice a karty: světlo pod kurzorem, zvednutí, svítící okraj --- */
+.tile, .tcard, .step3, .pp-nb, .prow, .rcard { transition: transform .45s var(--ease-out), box-shadow .45s var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .tile:hover, .tcard:hover, .step3:hover, .pp-nb:hover, .rcard:hover {
+    transform: translateY(-4px);
+    background-image: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--blue) 16%, transparent), transparent 62%);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blue) 45%, transparent), 0 24px 48px -28px color-mix(in srgb, var(--blue) 60%, transparent);
+  }
+  .prow:hover { transform: translateX(3px); background-image: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--blue) 13%, transparent), transparent 65%); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blue) 45%, transparent); }
+  .tcard.hard:hover { background-image: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--hard) 18%, transparent), transparent 62%); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hard) 55%, transparent); }
+}
+.chip { transition: box-shadow .2s, background-color .2s, color .2s, transform .2s var(--ease-out); }
+.chip:active { transform: scale(.96); }
+.links button { transition: background-color .25s, color .25s, opacity .25s; }
+
+/* --- přechody mezi stránkami (View Transitions) --- */
+.gnav { view-transition-name: gnav; }
+@media (max-width: 734px) { .links { view-transition-name: tabbar; } }
+::view-transition-group(gnav), ::view-transition-old(gnav), ::view-transition-new(gnav),
+::view-transition-group(tabbar), ::view-transition-old(tabbar), ::view-transition-new(tabbar) { animation: none; }
+::view-transition-old(root) { animation: fx-out .26s cubic-bezier(.4, 0, 1, 1) both; }
+::view-transition-new(root) { animation: fx-in .5s var(--ease-out) both; }
+html[data-vt="next"]::view-transition-old(root) { animation-name: fx-out-l; }
+html[data-vt="next"]::view-transition-new(root) { animation-name: fx-in-r; }
+html[data-vt="prev"]::view-transition-old(root) { animation-name: fx-out-r; }
+html[data-vt="prev"]::view-transition-new(root) { animation-name: fx-in-l; }
+html[data-vt="back"]::view-transition-new(root) { animation-name: fx-in-back; }
+@keyframes fx-out { to { opacity: 0; transform: translate3d(0, -12px, 0) scale(.99); } }
+@keyframes fx-in { from { opacity: 0; transform: translate3d(0, 18px, 0) scale(.99); } }
+@keyframes fx-in-back { from { opacity: 0; transform: scale(1.015); } }
+@keyframes fx-out-l { to { opacity: 0; transform: translate3d(-40px, 0, 0); } }
+@keyframes fx-in-r { from { opacity: 0; transform: translate3d(48px, 0, 0); } }
+@keyframes fx-out-r { to { opacity: 0; transform: translate3d(40px, 0, 0); } }
+@keyframes fx-in-l { from { opacity: 0; transform: translate3d(-48px, 0, 0); } }
+
+/* --- kdo nechce pohyb, nemá pohyb --- */
+@media (prefers-reduced-motion: reduce) {
+  #view > section.band:first-of-type::before, .display .grad { animation: none; }
+  .gnav::after { display: none; }
+  .pill::after { display: none; }
+  .tile, .tcard, .step3, .pp-nb, .prow, .rcard, .pill { transition: none; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+}
+
 </style>
 
 <header class="gnav"><div class="gnav-in">
@@ -3748,6 +3850,116 @@ function initProofPage(p) {
 }
 function revealStep(li) { if (!li) return false; li.classList.remove('hide'); li.querySelector('.reveal')?.remove(); return true; }
 
+/* ---------- FX: přechody mezi stránkami, odhalování při scrollu, světlo pod kurzorem, počítání čísel ----------
+   Jen opacity a transform (běží na GPU, neblokují scroll). Při prefers-reduced-motion se nic nehýbe. */
+const FX_ON = () => !reduceMotion();
+document.documentElement.classList.toggle('fx', FX_ON());
+
+/* co se při příchodu do obrazovky jemně vynoří (vnořené prvky se neanimují dvakrát) */
+const RV_SEL = [
+  '#view > section.band:first-of-type .inner > *',
+  '.tile', '.step3', '.stat', '.tcard', '.list > .card', '.prow', '.pch > .row-h', '.plearn li',
+  '.thm', '.topic > h2', '.note', '.rcard', '.tbl', '.hardsub', '.pp-nb', '.endpanel', '.score',
+  '.pp-h', '.stmt', '.kostra', '.pv-idea', '.tl-i', '.tl-g', '.say', '.pp-done', 'figure'
+].join(', ');
+let heroObs = null;
+
+function fxCount(el) {
+  /* čísla v textu naběhnou od nuly (jen celá čísla do 9999) */
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [];
+  while (walker.nextNode()) if (/\d/.test(walker.currentNode.nodeValue)) nodes.push(walker.currentNode);
+  for (const n of nodes) {
+    const src = n.nodeValue, nums = src.match(/\d+/g) || [];
+    if (!nums.length || nums.some(x => +x > 9999)) continue;
+    const t0 = performance.now(), dur = 900;
+    const step = t => {
+      const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      let i = 0; n.nodeValue = src.replace(/\d+/g, m => String(Math.round(+nums[i++] * e)));
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+}
+
+function fxDone(el) { el.classList.remove('rv', 'in'); el.style.removeProperty('--d'); }
+
+/* čekající prvky: odhalí je kontrola při scrollu (bez IntersectionObserveru a rAF, aby obsah nikdy nezůstal schovaný) */
+let rvPending = [], rvT = 0;
+function rvCheck() {
+  rvT = 0; if (!rvPending.length) return;
+  const lim = window.innerHeight * 0.97, show = [], keep = [];
+  for (const el of rvPending) {
+    if (!el.isConnected) continue;
+    const r = el.getBoundingClientRect();
+    (r.top < lim ? show : keep).push([el, r.top, r.left]);
+  }
+  rvPending = keep.map(x => x[0]);
+  show.sort((a, b) => a[1] - b[1] || a[2] - b[2]).forEach(([el], k) => {
+    el.style.setProperty('--d', Math.min(k, 7));
+    el.classList.add('in');
+    if (el.matches('.tile')) fxCount(el.querySelector('.big') || el);
+    else if (el.matches('.stat')) fxCount(el.querySelector('b') || el);
+    else if (el.matches('.display')) fxCount(el.querySelector('.grad') || el);
+    const end = ev => { if (ev.target === el && !ev.pseudoElement && ev.propertyName === 'opacity') { fxDone(el); el.removeEventListener('transitionend', end); } };
+    el.addEventListener('transitionend', end);
+    setTimeout(() => fxDone(el), 1700); /* pojistka, kdyby transitionend nepřišel */
+  });
+}
+const rvSoon = () => { if (!rvT) rvT = setTimeout(rvCheck, 40); };
+window.addEventListener('scroll', rvSoon, { passive: true });
+window.addEventListener('resize', rvSoon, { passive: true });
+
+function fxReveal(root) {
+  if (!FX_ON() || !root) return;
+  const els = [...root.querySelectorAll(RV_SEL)];
+  const set = new Set(els);
+  rvPending = [];
+  for (const el of els) {
+    let p = el.parentElement, nested = false;
+    while (p && p !== root) { if (set.has(p)) { nested = true; break; } p = p.parentElement; }
+    if (nested || el.offsetParent === null) continue;
+    el.classList.add('rv'); rvPending.push(el);
+  }
+  /* první várka až po vykreslení výchozího stavu, aby přechod opravdu proběhl */
+  setTimeout(rvCheck, 60);
+  /* úvodní pás: animace pozadí běží, jen když je vidět */
+  const hero = root.querySelector(':scope > section.band');
+  heroObs?.disconnect();
+  if (hero && 'IntersectionObserver' in window) {
+    heroObs = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('fx-off', !e.isIntersecting)));
+    heroObs.observe(hero);
+  }
+}
+
+/* přechod mezi stránkami (View Transitions API, kde je k dispozici) */
+const routeIndex = v => { const m = v.match(PROOF_RE); if (m) return PROOFS.findIndex(p => p.id === m[1]); const t = v.match(TEST_RE); return t ? +t[2] : null; };
+function fxGo(from, to, restore, doIt) {
+  if (!FX_ON() || !document.startViewTransition || from === to) { doIt(); return; }
+  const a = routeIndex(from), b = routeIndex(to), same = (PROOF_RE.test(from) && PROOF_RE.test(to)) || (TEST_RE.test(from) && TEST_RE.test(to) && from.slice(0, 2) === to.slice(0, 2));
+  document.documentElement.dataset.vt = same && a != null && b != null ? (b > a ? 'next' : 'prev') : restore ? 'back' : 'fwd';
+  /* pojistka: když prohlížeč snímek nepořídí (skrytá karta, rám), přepni stránku i tak, jen bez animace */
+  let ran = false; const once = () => { if (ran) return; ran = true; doIt(); };
+  let vt = null;
+  try { vt = document.startViewTransition(once); } catch { once(); return; }
+  setTimeout(() => { if (!ran) { try { vt && vt.skipTransition(); } catch { } once(); } }, 350);
+}
+
+/* světlo pod kurzorem na dlaždicích a v úvodním pásu */
+if (window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  let raf = 0, last = null;
+  document.addEventListener('pointermove', e => {
+    last = e; if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0; const ev = last;
+      const el = ev.target.closest && ev.target.closest('.tile, .tcard, .step3, .pp-nb, .prow, .rcard, #view > section.band:first-of-type');
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+      el.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+    });
+  }, { passive: true });
+}
+
 /* ---------- úložiště (jen v tomto prohlížeči) ---------- */
 const store = {
   ok: (() => { try { localStorage.setItem('mat1:_t', '1'); localStorage.removeItem('mat1:_t'); return true; } catch { return false; } })(),
@@ -3799,13 +4011,18 @@ function go(token, push = true, restore = false) {
   if (timer.id && state.view !== token && !confirmLeave()) return;
   stopTimer(false);
   scrollMem[state.view] = window.scrollY;
+  const from = state.view;
   state.view = token;
   if (push) { try { history.pushState({ v: token }, '', '#' + token); } catch { } }
   store.set('last', token);
   if (TEST_RE.test(token)) store.set('resume', { v: token, t: Date.now() });
-  render();
-  window.scrollTo({ top: restore ? (scrollMem[token] || 0) : 0 });
-  if (!restore && push) document.body.scrollIntoView({ block: 'start' });
+  const doIt = () => {
+    state.fxAnim = true;
+    render();
+    window.scrollTo({ top: restore ? (scrollMem[token] || 0) : 0 });
+    if (!restore && push) document.body.scrollIntoView({ block: 'start' });
+  };
+  if (typeof fxGo === 'function') fxGo(from, token, restore, doIt); else doIt();
 }
 function confirmLeave() { return state.leaveOk === true || (toast('Stopky běží. Ukonči písemku, nebo klikni znovu pro odchod.', 'warn'), state.leaveOk = true, setTimeout(() => state.leaveOk = false, 4000), false); }
 window.addEventListener('popstate', ev => { const t = (ev.state && ev.state.v) || (location.hash || '#domu').slice(1); go(t, false, true); });
@@ -4076,6 +4293,8 @@ function render() {
   document.title = tm ? `Písemka ${+tm[2]} · ${TESTDEF[tm[1]].short} · MATEMATIKA I` : state.view === 'nahodna' ? 'Náhodná písemka · MATEMATIKA I' : state.view === 'domu' || !navL ? 'MATEMATIKA I' : `${navL} · MATEMATIKA I`;
   typesetAll();
   const pm = state.view.match(PROOF_RE); if (pm) initProofPage(proofById(pm[1]));
+  if (state.fxAnim && typeof fxReveal === 'function') fxReveal($view);
+  state.fxAnim = false;
   if (v.startsWith('teorie-')) requestAnimationFrame(() => document.getElementById('th-' + v.slice(7))?.scrollIntoView());
   resetTimerDisplay();
 }
