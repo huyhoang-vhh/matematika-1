@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>
+<script>window.NO_RUK = 1;</script>
 <title>MATEMATIKA I</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
@@ -3453,6 +3454,8 @@ const RUK = {
   l46: { p: [42] }, v47: { p: [43] }, v48: { p: [44] }, v49: { p: [45] }, t50: { p: [46] }, v45: { p: [52] }
 };
 const rukSrc = n => `rukopis/p${String(n).padStart(3, '0')}.jpg`;
+/* kopie mimo claude.ai (GitHub Pages) skeny nemá: tam se tlačítko neukazuje */
+if (window.NO_RUK) for (const k of Object.keys(RUK)) delete RUK[k];
 const rukBtn = (p, cls = 'pill sm ghost') => RUK[p.id] ? `<button type="button" class="${cls} ruk-open" data-ruk="${p.id}"><span aria-hidden="true">✍︎</span> Ručně psaný důkaz</button>` : '';
 
 const ruk = { id: null, i: 0, fit: true, last: null };
