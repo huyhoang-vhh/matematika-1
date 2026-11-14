@@ -695,7 +695,7 @@ details.sol.flash { animation: solflash 2s ease-out; border-radius: 10px; }
 .meter i { transform-origin: left center; transition: transform 1.2s var(--ease-out) .3s; }
 .fx .rv:not(.in) .meter i { transform: scaleX(0); }
 
-/* --- úvodní pás: světelná mlha + technická mřížka, která se rozsvítí pod kurzorem --- */
+/* --- úvodní pás: světelná mlha --- */
 #view > section.band:first-of-type { position: relative; isolation: isolate; overflow: hidden; }
 #view > section.band:first-of-type::before {
   content: ""; position: absolute; inset: -35% -20%; z-index: -1; pointer-events: none;
@@ -704,15 +704,6 @@ details.sol.flash { animation: solflash 2s ease-out; border-radius: 10px; }
     radial-gradient(closest-side at 72% 30%, rgba(163, 92, 255, .24), transparent 72%),
     radial-gradient(closest-side at 56% 82%, rgba(255, 106, 61, .14), transparent 72%);
   animation: fx-aurora 22s var(--ease-io) infinite alternate;
-}
-#view > section.band:first-of-type::after {
-  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--ink) 9%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--ink) 9%, transparent) 1px, transparent 1px);
-  background-size: 44px 44px; background-position: center top;
-  -webkit-mask-image: radial-gradient(560px circle at var(--mx, 50%) var(--my, 38%), #000 0%, rgba(0,0,0,.35) 45%, transparent 75%);
-  mask-image: radial-gradient(560px circle at var(--mx, 50%) var(--my, 38%), #000 0%, rgba(0,0,0,.35) 45%, transparent 75%);
 }
 #view > section.band.fx-off:first-of-type::before { animation-play-state: paused; }
 @keyframes fx-aurora {
@@ -3941,17 +3932,19 @@ function fxGo(from, to, restore, doIt) {
   let ran = false; const once = () => { if (ran) return; ran = true; doIt(); };
   let vt = null;
   try { vt = document.startViewTransition(once); } catch { once(); return; }
+  /* přeskočený přechod (rychlé klikání, pojistka níž) není chyba, jen ho neohlašuj do konzole */
+  for (const pr of [vt.ready, vt.finished, vt.updateCallbackDone]) pr && pr.catch(() => { });
   setTimeout(() => { if (!ran) { try { vt && vt.skipTransition(); } catch { } once(); } }, 350);
 }
 
-/* světlo pod kurzorem na dlaždicích a v úvodním pásu */
+/* světlo pod kurzorem na dlaždicích */
 if (window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches) {
   let raf = 0, last = null;
   document.addEventListener('pointermove', e => {
     last = e; if (raf) return;
     raf = requestAnimationFrame(() => {
       raf = 0; const ev = last;
-      const el = ev.target.closest && ev.target.closest('.tile, .tcard, .step3, .pp-nb, .prow, .rcard, #view > section.band:first-of-type');
+      const el = ev.target.closest && ev.target.closest('.tile, .tcard, .step3, .pp-nb, .prow, .rcard');
       if (!el) return;
       const r = el.getBoundingClientRect();
       el.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
