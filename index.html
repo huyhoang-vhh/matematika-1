@@ -31,7 +31,8 @@
   --feat-ink: #1d1d1f; --feat-edge: inset 0 0 0 1px rgba(91, 84, 220, .12), 0 1px 2px rgba(22, 27, 45, .04), 0 12px 32px -20px rgba(60, 50, 160, .28);
   --aur1: rgba(10, 108, 255, .17); --aur2: rgba(123, 63, 228, .14); --aur3: rgba(229, 83, 43, .09);
   --sel-bg: #e8f1ff; --sel-ink: #0058c4; --sel-ring: inset 0 0 0 1px rgba(0, 113, 227, .35);
-  --card-edge: inset 0 0 0 1px #e2e4ec;
+  --card-edge: inset 0 0 0 1px #d6d8e1;
+  --tile-on-bg: #f4f5f9;           /* karty v bílém pásu dostanou jemně šedou výplň */
   --card-sh: 0 1px 2px rgba(22, 27, 45, .04), 0 12px 32px -20px rgba(22, 27, 45, .22);
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
   --r-tile: 28px;
@@ -45,7 +46,7 @@
     --g1: #2997ff; --g2: #a35cff; --g3: #ff6a3d;
     --hero-bg: #000000; --hero-tile: #1d1d1f; --hero-line: #424245; --hero-scheme: dark;
     --feat-bg: #000000; --feat-ink: #f5f5f7; --feat-edge: none;
-    --aur1: rgba(41, 151, 255, .30); --aur2: rgba(163, 92, 255, .24); --aur3: rgba(255, 106, 61, .14); --card-sh: 0 0 #0000; --card-edge: 0 0 #0000; --sel-bg: #f5f5f7; --sel-ink: #000000; --sel-ring: none;
+    --aur1: rgba(41, 151, 255, .30); --aur2: rgba(163, 92, 255, .24); --aur3: rgba(255, 106, 61, .14); --card-sh: 0 0 #0000; --card-edge: 0 0 #0000; --tile-on-bg: #1d1d1f; --sel-bg: #f5f5f7; --sel-ink: #000000; --sel-ring: none;
     color-scheme: dark;
   }
 }
@@ -56,7 +57,7 @@
   --g1: #2997ff; --g2: #a35cff; --g3: #ff6a3d;
   --hero-bg: #000000; --hero-tile: #1d1d1f; --hero-line: #424245; --hero-scheme: dark;
   --feat-bg: #000000; --feat-ink: #f5f5f7; --feat-edge: none;
-  --aur1: rgba(41, 151, 255, .30); --aur2: rgba(163, 92, 255, .24); --aur3: rgba(255, 106, 61, .14); --card-sh: 0 0 #0000; --card-edge: 0 0 #0000; --sel-bg: #f5f5f7; --sel-ink: #000000; --sel-ring: none;
+  --aur1: rgba(41, 151, 255, .30); --aur2: rgba(163, 92, 255, .24); --aur3: rgba(255, 106, 61, .14); --card-sh: 0 0 #0000; --card-edge: 0 0 #0000; --tile-on-bg: #1d1d1f; --sel-bg: #f5f5f7; --sel-ink: #000000; --sel-ring: none;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -817,7 +818,8 @@ html[data-vt="back"]::view-transition-new(root) { animation-name: fx-in-back; }
 @media (prefers-reduced-motion: reduce) { .bm, .brand { transition: none; } .brand:hover .bm-cur, .brand:hover .bm-dot { animation: none; } .brand:hover .bm { transform: none; } }
 
 /* =================== karty: obrys a jemný stín (ve světlém motivu; ve tmavém průhledné) =================== */
-.tcard, .step3, .card, .prow, .pp-nb { box-shadow: var(--card-edge), var(--card-sh); }
+.band:not(.alt):not(.dark) { --tile: var(--tile-on-bg); }
+.tcard, .step3, .card, .prow, .pp-nb, .thm, .note, .tbl, .score, .kostra { box-shadow: var(--card-edge), var(--card-sh); }
 
 </style>
 
