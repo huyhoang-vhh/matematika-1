@@ -31,6 +31,7 @@
   --feat-ink: #1d1d1f; --feat-edge: inset 0 0 0 1px rgba(91, 84, 220, .12), 0 1px 2px rgba(22, 27, 45, .04), 0 12px 32px -20px rgba(60, 50, 160, .28);
   --aur1: rgba(10, 108, 255, .17); --aur2: rgba(123, 63, 228, .14); --aur3: rgba(229, 83, 43, .09);
   --sel-bg: #e8f1ff; --sel-ink: #0058c4; --sel-ring: inset 0 0 0 1px rgba(0, 113, 227, .35);
+  --card-edge: inset 0 0 0 1px #e2e4ec;
   --card-sh: 0 1px 2px rgba(22, 27, 45, .04), 0 12px 32px -20px rgba(22, 27, 45, .22);
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
   --r-tile: 28px;
@@ -44,7 +45,7 @@
     --g1: #2997ff; --g2: #a35cff; --g3: #ff6a3d;
     --hero-bg: #000000; --hero-tile: #1d1d1f; --hero-line: #424245; --hero-scheme: dark;
     --feat-bg: #000000; --feat-ink: #f5f5f7; --feat-edge: none;
-    --aur1: rgba(41, 151, 255, .30); --aur2: rgba(163, 92, 255, .24); --aur3: rgba(255, 106, 61, .14); --card-sh: none; --sel-bg: #f5f5f7; --sel-ink: #000000; --sel-ring: none;
+    --aur1: rgba(41, 151, 255, .30); --aur2: rgba(163, 92, 255, .24); --aur3: rgba(255, 106, 61, .14); --card-sh: 0 0 #0000; --card-edge: 0 0 #0000; --sel-bg: #f5f5f7; --sel-ink: #000000; --sel-ring: none;
     color-scheme: dark;
   }
 }
@@ -55,7 +56,7 @@
   --g1: #2997ff; --g2: #a35cff; --g3: #ff6a3d;
   --hero-bg: #000000; --hero-tile: #1d1d1f; --hero-line: #424245; --hero-scheme: dark;
   --feat-bg: #000000; --feat-ink: #f5f5f7; --feat-edge: none;
-  --aur1: rgba(41, 151, 255, .30); --aur2: rgba(163, 92, 255, .24); --aur3: rgba(255, 106, 61, .14); --card-sh: none; --sel-bg: #f5f5f7; --sel-ink: #000000; --sel-ring: none;
+  --aur1: rgba(41, 151, 255, .30); --aur2: rgba(163, 92, 255, .24); --aur3: rgba(255, 106, 61, .14); --card-sh: 0 0 #0000; --card-edge: 0 0 #0000; --sel-bg: #f5f5f7; --sel-ink: #000000; --sel-ring: none;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -119,7 +120,7 @@ h1, h2, h3 { margin: 0; text-wrap: balance; font-weight: 600; }
 .tile { all: unset; box-sizing: border-box; cursor: pointer; background: var(--tile); border-radius: var(--r-tile); padding: 40px 36px; display: flex; flex-direction: column; gap: 8px; min-height: 300px; position: relative; overflow: hidden; }
 .tile:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 .tile.dark { background: var(--feat-bg); color: var(--feat-ink); box-shadow: var(--feat-edge); }
-.tile { box-shadow: var(--card-sh); }
+.tile { box-shadow: var(--card-edge), var(--card-sh); }
 .tile .big { font-size: clamp(48px, 7vw, 72px); font-weight: 700; letter-spacing: -.04em; line-height: 1; margin-top: auto; font-variant-numeric: tabular-nums; }
 .tile .h2 { font-size: clamp(26px, 3vw, 34px); }
 .tile p { color: var(--ink-2); font-size: 17px; }
@@ -528,7 +529,7 @@ details.sol.flash { animation: solflash 2s ease-out; border-radius: 10px; }
 /* extra těžké písemky */
 .band.hard { background: color-mix(in srgb, var(--hard) 7%, var(--bg)); }
 .eyebrow.hard, .band.hard .eyebrow { color: var(--hard); }
-.tcard.hard { box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--hard) 45%, transparent); }
+.tcard.hard { box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--hard) 45%, transparent), var(--card-sh); }
 .tcard.hard b { color: var(--hard); }
 .tcard.hard.done .st { color: var(--ok); }
 .tag.hard { color: var(--hard); font-weight: 600; }
@@ -814,6 +815,9 @@ html[data-vt="back"]::view-transition-new(root) { animation-name: fx-in-back; }
 .bm-dot { transform-box: fill-box; transform-origin: center; }
 @media (max-width: 734px) { .brand { margin-left: -4px; } }
 @media (prefers-reduced-motion: reduce) { .bm, .brand { transition: none; } .brand:hover .bm-cur, .brand:hover .bm-dot { animation: none; } .brand:hover .bm { transform: none; } }
+
+/* =================== karty: obrys a jemný stín (ve světlém motivu; ve tmavém průhledné) =================== */
+.tcard, .step3, .card, .prow, .pp-nb { box-shadow: var(--card-edge), var(--card-sh); }
 
 </style>
 
