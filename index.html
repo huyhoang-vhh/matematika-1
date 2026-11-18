@@ -821,6 +821,23 @@ html[data-vt="back"]::view-transition-new(root) { animation-name: fx-in-back; }
 .band:not(.alt):not(.dark) { --tile: var(--tile-on-bg); }
 .tcard, .step3, .card, .prow, .pp-nb, .thm, .note, .tbl, .score, .kostra { box-shadow: var(--card-edge), var(--card-sh); }
 
+/* =================== požadavky ke zkoušce: štítky u vět =================== */
+.mchip.req-l { background: color-mix(in srgb, var(--ok) 14%, transparent); color: var(--ok); }
+.mchip.req-t { background: color-mix(in srgb, var(--hard) 14%, transparent); color: var(--hard); }
+.mchip.req-b { background: color-mix(in srgb, var(--new) 14%, transparent); color: var(--new); }
+.mchip.req-x { background: color-mix(in srgb, var(--ink-2) 14%, transparent); color: var(--ink-2); }
+.req-chips { margin-top: 8px; align-items: center; }
+.req-chips > .muted { margin-right: 4px; }
+.req-line { font-size: 15px; font-weight: 500; padding: 8px 14px; border-radius: 12px; align-self: flex-start; max-width: 60ch; }
+.req-line.req-l { background: color-mix(in srgb, var(--ok) 11%, transparent); color: var(--ok); }
+.req-line.req-t { background: color-mix(in srgb, var(--hard) 11%, transparent); color: var(--hard); }
+.req-line.req-b { background: color-mix(in srgb, var(--new) 11%, transparent); color: var(--new); }
+.req-line.req-x { background: color-mix(in srgb, var(--ink-2) 11%, transparent); color: var(--ink-2); }
+.oral-fmt { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.oral-fmt .step3 { padding: 22px; }
+.oral-fmt .step3 b.opts { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+.grades td:last-child { font-weight: 600; }
+
 </style>
 
 <header class="gnav"><div class="gnav-in">
@@ -1764,10 +1781,101 @@ fam('P6', 'pr', r => {
   };
 });
 
+/* L14: podíl odmocnin či polynomů (1. příklad 3. písemky podle ohlášení z 16. 11.) */
+fam('L14', 'fl', r => {
+  const v = ri(r, 0, 4);
+  if (v === 0) {
+    const c = ri(r, 1, 6), q = ri(r, 2, 4); let s = ri(r, 1, 4); if (s === q) s = q - 1;
+    const p = q * q - c, rr = s * s - c, P = poly([[1, 'x'], [p, '']]), Q = poly([[1, 'x'], [rr, '']]);
+    return {
+      task: D(R`\lim_{x\to ${c}}\frac{\sqrt{${P}}-${q}}{\sqrt{${Q}}-${s}}`), ans: fr(s, q),
+      sol: R`<p>Dosazením vyjde ${I(R`\frac{\sqrt{${q * q}}-${q}}{\sqrt{${s * s}}-${s}}=\frac00`)}. Odmocniny odstraníme rozšířením <b>oběma</b> sdruženými výrazy, ${I(R`\sqrt{${P}}+${q}`)} i ${I(R`\sqrt{${Q}}+${s}`)}:</p>
+${D(R`\frac{\sqrt{${P}}-${q}}{\sqrt{${Q}}-${s}}=\frac{\big(${P}-${q * q}\big)\big(\sqrt{${Q}}+${s}\big)}{\big(${Q}-${s * s}\big)\big(\sqrt{${P}}+${q}\big)}=\frac{(x-${c})\big(\sqrt{${Q}}+${s}\big)}{(x-${c})\big(\sqrt{${P}}+${q}\big)}`)}
+<p>Použili jsme ${I(R`(\sqrt a-b)(\sqrt a+b)=a-b^2`)}. Pro ${I(R`x\neq ${c}`)} krátíme ${I(R`x-${c}`)}. Zbylý výraz je spojitý v ${I(c)} (odmocnina je spojitá, jmenovatel nenulový), takže dosadíme:</p>
+${D(R`\frac{\sqrt{${s * s}}+${s}}{\sqrt{${q * q}}+${q}}=\frac{${2 * s}}{${2 * q}}=${fr(s, q)}`)}`,
+      f0: x => (Math.sqrt(x + p) - q) / (Math.sqrt(x + rr) - s), at: c, val: s / q
+    };
+  }
+  if (v === 1) {
+    const c = ri(r, 1, 5), q = ri(r, 2, 4), p = q * q - c, P = poly([[1, 'x'], [p, '']]);
+    return {
+      task: D(R`\lim_{x\to ${c}}\frac{\sqrt{${P}}-${q}}{x^2-${c * c}}`), ans: fr(1, 4 * c * q),
+      sol: R`<p>Typ ${I(R`\frac00`)}. Rozšíříme sdruženým výrazem ${I(R`\sqrt{${P}}+${q}`)} a jmenovatel rozložíme ${I(R`x^2-${c * c}=(x-${c})(x+${c})`)}:</p>
+${D(R`\frac{\sqrt{${P}}-${q}}{x^2-${c * c}}=\frac{${P}-${q * q}}{(x-${c})(x+${c})\big(\sqrt{${P}}+${q}\big)}=\frac{1}{(x+${c})\big(\sqrt{${P}}+${q}\big)}`)}
+<p>Čitatel ${I(R`${P}-${q * q}=x-${c}`)} se zkrátil (smíme, ${I(R`x\neq ${c}`)}). Zbytek je spojitý v ${I(c)}: ${I(R`\frac{1}{${2 * c}\cdot${2 * q}}=${fr(1, 4 * c * q)}`)}.</p>`,
+      f0: x => (Math.sqrt(x + p) - q) / (x * x - c * c), at: c, val: 1 / (4 * c * q)
+    };
+  }
+  if (v === 2 || v === 3) {
+    const a = ri(r, 1, 3), b = ri(r, 1, 5), m = ri(r, 1, 4), d = ri(r, -3, 3); let k = ri(r, 1, 3);
+    if (v === 3 && k === a) k = a === 3 ? 1 : a + 1;
+    const rad = poly([[a * a, 'x^2'], [b, 'x'], [1, '']]), den = poly([[m, 'x'], [d, '']]);
+    const inner = R`\sqrt{${a * a}+\frac{${b}}{x}+\frac{1}{x^2}}`;
+    if (v === 2) return {
+      task: D(R`\lim_{x\to+\infty}\frac{\sqrt{${rad}}+${one(k, 'x')}}{${den}}`), ans: fr(a + k, m),
+      sol: R`<p>Typ ${I(R`\frac\infty\infty`)}. Vytkneme nejvyšší mocninu: pod odmocninou ${I(R`x^2`)}, a protože ${I(R`x>0`)}, je ${I(R`\sqrt{x^2}=x`)}:</p>
+${D(R`\frac{\sqrt{${rad}}+${one(k, 'x')}}{${den}}=\frac{x\left(${inner}+${k}\right)}{x\left(${m}${d ? (d > 0 ? '+' : '-') + R`\frac{${Math.abs(d)}}{x}` : ''}\right)}=\frac{${inner}+${k}}{${m}${d ? (d > 0 ? '+' : '-') + R`\frac{${Math.abs(d)}}{x}` : ''}}`)}
+<p>Zlomky s ${I('x')} ve jmenovateli jdou k 0, odmocnina je spojitá. Podle AL: ${I(R`\frac{\sqrt{${a * a}}+${k}}{${m}}=${fr(a + k, m)}`)}.</p>`,
+      f0: x => (Math.sqrt(a * a * x * x + b * x + 1) + k * x) / (m * x + d), at: Infinity, val: (a + k) / m
+    };
+    return {
+      task: D(R`\lim_{x\to-\infty}\frac{\sqrt{${rad}}+${one(k, 'x')}}{${den}}`), ans: fr(k - a, m),
+      sol: R`<p>Typ ${I(R`\frac\infty\infty`)} (resp. ${I(R`\frac{\infty-\infty}{\infty}`)}). Vytkneme ${I(R`x^2`)} zpod odmocniny. <b>Pozor:</b> ${I(R`\sqrt{x^2}=|x|`)}, a pro ${I(R`x\lt0`)} je ${I(R`|x|=-x`)}:</p>
+${D(R`\frac{\sqrt{${rad}}+${one(k, 'x')}}{${den}}=\frac{-x\,${inner}+${one(k, 'x')}}{${den}}=\frac{-${inner}+${k}}{${m}${d ? (d > 0 ? '+' : '-') + R`\frac{${Math.abs(d)}}{x}` : ''}}`)}
+<p>(V posledním kroku jsme čitatel i jmenovatel vydělili ${I('x')}.) Zlomky s ${I('x')} ve jmenovateli jdou k 0. Podle AL: ${I(R`\frac{-${a}+${k}}{${m}}=${fr(k - a, m)}`)}.</p>
+<p>Kdo zapomene na ${I(R`|x|=-x`)}, dostane chybně ${I(fr(a + k, m))}.</p>`,
+      f0: x => (Math.sqrt(a * a * x * x + b * x + 1) + k * x) / (m * x + d), at: -Infinity, val: (k - a) / m
+    };
+  }
+  const c = ri(r, 1, 4), b = ri(r, 1, 5);
+  const N = poly([[1, 'x^3'], [-(c ** 3), '']]), Dn = poly([[1, 'x^2'], [b - c, 'x'], [-b * c, '']]);
+  return {
+    task: D(R`\lim_{x\to ${c}}\frac{${N}}{${Dn}}`), ans: fr(3 * c * c, c + b),
+    sol: R`<p>Dosazením ${I(R`\frac00`)}, takže čitatel i jmenovatel mají kořen ${I(c)} a dají se vydělit ${I(R`x-${c}`)}:</p>
+${D(R`\frac{${N}}{${Dn}}=\frac{(x-${c})\big(x^2+${one(c, 'x')}+${c * c}\big)}{(x-${c})(x+${b})}=\frac{x^2+${one(c, 'x')}+${c * c}}{x+${b}}\quad\text{pro }x\neq ${c}`)}
+<p>Použili jsme ${I(R`a^3-b^3=(a-b)(a^2+ab+b^2)`)}. Zbylá racionální funkce je spojitá v ${I(c)}: ${I(R`\frac{${3 * c * c}}{${c + b}}=${fr(3 * c * c, c + b)}`)}.</p>`,
+    f0: x => (x ** 3 - c ** 3) / (x * x + (b - c) * x - b * c), at: c, val: 3 * c * c / (c + b)
+  };
+});
+
+/* L15: známé limity a složená funkce (2. a 3. příklad 3. písemky) */
+fam('L15', 'fl', r => {
+  const v = ri(r, 0, 3), k = ri(r, 1, 5), m = ri(r, 1, 5), kx = cx(k), mx = cx(m);
+  const P = u => R`(vnitřní funkce ${I(u)} jde k 0 a na nějakém ${I(R`P(0,\delta)`)} je nenulová, takže platí podmínka P ${VLSF})`;
+  if (v === 0) return {
+    task: D(R`\lim_{x\to0}\frac{\ln\big(1+\sin(${kx})\big)}{e^{${mx}}-1}`), ans: fr(k, m),
+    sol: R`<p>Typ ${I(R`\frac00`)}. Rozložíme na známé limity tak, aby v každém zlomku byla stejná „vnitřní“ funkce nahoře i dole:</p>
+${D(R`\frac{\ln(1+\sin(${kx}))}{e^{${mx}}-1}=\frac{\ln(1+\sin(${kx}))}{\sin(${kx})}\cdot\frac{\sin(${kx})}{${kx}}\cdot\frac{${mx}}{e^{${mx}}-1}\cdot\frac{${k}}{${m}}`)}
+<p>${I(R`\frac{\ln(1+u)}{u}\to1`)} pro ${I(R`u=\sin(${kx})`)} ${P(R`\sin(${kx})`)}. ${I(R`\frac{\sin(${kx})}{${kx}}\to1`)} a ${I(R`\frac{${mx}}{e^{${mx}}-1}\to1`)} stejně. Podle AL: ${I(R`1\cdot1\cdot1\cdot\frac{${k}}{${m}}=${fr(k, m)}`)}.</p>`,
+    f0: x => Math.log(1 + Math.sin(k * x)) / (Math.exp(m * x) - 1), at: 0, val: k / m, h: 1e-5
+  };
+  if (v === 1) return {
+    task: D(R`\lim_{x\to0}\frac{e^{\sin(${kx})}-1}{\mathrm{tg}(${mx})}`), ans: fr(k, m),
+    sol: R`<p>Typ ${I(R`\frac00`)}. Upravíme na známé limity:</p>
+${D(R`\frac{e^{\sin(${kx})}-1}{\mathrm{tg}(${mx})}=\frac{e^{\sin(${kx})}-1}{\sin(${kx})}\cdot\frac{\sin(${kx})}{${kx}}\cdot\frac{${mx}}{\sin(${mx})}\cdot\cos(${mx})\cdot\frac{${k}}{${m}}`)}
+<p>${I(R`\frac{e^u-1}{u}\to1`)} pro ${I(R`u=\sin(${kx})`)} ${P(R`\sin(${kx})`)}. Dál ${I(R`\frac{\sin(${kx})}{${kx}}\to1`)}, ${I(R`\frac{${mx}}{\sin(${mx})}\to1`)} a ${I(R`\cos(${mx})\to1`)} (spojitost). Podle AL: ${I(fr(k, m))}.</p>`,
+    f0: x => (Math.exp(Math.sin(k * x)) - 1) / Math.tan(m * x), at: 0, val: k / m, h: 1e-5
+  };
+  if (v === 2) return {
+    task: D(R`\lim_{x\to0}\frac{\ln\big(\cos(${kx})\big)}{x^2}`), ans: fr(-k * k, 2),
+    sol: R`<p>Typ ${I(R`\frac00`)}. Zapíšeme ${I(R`\cos(${kx})=1+w`)}, kde ${I(R`w=\cos(${kx})-1`)}:</p>
+${D(R`\frac{\ln(\cos(${kx}))}{x^2}=\frac{\ln(1+w)}{w}\cdot\frac{\cos(${kx})-1}{(${kx})^2}\cdot ${k * k}`)}
+<p>${I(R`w\to0`)} a pro ${I(R`0\lt|x|\lt\frac{2\pi}{${k}}`)} je ${I(R`\cos(${kx})\neq1`)}, tedy ${I(R`w\neq0`)}: podmínka P ${VLSF} platí a ${I(R`\frac{\ln(1+w)}{w}\to1`)}. Dále ${I(R`\frac{\cos t-1}{t^2}\to-\frac12`)}. Podle AL: ${I(R`1\cdot\left(-\frac12\right)\cdot ${k * k}=${fr(-k * k, 2)}`)}.</p>`,
+    f0: x => Math.log(Math.cos(k * x)) / (x * x), at: 0, val: -k * k / 2, h: 1e-3
+  };
+  return {
+    task: D(R`\lim_{x\to0}\frac{1-\cos(${kx})}{e^{x^2}-1}`), ans: fr(k * k, 2),
+    sol: R`<p>Typ ${I(R`\frac00`)}. Ve jmenovateli je známá limita s vnitřní funkcí ${I(R`x^2`)}, v čitateli ${I(R`\frac{1-\cos t}{t^2}`)}:</p>
+${D(R`\frac{1-\cos(${kx})}{e^{x^2}-1}=\frac{1-\cos(${kx})}{(${kx})^2}\cdot ${k * k}\cdot\frac{x^2}{e^{x^2}-1}`)}
+<p>${I(R`\frac{1-\cos t}{t^2}\to\frac12`)} pro ${I(R`t=${kx}`)} a ${I(R`\frac{y}{e^y-1}\to1`)} pro ${I(R`y=x^2`)} ${P(R`x^2`)}. Podle AL: ${I(R`\frac12\cdot ${k * k}\cdot1=${fr(k * k, 2)}`)}.</p>`,
+    f0: x => (1 - Math.cos(k * x)) / (Math.exp(x * x) - 1), at: 0, val: k * k / 2, h: 1e-3
+  };
+});
+
 /* ---------- písemky ---------- */
 const TESTDEF = {
   p2: { title: '2. zápočtová písemka', short: '2. test · posloupnosti', n: 20, lists: [['R1', 'R3', 'R4', 'R5', 'R2', 'R7', 'R8', 'R6', 'R10', 'R9'], ['N1', 'N3', 'N2', 'N4', 'N6', 'N5', 'N8', 'N7', 'N9'], ['S4', 'S1', 'S5', 'S2', 'S7', 'S6', 'S3', 'S10', 'S8', 'S9']], pts: [10, 10, 10], max: 30, pass: 20, min: 30, base: 1000, key: i => 't' + i },
-  p3: { title: '3. zápočtová písemka', short: '3. test · limity funkcí', n: 15, lists: [['L1', 'L2', 'L6', 'L11'], ['L3', 'L4', 'L5', 'L10'], ['L7', 'L9', 'L8']], pts: [10, 10, 10], max: 30, pass: 20, min: 30, base: 3000, key: i => 't3-' + i },
+  p3: { title: '3. zápočtová písemka', short: '3. test · limity funkcí', n: 15, lists: [['L14', 'L1', 'L2', 'L6'], ['L3', 'L15', 'L4', 'L5', 'L10'], ['L7', 'L11', 'L8', 'L15', 'L4']], pts: [10, 10, 10], max: 30, pass: 20, min: 30, base: 3000, key: i => 't3-' + i },
   zk: { title: 'Písemná zkouška', short: 'zkouška · 4 příklady', n: 15, lists: [['E1', 'E3', 'E2'], ['L7', 'L10', 'L4', 'L11', 'L6'], ['G1', 'G3', 'G5', 'G2', 'G4'], ['P1', 'P3', 'P2', 'P4', 'P6', 'P5']], pts: [10, 15, 10, 15], max: 50, pass: 26, min: 120, base: 5000, key: i => 'tz-' + i }
 };
 const TESTS2 = TESTDEF.p2.n;
@@ -2352,7 +2460,7 @@ ${D(R`\lim_{x\to b^-}f(x)=\sup f\big((a,b)\big),\qquad \lim_{x\to a^+}f(x)=\inf 
 <li>„Dokázat“ existenci limity Heineho větou pomocí <b>jedné</b> posloupnosti. Jedna posloupnost stačí jen k důkazu <b>neexistence</b> (dvě různé hodnoty), ne existence.</li>
 <li>U Heineho věty vybrat posloupnost, která bodu ${I('c')} nabývá (${I(R`x_n=c`)}), nebo v něm vůbec nekonverguje.</li></ul></div>` },
   { id: 'derivace', title: 'Spojitost a derivace', ready: false, html: R`
-<p class="lead">Ve zkoušce je za to třetí příklad (10 bodů). Zatím jsou tu věty o spojitých funkcích a logaritmus (13.–14. přednáška). Derivace (16.–18. přednáška) doplníme, až budou probrané.</p>
+<p class="lead">Ve zkoušce je za to třetí příklad (10 bodů). Zatím jsou tu věty o spojitých funkcích a elementární funkce: logaritmus, exponenciála, obecná mocnina a goniometrické funkce (13.–15. přednáška). Derivace (16.–18. přednáška) doplníme, až budou probrané.</p>
 <h3>Spojité funkce na intervalu</h3>
 <div class="thm"><span class="lbl">Nabývání mezihodnot (Bolzano, Věta 29)</span>
 <p>Je-li ${I('f')} spojitá na ${I(R`\langle a,b\rangle`)} a ${I(R`f(a)\lt f(b)`)}, pak pro každé ${I(R`y\in\big(f(a),f(b)\big)`)} existuje ${I(R`\xi\in(a,b)`)} s ${I(R`f(\xi)=y`)}. (Totéž pro ${I(R`f(a)>f(b)`)}.)</p>
@@ -2368,7 +2476,31 @@ ${D(R`\lim_{x\to b^-}f(x)=\sup f\big((a,b)\big),\qquad \lim_{x\to a^+}f(x)=\inf 
 <div class="thm"><span class="lbl">Zavedení logaritmu (Věta 34)</span>
 <p>Existuje právě jedna funkce ${I(R`\log`)} s vlastnostmi: (L1) ${I(R`D_{\log}=(0,+\infty)`)}; (L2) je rostoucí; (L3) ${I(R`\log(xy)=\log x+\log y`)}; (L4) ${I(R`\lim_{x\to1}\frac{\log x}{x-1}=1`)}.</p>
 <p>Z axiomů plyne: ${I(R`\log1=0`)}, ${I(R`\log\frac xy=\log x-\log y`)}, ${I(R`\log x^n=n\log x`)}, logaritmus je spojitý, ${I(R`\lim_{x\to0^+}\log x=-\infty`)}, ${I(R`\lim_{x\to+\infty}\log x=+\infty`)} a obor hodnot je ${I(R`\mathbb R`)}. Z (L4) substitucí ${I(R`x=1+t`)} dostaneš známou limitu ${I(R`\frac{\ln(1+t)}{t}\to1`)}.</p>
-<p>Exponenciála ${I(R`\exp=\log^{-1}`)}, číslo ${I(R`e=\exp1`)} a obecná mocnina ${I(R`a^b=e^{b\log a}`)} (pro ${I(R`a>0`)}) přijdou na 15. přednášce.</p></div>
+</div>
+<h3>Exponenciála a obecná mocnina (15. přednáška)</h3>
+<div class="thm"><span class="lbl">Exponenciála</span>
+<p>${I(R`\exp`)} je <b>inverzní funkce k logaritmu</b>: ${I(R`y=\exp x\iff x=\log y`)}. Protože ${I(R`\log`)} je spojitý, rostoucí a jeho obor hodnot je ${I(R`\mathbb R`)}, dává Věta 33:</p>
+<ul class="plain"><li>${I(R`D_{\exp}=\mathbb R`)}, ${I(R`H_{\exp}=(0,+\infty)`)}, ${I(R`\exp`)} je spojitá a rostoucí. Je tedy <b>vždy kladná</b>.</li>
+<li>${I(R`\exp0=1`)}, ${I(R`\exp1=e`)}, ${I(R`\exp(x+y)=\exp x\cdot\exp y`)}, ${I(R`\exp(-x)=\frac1{\exp x}`)}.</li>
+<li>${I(R`\lim_{x\to+\infty}e^x=+\infty`)}, ${I(R`\lim_{x\to-\infty}e^x=0`)}.</li>
+<li>Známá limita ${I(R`\lim_{x\to0}\frac{e^x-1}{x}=1`)}: je to (L4) „naruby“, substitucí ${I(R`y=e^x-1`)}.</li></ul>
+<p>Důkaz těchto vlastností je u zkoušky mezi větami s lehčím důkazem. Najdeš ho v záložce Důkazy (karta „K Větě 34: Exponenciální funkce“).</p></div>
+<div class="thm"><span class="lbl">Obecná mocnina a logaritmus o základu a</span>
+<p>Pro ${I(R`a>0`)} a ${I(R`b\in\mathbb R`)} je ${I(R`a^b:=\exp(b\log a)=e^{b\ln a}`)}. Pro ${I(R`a,b>0`)}, ${I(R`a\neq1`)} je ${I(R`\log_a b:=\frac{\log b}{\log a}`)}.</p>
+<ul class="plain"><li>Platí ${I(R`a^{b+c}=a^ba^c`)}, ${I(R`(a^b)^c=a^{bc}`)}, ${I(R`(ab)^c=a^cb^c`)} a ${I(R`\log a^b=b\log a`)}. Všechno plyne z vlastností ${I(R`\exp`)} a ${I(R`\log`)}.</li>
+<li>Pro racionální ${I(R`b=\frac mn`)} vyjde totéž co odmocnina: ${I(R`a^{m/n}=\sqrt[n]{a^m}`)}.</li>
+<li>Proto se každá limita typu ${I(R`f(x)^{g(x)}`)} počítá přes ${I(R`f^g=e^{\,g\ln f}`)}: spočítáš limitu exponentu ${I(R`g\ln f`)} a pak použiješ spojitost ${I(R`\exp`)} (limita složené funkce s podmínkou S).</li></ul></div>
+<h3>Goniometrické funkce (15. přednáška)</h3>
+<div class="thm"><span class="lbl">Zavedení sinu (Věta 35, bez důkazu)</span>
+<p>Existuje jediné číslo ${I(R`\pi>0`)} a jediná funkce ${I(R`\sin`)} s vlastnostmi (S1) ${I(R`D_{\sin}=\mathbb R`)}; (S2) ${I(R`\sin`)} je rostoucí na ${I(R`\langle-\frac\pi2,\frac\pi2\rangle`)}; (S3) ${I(R`\sin0=0`)}; (S4) součtový vzorec ${I(R`\sin(x+y)=\sin x\,\sin(\frac\pi2-y)+\sin(\frac\pi2-x)\sin y`)}; (S5) ${I(R`\lim_{x\to0}\frac{\sin x}{x}=1`)}.</p>
+<p>Dál ${I(R`\cos x:=\sin(\frac\pi2-x)`)}, ${I(R`\mathrm{tg}\,x=\frac{\sin x}{\cos x}`)} (pro ${I(R`\cos x\neq0`)}) a ${I(R`\mathrm{cotg}\,x=\frac{\cos x}{\sin x}`)} (pro ${I(R`\sin x\neq0`)}). U ústní stačí přesné znění (S1)–(S5).</p></div>
+<div class="thm"><span class="lbl">Co z toho plyne a co se hodí do příkladů</span>
+<ul class="plain"><li>${I(R`\sin`)} je lichý, ${I(R`\cos`)} sudý, oba jsou spojité na ${I(R`\mathbb R`)} s periodou ${I(R`2\pi`)} a hodnotami v ${I(R`\langle-1,1\rangle`)}; ${I(R`\sin^2x+\cos^2x=1`)}.</li>
+<li>${I(R`\sin x=0`)} právě pro ${I(R`x=k\pi`)}, ${I(R`\cos x=0`)} právě pro ${I(R`x=\frac\pi2+k\pi`)} (${I(R`k\in\mathbb Z`)}). Tam ${I(R`\mathrm{tg}`)} resp. ${I(R`\mathrm{cotg}`)} není definovaný.</li>
+<li>${I(R`\sin(x+\pi)=-\sin x`)}, ${I(R`\cos(x+\pi)=-\cos x`)}. To se hodí při substituci ${I(R`t=x-\pi`)} nebo ${I(R`t=x-\frac\pi2`)}.</li>
+<li>Známé limity v nule: ${I(R`\frac{\sin x}{x}\to1`)}, ${I(R`\frac{\mathrm{tg}\,x}{x}\to1`)}, ${I(R`\frac{1-\cos x}{x^2}\to\frac12`)}. Spolu s ${I(R`\frac{e^x-1}{x}\to1`)} a ${I(R`\frac{\ln(1+x)}{x}\to1`)} je to základní výbava na 2. a 3. příklad 3. písemky.</li></ul></div>
+<div class="thm"><span class="lbl">Cyklometrické funkce (definice, probírají se na 16. přednášce)</span>
+<p>Inverze k zúženým goniometrickým funkcím: ${I(R`\arcsin:\langle-1,1\rangle\to\langle-\frac\pi2,\frac\pi2\rangle`)}, ${I(R`\arccos:\langle-1,1\rangle\to\langle0,\pi\rangle`)}, ${I(R`\mathrm{arctg}:\mathbb R\to(-\frac\pi2,\frac\pi2)`)}, ${I(R`\mathrm{arccotg}:\mathbb R\to(0,\pi)`)}. Všechny jsou spojité (Věta 33); arcsin a arctg rostou, arccos a arccotg klesají. Jejich definice jsou v seznamu požadavků k ústní zkoušce.</p></div>
 <h3>Postup</h3>
 <div class="thm"><span class="lbl">Jak dokázat, že rovnice má řešení</span><ol class="steps">
 <li>Převeď rovnici na tvar ${I(R`h(x)=0`)} a ověř, že ${I('h')} je spojitá na zvoleném ${I(R`\langle a,b\rangle`)}.</li>
@@ -2377,7 +2509,10 @@ ${D(R`\lim_{x\to b^-}f(x)=\sup f\big((a,b)\big),\qquad \lim_{x\to a^+}f(x)=\inf 
 <div class="note warn"><b>Nejčastější chyby</b><ul class="plain">
 <li>Použít Větu 29 nebo 31 na funkci, která na intervalu spojitá není (např. ${I(R`\frac1x`)} na ${I(R`\langle-1,1\rangle`)}).</li>
 <li>Použít větu o extrémech na otevřeném nebo neomezeném intervalu.</li>
-<li>Myslet si, že spojitá funkce zobrazí otevřený interval na otevřený.</li></ul></div>` },
+<li>Myslet si, že spojitá funkce zobrazí otevřený interval na otevřený.</li>
+<li>Psát ${I(R`a^b`)} pro záporný základ (např. ${I(R`(-8)^{1/3}`)}): obecná mocnina je definovaná jen pro ${I(R`a>0`)}.</li>
+<li>Rozepsat ${I(R`\ln(xy)=\ln x+\ln y`)} i tam, kde ${I('x')} nebo ${I('y')} může být záporné.</li>
+<li>Zapomenout, že ${I(R`e^x>0`)} pro všechna ${I('x')}. Výraz ${I(R`e^x`)} se nikdy nemůže rovnat nule.</li></ul></div>` },
   { id: 'prubeh', title: 'Průběh funkce', ready: false, html: R`<p>Monotonie, lokální extrémy, konvexita a konkávita, inflexní body, asymptoty, graf. Ve zkoušce je za to čtvrtý příklad (15 bodů).</p>` },
   { id: 'rn', title: 'Funkce více proměnných', ready: false, html: R`<p>${I(R`\mathbb R^n`)}, eukleidovská metrika, otevřené a uzavřené množiny, konvergence posloupností v ${I(R`\mathbb R^n`)}. Je to konec přednášek a látka k ústní části.</p>` }
 ];
@@ -2386,14 +2521,22 @@ ${D(R`\lim_{x\to b^-}f(x)=\sup f\big((a,b)\big),\qquad \lim_{x\to a^+}f(x)=\inf 
 const EVENTS = [
   { d: '2026-10-12', what: '1. zápočtová písemka', note: 'středoškolská látka · superseminář' },
   { d: '2026-11-02', what: '2. zápočtová písemka', note: 'limity posloupností: rozdíl odmocnin, n-tá odmocnina, zdůvodnění škály · superseminář' },
-  { d: '2026-11-30', what: '3. zápočtová písemka (orientačně)', note: 'limity funkcí a posloupností (Heine) · 10. týden, přesné datum bude upřesněno', key: true },
+  { d: '2026-11-30', what: '3. zápočtová písemka', note: 'na supersemináři · 3 příklady: 1. podíl odmocnin či polynomů, 2. a 3. známé limity a složená funkce', key: true },
   { d: '2027-01-04', what: '1. opravná písemka (předběžně)', note: 'datum bude upřesněno, možná už před Vánoci' },
-  { d: '2027-01-08', what: '2. opravná písemka (předběžně)', note: 'datum bude upřesněno' }
+  { d: '2027-01-08', what: '2. opravná písemka (předběžně)', note: 'datum bude upřesněno' },
+  { d: '2027-01-13', what: 'Zkouška: 1. termín', note: 'středa, písemná část v M1 · ústní zpravidla ve čtvrtek (případně i v pátek) v Karlíně, Sokolovská 83 · přihlášení v SIS' },
+  { d: '2027-01-20', what: 'Zkouška: 2. termín', note: 'středa, písemná část v M1 · ústní zpravidla následující den v Karlíně' },
+  { d: '2027-01-27', what: 'Zkouška: 3. termín', note: 'středa, písemná část v M1 · ústní zpravidla následující den v Karlíně' },
+  { d: '2027-02-03', what: 'Zkouška: 4. termín', note: 'středa, písemná část v M1 · ústní zpravidla následující den v Karlíně' },
+  { d: '2027-02-10', what: 'Zkouška: 5. termín', note: 'středa, písemná část v M1 · ústní zpravidla následující den v Karlíně' }
 ];
 const LINKS = [
   ['Tomáš Bárta – stránka předmětu (přednášky, písemky, zkouška)', 'https://www2.karlin.mff.cuni.cz/~barta/FSV/mat1.html'],
   ['Josef Hlahulek – cvičení, animace, tahák', 'https://josefhlahulek.github.io/cviceni.html'],
-  ['Jan Moldavčuk – cvičení s řešeními', 'https://www2.karlin.mff.cuni.cz/~moldavcuk/Matematika_I_ZS26-27/'],
+  ['Požadavky k ústní zkoušce (oficiální seznam)', 'https://www2.karlin.mff.cuni.cz/~barta/FSV/mat1/mat1_pozadavky.html'],
+  ['Podmínky zkoušky a hodnocení', 'https://www2.karlin.mff.cuni.cz/~barta/FSV/mat1/mat1_podminkyZK.html'],
+  ['Výsledky učení (co budeme umět a co se testuje)', 'https://www2.karlin.mff.cuni.cz/~barta/FSV/mat1/mat1_vysledky_uceni.html'],
+  ['Jan Moldavčuk – cvičení s řešeními', 'https://www2.karlin.mff.cuni.cz/~moldavcuk/'],
   ['Václav Vlasák', 'https://www.karlin.mff.cuni.cz/~vlasakv/'],
   ['Ondřej Kalenda – archiv písemek a důkazů', 'https://www.karlin.mff.cuni.cz/~kalenda/edu.php'],
   ['Miroslav Zelený – staré zkouškové písemky FSV', 'http://www.karlin.mff.cuni.cz/~zeleny/fsv/mat1.htm'],
@@ -2401,14 +2544,14 @@ const LINKS = [
 ];
 
 /* ---------- ústní ---------- */
+/* podle oficiálních požadavků (Bárta, mat1_pozadavky, listopad 2026): [nadpis, poznámka, položky] */
 const ORAL = [
-  ['Výroky a množiny', ['Výroky, kvantifikátory, negace', 'De Morganova pravidla', 'Zobrazení (prosté, na, inverzní)', 'Metody důkazu, indukce']],
-  ['Reálná čísla', ['Supremum a infimum (definice)', 'Věta o supremu', 'Charakterizace intervalu', 'Existence celé části', 'Archimédova vlastnost', 'Hustota ℚ v ℝ, odmocniny']],
-  ['Posloupnosti', ['Definice limity, jednoznačnost', 'Limita vybrané posloupnosti', 'Aritmetika limit', 'Limita a uspořádání, dva policajti', 'Nevlastní limity', 'Limita monotónní posloupnosti', 'Bolzanova–Weierstrassova věta']],
-  ['Funkce a spojitost', ['Limita a spojitost funkce', 'Jednostranné a nevlastní limity', 'Limita složené funkce', 'Heineho věta', 'Limita monotónní funkce', 'Darbouxova vlastnost, obraz intervalu', 'Věta o extrémech spojité funkce', 'Spojitost inverzní funkce']],
-  ['Elementární funkce a derivace', ['Logaritmus, exponenciála, goniometrické a cyklometrické funkce', 'Derivace, aritmetika derivací', 'Derivace složené a inverzní funkce', 'Nutná podmínka lokálního extrému']],
-  ['Věty o střední hodnotě a průběh', ['Rolleova a Lagrangeova věta', 'Znaménko derivace a monotonie', 'l\'Hospitalovo pravidlo', 'Konvexní a konkávní funkce, inflexe', 'Asymptoty']],
-  ['Více proměnných', ['ℝⁿ a eukleidovská metrika', 'Otevřené a uzavřené množiny', 'Konvergence posloupností v ℝⁿ']]
+  ['Klíčové pojmy', 'Musíš umět všechny: přesnou definici, pochopení a použití. Podstatná neznalost kteréhokoli z nich znamená automaticky F.', ['supremum a infimum množiny reálných čísel', 'vlastní limita posloupnosti', 'nevlastní limita posloupnosti', 'okolí bodu', 'limita funkce', 'limita funkce zprava a zleva', 'spojitost funkce v bodě', 'spojitost funkce v bodě zprava a zleva', 'spojitost funkce na intervalu', 'extrém funkce', 'derivace funkce v bodě', 'derivace funkce v bodě zprava a zleva', 'tečna ke grafu funkce', 'konvexní a konkávní funkce']],
+  ['Definice: množiny a reálná čísla', '', ['zdola omezená množina', 'shora omezená množina', 'dolní závora', 'horní závora', 'omezená množina', 'maximum množiny', 'minimum množiny', 'celá část čísla', 'rozšířená reálná osa']],
+  ['Definice: posloupnosti', '', ['shora omezená posloupnost', 'zdola omezená posloupnost', 'omezená posloupnost', 'rostoucí posloupnost', 'klesající posloupnost', 'nerostoucí posloupnost', 'neklesající posloupnost', 'monotónní posloupnost', 'ryze monotónní posloupnost', 'konvergentní posloupnost', 'vybraná posloupnost']],
+  ['Definice: zobrazení a funkce', '', ['vzor množiny při zobrazení', 'zobrazení na', 'prosté zobrazení', 'bijekce', 'rostoucí funkce', 'klesající funkce', 'nerostoucí funkce', 'neklesající funkce', 'monotónní funkce', 'omezená funkce', 'sudá a lichá funkce', 'periodická funkce', 'prstencové okolí bodu', 'lokální maximum', 'lokální minimum']],
+  ['Definice: elementární funkce, derivace, průběh', '', ['obecná mocnina aᵇ', 'funkce arcsin', 'funkce arccos', 'funkce arctg', 'funkce arccotg', 'ryze konvexní funkce', 'ryze konkávní funkce', 'n-tá derivace funkce v bodě', 'inflexní bod', 'asymptota funkce']],
+  ['Věty jen se zněním (bez důkazu)', 'Stačí přesné znění, pochopení předpokladů a použití na příkladu.', ['existence celé části čísla (Věta 5)', 'polovina Heineovy věty (Věta 27)', 'spojitost složené funkce na intervalu (Důsledek věty 25)', 'zavedení funkce sinus (Věta 35)', 'l’Hospitalovo pravidlo (Věta 45)']]
 ];
 
 
@@ -2898,6 +3041,23 @@ PROOFS.push(
   say: 'Postup je stejný jako u posloupností. Z definic limit dostanu δ₁ pro f a δ₂ pro g a vezmu menší z nich, aby platily obě podmínky. Pro konečné limity rozdělím ε napůl a použiju trojúhelníkovou nerovnost. Pro +∞ odhaduju zdola: f > K − L a g > L. Součin a podíl stejně jako ve Větách 12 a 12′, omezenost g na okolí dává Věta 21.',
   pit: ['Důsledek: součet, součin a podíl (pro g(c) ≠ 0) spojitých funkcí je spojitý. Proto jsou spojité polynomy a racionální funkce.'] },
 
+{ id: 'd22', no: 'Důsledek věty 22', name: 'Spojitost a aritmetické operace', ch: 'fce',
+  stmt: R`Jsou-li \(f\) a \(g\) spojité v bodě \(c\in\mathbb R\), jsou v \(c\) spojité také \(f+g\), \(f-g\) a \(fg\). Je-li navíc \(g(c)\neq0\), je v \(c\) spojitý i podíl \(\frac fg\).`,
+  plain: 'Sečtením, vynásobením nebo vydělením spojitých funkcí spojitost neztratíš (jen nesmíš dělit nulou).',
+  method: ['Přímý důsledek', 'Aritmetika limit'],
+  idea: 'Spojitost v c je totéž co lim f = f(c). Stačí tedy použít aritmetiku limit (Větu 22) s A = f(c) a B = g(c). Obě čísla jsou konečná, takže výrazy A + B, AB a A/B (pro B ≠ 0) jsou vždy definované.',
+  need: [{ t: 'Věta 22 (aritmetika limit funkcí)', ref: 'v22' }, { t: 'definice spojitosti v bodě' }],
+  goal: R`\lim_{x\to c}\big(f(x)+g(x)\big)=f(c)+g(c),\qquad \lim_{x\to c}f(x)g(x)=f(c)g(c),\qquad \lim_{x\to c}\frac{f(x)}{g(x)}=\frac{f(c)}{g(c)}`,
+  steps: [
+    { h: 'Spojitost přepíšu jako limitu', m: R`\lim_{x\to c}f(x)=f(c)=:A\in\mathbb R,\qquad \lim_{x\to c}g(x)=g(c)=:B\in\mathbb R`, why: 'Definice spojitosti v bodě: funkce je v c definovaná a její limita v c je rovna hodnotě f(c). Hodnota je reálné číslo, takže A i B jsou konečné.' },
+    { h: 'Součet, rozdíl a součin', m: R`\lim_{x\to c}(f\pm g)(x)=A\pm B=(f\pm g)(c),\qquad \lim_{x\to c}(fg)(x)=AB=(fg)(c)`, use: ['v22'], why: 'Věta 22. Pro konečná A, B jsou A ± B i AB vždy definované, takže předpoklad věty je splněný. Výsledná limita je rovna hodnotě součtu (součinu) v c, a to je přesně spojitost.' },
+    { h: 'Podíl pro g(c) ≠ 0', m: R`\lim_{x\to c}\frac{f(x)}{g(x)}=\frac AB=\frac{f(c)}{g(c)}`, use: ['v22'], why: 'Pro B = g(c) ≠ 0 je A/B definované, takže znovu platí Věta 22. Navíc z B ≠ 0 plyne, že g je na nějakém okolí c nenulová (Věta 24(i) při porovnání |g| s konstantou |B|/2), takže podíl je na okolí c definovaný.', }
+  ],
+  end: 'f ± g a fg jsou spojité v c; f/g je spojitá v c, pokud g(c) ≠ 0.',
+  say: 'Spojitost v c znamená, že limita v c je rovna hodnotě. Takže lim f = f(c) a lim g = g(c), obě konečné. Podle aritmetiky limit funkcí je lim (f + g) = f(c) + g(c), tedy hodnota součtu v c; stejně pro rozdíl a součin. U podílu potřebuju g(c) ≠ 0, aby byl výraz f(c)/g(c) definovaný; pak aritmetika limit dá lim f/g = f(c)/g(c).',
+  pit: ['U podílu nezapomeň na podmínku g(c) ≠ 0. Bez ní podíl v c není ani definovaný.', 'Odtud plyne, že polynomy jsou spojité na celém ℝ (vzniknou ze spojitých funkcí konstanta a x sčítáním a násobením) a racionální funkce všude, kde je jmenovatel nenulový.'],
+  ask: [['Proč tu nemůže nastat nedefinovaný výraz typu ∞ − ∞?', 'Protože obě limity jsou hodnoty funkcí v bodě c, tedy reálná čísla. Nevlastní limita by spojitost vylučovala.'], ['Je součet nespojité a spojité funkce nespojitý?', 'Ano. Kdyby f + g byla spojitá a g spojitá, byla by spojitá i f = (f + g) − g.']] },
+
 { id: 'v23', no: 'Věta 23', name: 'Dělení kladnou nulou (funkce)', ch: 'fce',
   stmt: R`Nechť \(g\to0\), \(f\to A>0\) (\(A\in\mathbb R^*\)) pro \(x\to c\) a \(g>0\) na nějakém \(P(c,\eta)\). Pak \(\frac fg\to+\infty\).`,
   plain: 'Kladné číslo děleno kladnou nulou je +∞, i u funkcí.',
@@ -2963,6 +3123,13 @@ PROOFS.push(
   ],
   end: 'Limita zleva složené funkce je B.',
   say: 'Stejně jako u Věty 25: k ε najdu r pro f zprava, k r najdu δ pro g zleva. Podmínka (P) g > A zaručí, že g(x) je v (A, A + r). Při (S) může být g(x) = A, ale tam je f(A) = B díky spojitosti zprava.' },
+
+{ id: 'd25', no: 'Důsledek věty 25', name: 'Spojitost složené funkce na intervalu', ch: 'fce', nop: true,
+  stmt: R`Nechť \(I,J\) jsou intervaly, \(g\) je spojitá na \(I\), \(g(I)\subset J\) a \(f\) je spojitá na \(J\). Pak je složená funkce \(f\circ g\) spojitá na \(I\).`,
+  plain: 'Spojitá funkce dosazená do spojité funkce dá zase spojitou funkci.',
+  idea: 'U zkoušky bez důkazu. Znát přesné znění a umět ho použít, třeba na spojitost funkcí jako e^(sin x) nebo √(1 + x²). Vychází z bodové verze: je-li g spojitá v c a f spojitá v g(c), je f∘g spojitá v c (limita složené funkce s podmínkou (S)).',
+  steps: [],
+  pit: ['Na krajních bodech intervalu jde o jednostrannou spojitost.', 'Předpoklad g(I) ⊂ J je nutný, jinak složená funkce není na I ani definovaná.'] },
 
 { id: 'v27', no: 'Věta 27', name: 'Heineho věta (polovina)', ch: 'fce',
   stmt: R`Nechť \(\lim_{x\to c}f(x)=A\). Pokud \(x_n\in D_f\), \(x_n\neq c\) a \(x_n\to c\), pak \(f(x_n)\to A\).`,
@@ -3116,6 +3283,27 @@ PROOFS.push(
   end: 'Všechny vlastnosti logaritmu plynou z (L1)–(L4).',
   say: 'Z (L3) dostanu log 1 = 0, log(1/x) = −log x a indukcí log xⁿ = n log x. log roste, takže v +∞ má limitu, a po posloupnosti 2ⁿ je log 2ⁿ = n log 2 → ∞; v nule pak −∞ přes log(1/x). Spojitost v 1 plyne z (L4): log x = (log x/(x − 1)) · (x − 1) → 0. V obecném x₀ píšu log x = log x₀ + log(x/x₀). Spojitý obraz intervalu je interval, a s limitami ±∞ je to ℝ, takže existuje jediné e s log e = 1.',
   pit: ['exp je inverzní funkce k log. Její vlastnosti se dokazují převodem na logaritmus.'] },
+
+{ id: 'exp', no: 'K Větě 34', name: 'Exponenciální funkce a její vlastnosti', ch: 'fce',
+  stmt: R`Exponenciála \(\exp\) je inverzní funkce k logaritmu. Platí: \(D_{\exp}=\mathbb R\), \(H_{\exp}=(0,+\infty)\), \(\exp\) je spojitá a rostoucí, \(\exp0=1\), \(\exp1=e\), \(\exp(x+y)=\exp x\cdot\exp y\), \(\exp(-x)=\frac1{\exp x}\), \(\lim_{x\to+\infty}\exp x=+\infty\), \(\lim_{x\to-\infty}\exp x=0\) a \(\lim_{x\to0}\frac{\exp x-1}{x}=1\).`,
+  plain: 'Exponenciála je logaritmus „pozpátku“. Každou její vlastnost dostaneš tak, že ji přeložíš na vlastnost logaritmu.',
+  method: ['Převod na inverzní funkci', 'Limita složené funkce'],
+  idea: 'Všechno se převádí na logaritmus přes vztah y = exp x ⟺ x = log y. Definiční obor, monotonie a spojitost plynou z Věty 33 o inverzní funkci, algebraické vlastnosti z (L3) a limity ze spojitosti a monotonie. Známá limita (eˣ − 1)/x → 1 je (L4) „obrácená“ substitucí y = eˣ.',
+  need: [{ t: 'Věta 34 (vlastnosti logaritmu)', ref: 'v34' }, { t: 'Věta 33 (spojitost inverzní funkce)', ref: 'v33' }, { t: 'Věta 25 (limita složené funkce)', ref: 'v25' }],
+  steps: [
+    { g: 'Definice a spojitost', h: 'exp existuje, je rostoucí a spojitá na ℝ', m: R`\log:(0,+\infty)\to\mathbb R\ \text{rostoucí, spojitý, na}\ \Longrightarrow\ \exp=\log^{-1}:\mathbb R\to(0,+\infty)`, use: ['v34', 'v33'], why: 'Z Věty 34 je log rostoucí a spojitý na intervalu (0, +∞) s oborem hodnot ℝ. Rostoucí funkce je prostá, takže inverze existuje. Věta 33 říká, že inverzní funkce ke spojité rostoucí funkci na intervalu je spojitá a rostoucí. Její definiční obor je obor hodnot logaritmu (ℝ) a obor hodnot je definiční obor logaritmu ((0, +∞)).' },
+    { g: 'Algebraické vlastnosti', h: 'exp 0 = 1 a exp 1 = e', m: R`\log1=0\ \Longrightarrow\ \exp0=1,\qquad \log e=1\ \Longrightarrow\ \exp1=e`, why: 'Pro inverzní funkci platí exp a = b právě když log b = a. Z Věty 34 víme log 1 = 0 a e je číslo s log e = 1.' },
+    { g: 'Algebraické vlastnosti', h: 'exp(x + y) = exp x · exp y', m: R`\log\big(\exp x\cdot\exp y\big)=\log\exp x+\log\exp y=x+y\ \Longrightarrow\ \exp x\cdot\exp y=\exp(x+y)`, why: 'Čísla exp x a exp y jsou kladná, takže smím použít (L3). Dostanu, že logaritmus čísla exp x · exp y je x + y. To podle definice inverzní funkce znamená exp(x + y) = exp x · exp y.' },
+    { g: 'Algebraické vlastnosti', h: 'exp(−x) = 1 / exp x', m: R`\exp x\cdot\exp(-x)=\exp(x-x)=\exp0=1`, why: 'Předchozí krok pro y = −x a exp 0 = 1. Vydělím kladným číslem exp x.' },
+    { g: 'Limity', h: 'Limita v +∞', m: R`K>0,\ x>\log K\ \Longrightarrow\ \exp x>\exp(\log K)=K`, why: 'exp je rostoucí, takže z x > log K plyne exp x > exp(log K) = K. Pro každé K > 0 tedy existuje okolí +∞ (interval (log K, +∞)), na kterém je exp x > K. To je přesně definice limity +∞.' },
+    { g: 'Limity', h: 'Limita v −∞', m: R`\lim_{x\to-\infty}\exp x=\lim_{x\to-\infty}\frac1{\exp(-x)}=0`, use: ['v25'], why: 'Pro x → −∞ jde −x → +∞, takže exp(−x) → +∞ (předchozí krok a limita složené funkce s podmínkou (P), vnitřní funkce −x nikdy není rovna +∞). Převrácená hodnota čísla jdoucího k +∞ jde k 0 (aritmetika limit).' },
+    { g: 'Známá limita', h: 'Substituce y = exp x − 1', m: R`\frac{\exp x-1}{x}=\frac{y}{\log(1+y)},\qquad y=\exp x-1\xrightarrow{x\to0}0,\quad y\neq0\ \text{pro}\ x\neq0`, why: 'Z y = exp x − 1 je exp x = 1 + y, tedy x = log(1 + y). Spojitost exp v 0 dává y → exp 0 − 1 = 0. Protože exp je prostá, pro x ≠ 0 je exp x ≠ 1, tedy y ≠ 0.' },
+    { g: 'Známá limita', h: 'Limita složené funkce s podmínkou (P)', m: R`\lim_{y\to0}\frac{y}{\log(1+y)}=\frac1{\lim_{y\to0}\frac{\log(1+y)}{y}}=\frac11=1\ \Longrightarrow\ \lim_{x\to0}\frac{\exp x-1}{x}=1`, use: ['v25'], why: 'Vnější limita: (L4) substitucí t = 1 + y dává log(1 + y)/y → 1, a převrácená hodnota jde k 1. Vnitřní funkce y(x) jde k 0 a na prstencovém okolí nuly je nenulová, takže platí podmínka (P) Věty 25.' }
+  ],
+  end: 'exp je spojitá rostoucí bijekce ℝ → (0, +∞) s exp(x + y) = exp x · exp y a (eˣ − 1)/x → 1.',
+  say: 'exp definuju jako inverzi k logaritmu. log je spojitý a rostoucí na (0, +∞) s oborem hodnot ℝ, takže podle Věty 33 je exp spojitá a rostoucí na ℝ s hodnotami v (0, +∞). Vlastnosti dostanu zlogaritmováním: log(eˣ eʸ) = x + y, takže eˣ eʸ = eˣ⁺ʸ. Rostoucí funkce má v +∞ limitu rovnou supremu hodnot, tedy +∞; v −∞ píšu eˣ = 1/e⁻ˣ → 0. Na limitu (eˣ − 1)/x použiju substituci y = eˣ − 1, což je převrácená limita (L4), a podmínku (P) zaručí prostota exp.',
+  pit: ['Pozor na pořadí: exp se zavádí AŽ z logaritmu. V důkazu nesmíš používat vlastnosti exp, které teprve dokazuješ.', 'Obecná mocnina se pak definuje jako aᵇ = exp(b log a) jen pro a > 0. Pravidla aᵇ⁺ᶜ = aᵇaᶜ a (aᵇ)ᶜ = aᵇᶜ plynou z kroků 3–4.', 'U známé limity musíš zdůvodnit podmínku (P): y = eˣ − 1 je pro x ≠ 0 nenulové, protože exp je prostá.'],
+  ask: [['Proč je obor hodnot exp právě (0, +∞)?', 'Obor hodnot inverzní funkce je definiční obor původní funkce, a log je definovaný na (0, +∞).'], ['Jak dokážeš e^(x+y) = eˣ eʸ bez kalkulačky?', 'Zlogaritmuju pravou stranu: podle (L3) je log(eˣ eʸ) = log eˣ + log eʸ = x + y. Takže eˣ eʸ je číslo, jehož logaritmus je x + y, a to je přesně e^(x+y).']] },
 
 { id: 'v35', no: 'Věta 35', name: 'Zavedení sinu a čísla π', ch: 'fce', nop: true,
   stmt: R`Existuje jediné \(\pi>0\) a jediná funkce \(\sin\): (S1) \(D=\mathbb R\); (S2) rostoucí na \(\langle-\frac\pi2,\frac\pi2\rangle\); (S3) \(\sin0=0\); (S4) \(\sin(x+y)=\sin x\cos y+\cos x\sin y\); (S5) \(\lim_{x\to0}\frac{\sin x}x=1\).`,
@@ -3732,8 +3920,24 @@ function vidSec(p) {
 const PROOF_RE = /^dukaz-([a-z0-9-]+)$/;
 const proofById = id => PROOFS.find(p => p.id === id);
 const plural = (n, a, b, c) => n === 1 ? a : n > 1 && n < 5 ? b : c;
-const pKind = p => { const m = p.no.match(/^(\S+)\s*(.*)$/); return [m[1], m[2]]; };
-const pShort = p => p.no.replace(/^Věta /, 'V ').replace(/^Tvrzení /, 'T ').replace(/^Lemma /, 'L ').replace(/^Důsledek /, 'D ').replace(/^Příklad$/, 'Př.').replace(/^Věta$/, 'Věta');
+const pKind = p => { const m = p.no.match(/^(.+?)\s+(\d+\S*)$/); return m ? [m[1], m[2]] : [p.no, '']; };
+/* oficiální požadavky k ústní zkoušce (Bárta, stránka mat1_pozadavky, listopad 2026):
+   L = věta s lehčím důkazem, T = s obtížnějším důkazem, B = jen znění (bez důkazu), jinak mimo seznam */
+const REQ = {
+  L: ['t1', 't3', 'l4', 'v6', 'v8', 'v9', 'v10', 'v11', 'v13', 'v14', 'v15', 'v16', 'l17', 'v18', 'v20', 'v21', 'd22', 'v23', 'v24', 'v28', 'v30', 'd32', 'v34', 'exp', 'v36', 'v40', 'v41', 'v42', 'v43', 'l46', 't50'],
+  T: ['v7', 'v12', 'v12p', 'v19', 'v22', 'v25', 'v29', 'v31', 'v33', 'v37', 'v38', 'v39', 'v44', 'v47', 'v48', 'v49'],
+  B: ['v5', 'v27', 'd25', 'v35', 'v45']
+};
+const reqOf = p => Object.keys(REQ).find(k => REQ[k].includes(p.id)) || 'X';
+const REQ_LBL = { L: 'lehčí důkaz', T: 'těžší důkaz', B: 'jen znění', X: 'mimo seznam' };
+const REQ_LONG = {
+  L: 'U zkoušky jako věta s lehčím důkazem (13 bodů: 3 za znění, 10 za důkaz)',
+  T: 'U zkoušky jako věta s obtížnějším důkazem (23 bodů: 3 za znění, 20 za důkaz)',
+  B: 'U zkoušky bez důkazu: stačí přesné znění a umět větu použít',
+  X: 'Není v oficiálním seznamu požadavků. Hodí se k pochopení, u zkoušky se nezkouší samostatně.'
+};
+const reqChip = p => { const r = reqOf(p); return `<span class="mchip req-${r.toLowerCase()}">${REQ_LBL[r]}</span>`; };
+const pShort = p => p.no.replace(/^K Větě /, 'k V ').replace(/^Důsledek věty /, 'D ').replace(/^Věta /, 'V ').replace(/^Tvrzení /, 'T ').replace(/^Lemma /, 'L ').replace(/^Důsledek /, 'D ').replace(/^Příklad$/, 'Př.').replace(/^Věta$/, 'Věta');
 
 /* dlouhý vzorec zalomím v přirozených místech do více řádků. Na úzké obrazovce lámu i před šipkami ⟹, ⟺. */
 const NARROW = () => window.innerWidth < 640;
@@ -3781,14 +3985,14 @@ function proofRow(p, known) {
   return `<li><button type="button" class="prow ${isK ? 'is-known' : ''}" data-ref="${p.id}">
 <span class="prow-no">${(([k, n]) => `<small>${k}</small>${n ? `<b>${n}</b>` : ''}`)(pKind(p))}</span>
 <span class="prow-main"><b>${p.name}</b><span>${p.plain || ''}</span></span>
-<span class="prow-meta">${(p.method || []).slice(0, 1).map(m => `<span class="mchip">${m}</span>`).join('')}${VID[p.id] ? '<span class="prow-ic" title="Záznam z přednášky" aria-label="má záznam z přednášky">▶</span>' : ''}${p.nop ? '<span class="mchip hot">bez důkazu</span>' : ''}</span>
+<span class="prow-meta">${reqChip(p)}${VID[p.id] ? '<span class="prow-ic" title="Záznam z přednášky" aria-label="má záznam z přednášky">▶</span>' : ''}</span>
 <span class="prow-st" aria-label="${isK ? 'umím' : 'zatím neumím'}">${isK ? '✓' : ''}</span></button></li>`;
 }
 
 function viewProofs() {
   const known = knownSet();
   const q = state.pq.trim().toLowerCase();
-  const list = PROOFS.filter(p => (state.pch === 'all' || (state.pch === 'todo' ? !p.nop && !known[p.id] : p.ch === state.pch)) && (!q || (p.no + ' ' + p.name + ' ' + (p.plain || '') + ' ' + (p.method || []).join(' ')).toLowerCase().includes(q)));
+  const list = PROOFS.filter(p => (state.pch === 'all' || (state.pch === 'todo' ? !p.nop && !known[p.id] : state.pch.startsWith('req-') ? reqOf(p) === state.pch.slice(4) : p.ch === state.pch)) && (!q || (p.no + ' ' + p.name + ' ' + (p.plain || '') + ' ' + (p.method || []).join(' ')).toLowerCase().includes(q)));
   const kc = knownCount(), lp = proofById(store.get('lastProof', '') || '');
   const groups = Object.keys(PROOF_CH).map(ch => [ch, list.filter(p => p.ch === ch)]).filter(([, l]) => l.length);
   return band('dark', R`<span class="eyebrow">Ústní zkouška</span><h1 class="display"><span class="grad">Důkazy.</span></h1>
@@ -3803,9 +4007,10 @@ function viewProofs() {
  <li><b>Nahlas</b><span>Režim zkoušení: krok si řekni sám, pak ho odkryj.</span></li>
 </ol>
 <div class="filters"><div class="chips"><button class="chip" data-pch="all" aria-pressed="${state.pch === 'all'}">Vše</button><button class="chip" data-pch="todo" aria-pressed="${state.pch === 'todo'}">Ještě neumím</button>${Object.entries(PROOF_CH).map(([k, l]) => `<button class="chip" data-pch="${k}" aria-pressed="${state.pch === k}">${l}</button>`).join('')}</div>
+<div class="chips req-chips"><span class="muted small">Podle požadavků ke zkoušce:</span>${Object.entries(REQ_LBL).map(([k, l]) => `<button class="chip" data-pch="req-${k}" aria-pressed="${state.pch === 'req-' + k}">${l[0].toUpperCase() + l.slice(1)} (${PROOFS.filter(p => reqOf(p) === k).length})</button>`).join('')}</div>
 <input class="search" id="pq" type="search" placeholder="Hledat: Rolle, supremum, sporem, 19…" value="${esc(state.pq)}" aria-label="Hledat větu"></div>
 ${groups.map(([ch, l]) => { const k = l.filter(p => known[p.id]).length; return `<section class="pch"><header><h2 class="h3">${PROOF_CH[ch]}</h2><span class="muted small">${k} / ${l.length} umím</span></header><ol class="prows">${l.map(p => proofRow(p, known)).join('')}</ol></section>`; }).join('') || '<p class="muted">Nic nenalezeno. Zkus jiné slovo nebo filtr „Vše“.</p>'}
-<p class="muted small">Sepsáno vlastními slovy podle důkazů z přednášky (zápisky 2022 a 2014/15) a poznámek ZS 2026/27. Oficiální seznam požadavků k ústní zkoušce zatím není dostupný.</p>`, 'narrow');
+<p class="muted small">Sepsáno vlastními slovy podle důkazů z přednášky (zápisky 2022 a 2014/15) a poznámek ZS 2026/27. U každé věty je označené, jak ji chce přednášející u ústní zkoušky: s lehčím důkazem, s obtížnějším důkazem, jen znění, nebo mimo seznam (podle <a href="https://www2.karlin.mff.cuni.cz/~barta/FSV/mat1/mat1_pozadavky.html" target="_blank" rel="noopener">oficiálních požadavků</a>, zveřejněných v listopadu 2026; může dojít k drobným přesunům).</p>`, 'narrow');
 }
 
 /* rozdělí kroky do částí podle pole g */
@@ -3857,8 +4062,9 @@ ${steps}${p.end ? `<p class="qed"><span aria-hidden="true">∎</span> ${p.end}</
 <span class="pbar-t"><b>${p.no}</b> ${p.name}</span>
 <span class="pbar-nav"><button class="pbar-a" ${prev ? `data-ref="${prev.id}"` : 'disabled'} aria-label="Předchozí věta">‹</button><span class="muted small">${idx + 1} / ${PROOFS.length}</span><button class="pbar-a" ${next ? `data-ref="${next.id}"` : 'disabled'} aria-label="Další věta">›</button></span>
 ${p.nop ? '' : `<button class="known" data-known="${p.id}" aria-pressed="${isK}">${isK ? '✓ Umím' : 'Umím'}</button>`}</div></div>`
-    + band('pp-head', R`<span class="eyebrow">${PROOF_CH[p.ch]}${p.skip22 ? ' · 2022 se nedokazovalo' : ''}${p.nop ? ' · bez důkazu' : ''}</span>
+    + band('pp-head', R`<span class="eyebrow">${PROOF_CH[p.ch]}${p.skip22 ? ' · 2022 se nedokazovalo' : ''}</span>
 <h1 class="h1"><span class="pno">${p.no}</span> ${p.name}</h1>
+<p class="req-line req-${reqOf(p).toLowerCase()}">${REQ_LONG[reqOf(p)]}</p>
 <div class="pf-alt">${vidBtn(p, 'pill sm ghost vid-open')}${rukBtn(p)}</div>
 <nav class="pp-next" aria-label="Předchozí a další důkaz">${prev ? `<button class="pp-nb" data-ref="${prev.id}"><span class="pp-dir">‹ Předchozí</span><span class="pp-no">${prev.no}</span><b>${prev.name}</b></button>` : '<span></span>'}${next ? `<button class="pp-nb nx" data-ref="${next.id}"><span class="pp-dir">Další ›</span><span class="pp-no">${next.no}</span><b>${next.name}</b></button>` : ''}</nav>`, 'narrow')
     + `<section class="band alt pp-band"><div class="pp">${rail}<div class="pp-main">${main}</div></div></section>`;
@@ -4085,7 +4291,7 @@ function resumeHTML() {
 }
 const PLANS = {
   p2: ['2. písemku', [['Pochop recepty', 'Rozdíl odmocnin, n-tá odmocnina a škála. Tři postupy na jedné stránce.', 'teorie-posloupnosti', 'Postupy'], ['Spočítej sbírku', 'Od každého typu pár variant. Řešení otevírej až po vlastním pokusu.', 'priklady', 'Sbírka', 'odm'], ['Piš na čas', 'Cvičné písemky se stopkami. Na úspěch potřebuješ 20 z 30 bodů.', 'pisemky', 'Písemky']]],
-  p3: ['3. písemku', [['Pochop limity funkcí', 'Algebraické úpravy, známé limity, složená funkce, typ 1^∞ a Heineho věta.', 'teorie-funkce', 'Teorie'], ['Spočítej sbírku', 'Téma limity funkcí: 30 příkladů s celým řešením.', 'priklady', 'Sbírka', 'fl'], ['Piš na čas', 'Cvičné 3. písemky se stopkami. Na úspěch 20 z 30 bodů.', 'pisemky', 'Písemky']]],
+  p3: ['3. písemku', [['Pochop limity funkcí', 'Písemka 30. 11.: 1. podíl odmocnin či polynomů, 2. a 3. známé limity a složená funkce.', 'teorie-funkce', 'Teorie'], ['Spočítej sbírku', 'Téma limity funkcí: 30 příkladů s celým řešením.', 'priklady', 'Sbírka', 'fl'], ['Piš na čas', 'Cvičné 3. písemky se stopkami. Na úspěch 20 z 30 bodů.', 'pisemky', 'Písemky']]],
   zk: ['zkoušku', [['Důkazy na ústní', 'Každá věta krok za krokem, s režimem zkoušení.', 'dukazy', 'Důkazy'], ['Průběh funkce', 'Nejvíc bodů na písemné části. Spočítej co nejvíc variant.', 'priklady', 'Sbírka', 'pr'], ['Zkouškové písemky', 'Čtyři příklady za 50 bodů. Potřebuješ víc než 25.', 'pisemky', 'Písemky']]]
 };
 function viewHome() {
@@ -4125,7 +4331,7 @@ ${written ? '<div class="ctas"><button class="more" data-go="pisemky">Všechny v
 
 /* ---------- Termíny ---------- */
 function viewTerms() {
-  return band('', R`<span class="eyebrow">Organizace</span><h1 class="h1">Termíny a zkouška.</h1><p class="sub">Podle stránky přednášejícího, zkontrolováno 14. 11. 2026.</p>`, 'center')
+  return band('', R`<span class="eyebrow">Organizace</span><h1 class="h1">Termíny a zkouška.</h1><p class="sub">Podle stránky přednášejícího, zkontrolováno 18. 11. 2026.</p>`, 'center')
   + band('alt', R`
 <div class="tbl"><table><thead><tr><th>Datum</th><th>Co</th><th>Poznámka</th></tr></thead><tbody>
 ${EVENTS.map(e => { const dn = daysTo(e.d); return `<tr class="${dn < 0 ? 'past' : ''}"><td style="white-space:nowrap">${fmtY(e.d)}<br>${dn < 0 ? '<span class="badge ok">proběhlo</span>' : dn <= 7 ? `<span class="badge soon">za ${dn} ${dayWord(dn)}</span>` : ''}</td><td>${e.key ? '<b>' + e.what + '</b>' : e.what}</td><td>${e.note}</td></tr>`; }).join('')}
@@ -4138,7 +4344,15 @@ ${EVENTS.map(e => { const dn = daysTo(e.d); return `<tr class="${dn < 0 ? 'past'
 <div class="tbl"><table><thead><tr><th>Část</th><th>Obsah</th><th>Body</th></tr></thead><tbody>
 <tr><td rowspan="4">Písemná</td><td>Limita posloupnosti</td><td>10</td></tr><tr><td>Limita funkce</td><td>15</td></tr><tr><td>Spojitost a derivace</td><td>10</td></tr><tr><td>Průběh funkce</td><td>15</td></tr>
 <tr><td>Ústní</td><td>Definice, věty, důkazy, souvislosti</td><td>50</td></tr></tbody></table></div>
-<p>Z písemné i ústní části potřebuješ <b>víc než 25 bodů</b>. Vzorová písemka i ústní zkouška jsou na stránce přednášejícího.</p>
+<p>Z písemné i ústní části potřebuješ <b>víc než 25 bodů</b>. Termíny: středy 13. 1., 20. 1., 27. 1., 3. 2. a 10. 2. (písemná v M1), ústní zpravidla následující den v Karlíně (Sokolovská 83). Přihlašuješ se v SIS.</p>
+<div class="tiles">
+ <div class="note"><h3 class="h3">Písemná část</h3><ul class="plain"><li>4 příklady za 50 bodů, <b>2 hodiny</b> čistého času.</li><li>Smíš používat libovolnou literaturu: tabulky, skripta, vlastní poznámky.</li><li><b>Žádná elektronika</b>: mobil, kalkulačka ani jiný počítač.</li><li>Úspěch: víc než 25 bodů. Pak jdeš na ústní.</li></ul></div>
+ <div class="note"><h3 class="h3">Ústní část</h3><ul class="plain"><li>Vylosuješ si sadu otázek a <b>40 minut</b> si odpovědi písemně připravuješ, bez pomůcek.</li><li>Pak je vysvětluješ zkoušejícímu, ten se doptává.</li><li>Neznalost klíčového pojmu = automaticky F.</li><li>Rozpis otázek a bodů je v záložce Ústní.</li></ul></div>
+</div>
+<div class="note"><h3 class="h3">Dobré vědět</h3><ul class="plain"><li>Ke zkoušce potřebuješ zápočet a s sebou průkaz s fotkou.</li><li>Když neuspěješ, na opravném termínu skládáš <b>celou zkoušku znovu</b>, včetně písemné části.</li><li>Kdo se na přihlášený termín nedostaví bez vážné omluvy (např. nemoc), termín mu propadá.</li></ul></div>
+<div class="tbl"><table class="grades"><thead><tr><th>Body (písemná + ústní)</th><th>Známka</th></tr></thead><tbody>
+<tr><td>91–100</td><td>A</td></tr><tr><td>81–90</td><td>B</td></tr><tr><td>71–80</td><td>C</td></tr><tr><td>61–70</td><td>D</td></tr><tr><td>51–60</td><td>E</td></tr><tr><td>0–50</td><td>F</td></tr></tbody></table></div>
+<p class="muted small">Hodnocení je podle přednášejícího přibližné. Podrobnosti: <a href="https://www2.karlin.mff.cuni.cz/~barta/FSV/mat1/mat1_podminkyZK.html" target="_blank" rel="noopener">podmínky zkoušky</a>.</p>
 <div class="note"><h3 class="h3">Rady starších ročníků</h3><ul class="plain"><li>Počítej průběžně. Na konci semestru se to dohnat nedá.</li><li>Před zkouškou spočítej co nejvíc starých písemek svého zkoušejícího. Typy příkladů se opakují.</li><li>U derivací si výsledek zkontroluj vícekrát. Chyba v derivaci shodí celý průběh funkce.</li><li>U \(f^g=e^{g\ln f}\) nejdřív zdůvodni přesun limity do exponentu (spojitost exponenciály), teprve pak počítej.</li></ul></div>`, 'narrow')
   + band('alt', R`<h2 class="h2">Odkazy.</h2>
 <ul class="plain">${LINKS.map(([t, u]) => `<li><a href="${u}" target="_blank" rel="noopener">${t}</a></li>`).join('')}
@@ -4220,7 +4434,7 @@ function viewTests() {
   const nx = EVENTS.find(e => daysTo(e.d) >= 0), first = nx ? kindOf(nx) : 'zk';
   const order = first === 'p3' ? ['p3', 'zk', 'p2'] : first === 'zk' ? ['zk', 'p3', 'p2'] : ['p2', 'p3', 'zk'];
   const SEC = { p2: ['2. zápočet', 'Rozdíl odmocnin, n-tá odmocnina, škála. 3 × 10 bodů, 30 minut, na úspěch 20 bodů.', 'h2', 'Stejná látka, ale v každém příkladu je chyták: odečtou se vedoucí členy, rozhoduje číslo e, odhad kombinačního čísla. Pořád 3 × 10 bodů za 30 minut, 20 bodů se dá stihnout.'],
-    p3: ['3. zápočet', 'Limity funkcí: algebraické úpravy, známé limity a složené funkce, typ 1^∞ a Heineho věta. 3 × 10 bodů, 30 minut.', 'h3', 'Stejná látka, ale těžší: tg − sin, ln(cos), pasti s |x| pro x → −∞, parametr, aby limita byla vlastní, a Heine na posloupnostech. 3 × 10 bodů za 30 minut.'],
+    p3: ['3. zápočet', 'Píše se v pondělí 30. 11. na supersemináři. Stejné typy jako ohlásil přednášející: 1. podíl odmocnin či polynomů, 2. a 3. známé limity a složená funkce (včetně typu 1^∞). 3 × 10 bodů, 30 minut.', 'h3', 'Stejná látka, ale těžší: tg − sin, ln(cos), pasti s |x| pro x → −∞, parametr, aby limita byla vlastní, a Heine na posloupnostech. 3 × 10 bodů za 30 minut.'],
     zk: ['Písemná zkouška', 'Limita posloupnosti (10 b.), limita funkce (15 b.), spojitost a derivace (10 b.), průběh funkce (15 b.). Na úspěch víc než 25 z 50 bodů.'] };
   const anyRes = ['p2', 'h2', 'p3', 'h3', 'zk'].some(k => TESTDEF[k] && statsFor(k).n);
   return band('', R`<span class="eyebrow">Cvičné písemky</span><h1 class="h1">${ALL_TESTS} písemek. Jedna po druhé.</h1>
@@ -4278,19 +4492,23 @@ document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.ma
 /* ---------- Důkazy ---------- */
 /* ---------- Ústní ---------- */
 function viewOral() {
-  const st = store.get('oral', {});
-  return band('', R`<span class="eyebrow">Ústní zkouška</span><h1 class="h1">Definice a souvislosti.</h1>
-<p class="sub">Odškrtávej si témata, která umíš vysvětlit. Důkazy najdeš v samostatné záložce.</p>
-<div class="ctas"><button class="pill" data-go="dukazy">Přejít na důkazy</button></div>`, 'center')
+  const st = store.get('oral2', {});
+  const total = ORAL.reduce((n, g) => n + g[2].length, 0), done = Object.values(st).filter(Boolean).length;
+  return band('', R`<span class="eyebrow">Ústní zkouška</span><h1 class="h1">Definice, věty, důkazy.</h1>
+<p class="sub">Podle oficiálních požadavků přednášejícího. Odškrtávej si, co umíš vysvětlit. Důkazy najdeš v samostatné záložce.</p>
+<div class="ctas"><button class="pill" data-go="dukazy">Přejít na důkazy</button><a class="more" href="https://www2.karlin.mff.cuni.cz/~barta/FSV/mat1/mat1_pozadavky.html" target="_blank" rel="noopener">Oficiální seznam</a></div>`, 'center')
   + band('dark', R`<h2 class="h1">Jak vypadá zadání.</h2>
-<p class="sub">Podle ukázky ústní zkoušky ze starších ročníků. U Bárty se může lišit, vzor má na své stránce.</p>
-<div class="steps3" style="grid-template-columns:repeat(2,minmax(0,1fr))">
- <div class="step3"><span class="n">1</span><h3 class="h3">Klíčový pojem</h3><p class="muted">Přesná definice jednoho pojmu, např. infimum množiny. Musí být úplně správně.</p></div>
- <div class="step3"><span class="n">2</span><h3 class="h3">Definice a znění vět</h3><p class="muted">Několik definic (uzavřená množina, okolí bodu, arkuskotangens) a znění vět (celá část, zavedení sinu).</p></div>
- <div class="step3"><span class="n">3</span><h3 class="h3">Implikace</h3><p class="muted">Čtyři tvrzení o funkci. Které implikace platí? Zdůvodnit, u neplatných dát protipříklad, aspoň dvě podrobně dokázat.</p></div>
- <div class="step3"><span class="n">4</span><h3 class="h3">Věta s důkazem</h3><p class="muted">Zformulovat a dokázat větu, např. o omezenosti spojité funkce na intervalu.</p><button class="more" data-go="dukazy">Důkazy</button></div>
-</div>`)
-  + band('', R`<h2 class="h2">Vyzkoušej si typ 3.</h2>
+<p class="sub">Vylosuješ si sadu otázek, 40 minut si odpovědi bez pomůcek písemně připravíš a pak je vysvětlíš zkoušejícímu. Body jsou podle přednášejícího orientační.</p>
+<div class="oral-fmt">
+ <div class="step3"><span class="n">1 · klíčový pojem</span><b class="opts">0 b.</b><p class="muted">Definice jednoho klíčového pojmu. Body za ni nejsou, ale podstatná neznalost znamená automaticky F.</p></div>
+ <div class="step3"><span class="n">2 · dvě definice a věta</span><b class="opts">14 b.</b><p class="muted">Po 3 bodech za každé znění, 5 bodů za odpovědi na doplňující dotazy.</p></div>
+ <div class="step3"><span class="n">3 · věta s lehčím důkazem</span><b class="opts">13 b.</b><p class="muted">3 body za znění, 10 za vysvětlení důkazu.</p><button class="more" data-go="dukazy" data-pchset="req-L">Lehčí důkazy</button></div>
+ <div class="step3"><span class="n">4 · věta s obtížnějším důkazem</span><b class="opts">23 b.</b><p class="muted">3 body za znění, 20 za vysvětlení důkazu.</p><button class="more" data-go="dukazy" data-pchset="req-T">Těžší důkazy</button></div>
+ <div class="step3"><span class="n">5 · bonus</span><b class="opts">10 b.</b><p class="muted">Dobrovolná teoretická úloha. Losuje se zvlášť, jen když už máš víc než 25 bodů.</p></div>
+</div>
+<p class="muted small">K úspěchu potřebuješ víc než 25 bodů z 50. Na stránce přednášejícího stojí u 3. i 4. otázky „lehčí věta“; podle bodů a seznamu vět je čtvrtá otázka zjevně věta s obtížnějším důkazem. Důkaz smíš vést jakkoli, pokud je matematicky správný a používá jen věty dokázané nebo zformulované na přednášce dřív (nebo věty, které umíš sám dokázat).</p>`)
+  + band('', R`<h2 class="h2">Vyzkoušej si teoretickou úlohu.</h2>
+<p class="muted">Typ úlohy ze starších ročníků. Takhle může vypadat třeba bonus: rozhodnout, které implikace platí, a zdůvodnit to.</p>
 <article class="card"><p>Nechť \(f\) je definovaná na \((-1,1)\). Které implikace mezi následujícími tvrzeními platí?</p>
 <ol class="steps"><li>\(\lim_{x\to0}f(x)=3\)</li><li>\(\lim_{x\to0}|f(x)|=3\)</li><li>\(\lim_{x\to0}|f(x)|=3\) a existuje \(\delta\in(0,1)\) takové, že \(f(x)>0\) pro \(x\in P(0,\delta)\)</li><li>\(f\) je spojitá v 0 a \(f(0)=3\)</li></ol>
 <details class="inline"><summary>Řešení</summary><div>
@@ -4303,8 +4521,9 @@ function viewOral() {
 <p>(1)⇏(4): \(f(x)=3\) pro \(x\neq0\), \(f(0)=0\). Limita je 3, ale \(f\) není v 0 spojitá. Stejný protipříklad vyvrací (3)⇒(4) a (2)⇒(4).</p>
 <p><b>Na co si dát pozor:</b> hodnota \(f(0)\) nemá na limitu vliv. To je nejčastější past v tomhle typu otázek.</p>
 </div></details></article>`, 'narrow')
-  + band('alt', R`<div class="note warn">Oficiální seznam požadavků k ústní zkoušce je na stránce přednášejícího, ale odkaz teď nefunguje. Přehled vychází z plánu přednášek. Ústní část má 50 bodů a potřebuješ víc než 25.</div>
-<div class="tiles">${ORAL.map(([h, items], gi) => R`<div class="note"><h3 class="h3">${h}</h3>${items.map((it, ii) => `<label class="check"><input type="checkbox" data-oral="${gi}-${ii}" ${st[gi + '-' + ii] ? 'checked' : ''}> ${it}</label>`).join('')}</div>`).join('')}</div>`);
+  + band('alt', R`<h2 class="h2">Co musíš umět.</h2>
+<p class="muted">Seznam definic a vět bez důkazu podle oficiálních požadavků. Věty s důkazem (${REQ.L.length} s lehčím, ${REQ.T.length} s obtížnějším důkazem) jsou v záložce <button class="more" data-go="dukazy">Důkazy</button> Odškrtnuto: <b id="oralDone">${done}</b> z ${total}.</p>
+<div class="tiles">${ORAL.map(([h, note, items], gi) => R`<div class="note${gi === 0 ? ' warn' : ''}"><h3 class="h3">${h}</h3>${note ? `<p class="small muted">${note}</p>` : ''}${items.map((it, ii) => `<label class="check"><input type="checkbox" data-oral="${gi}-${ii}" ${st[gi + '-' + ii] ? 'checked' : ''}> ${it}</label>`).join('')}</div>`).join('')}</div>`);
 }
 
 /* ---------- render ---------- */
@@ -4408,7 +4627,7 @@ function showSolutions(btn) {
 /* ---------- události ---------- */
 document.addEventListener('click', e => {
   const g = e.target.closest('[data-go]');
-  if (g) { e.preventDefault(); if (g.dataset.topic) { state.topic = g.dataset.topic; store.set('topic', state.topic); } go(g.dataset.go); return; }
+  if (g) { e.preventDefault(); if (g.dataset.topic) { state.topic = g.dataset.topic; store.set('topic', state.topic); } if (g.dataset.pchset) state.pch = g.dataset.pchset; go(g.dataset.go); return; }
   const j = e.target.closest('[data-jump]');
   if (j) { e.preventDefault(); const el = document.getElementById(j.dataset.jump); if (el) revealEl(el); return; }
   const tp = e.target.closest('[data-topic]');
@@ -4472,7 +4691,7 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => {
   const t = e.target;
-  if (t.dataset.oral) { const st = store.get('oral', {}); st[t.dataset.oral] = t.checked; store.set('oral', st); return; }
+  if (t.dataset.oral) { const st = store.get('oral2', {}); st[t.dataset.oral] = t.checked; store.set('oral2', st); const od = document.getElementById('oralDone'); if (od) od.textContent = Object.values(st).filter(Boolean).length; return; }
   if (t.matches && t.matches('[data-score]')) { clearTimeout(scoreTimer); saveScore(t.value); return; }
   if (t.id === 'tdone') {
     const mt = state.view.match(TEST_RE); if (!mt) return;
