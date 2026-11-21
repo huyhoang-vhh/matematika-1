@@ -2460,7 +2460,7 @@ ${D(R`\lim_{x\to b^-}f(x)=\sup f\big((a,b)\big),\qquad \lim_{x\to a^+}f(x)=\inf 
 <li>„Dokázat“ existenci limity Heineho větou pomocí <b>jedné</b> posloupnosti. Jedna posloupnost stačí jen k důkazu <b>neexistence</b> (dvě různé hodnoty), ne existence.</li>
 <li>U Heineho věty vybrat posloupnost, která bodu ${I('c')} nabývá (${I(R`x_n=c`)}), nebo v něm vůbec nekonverguje.</li></ul></div>` },
   { id: 'derivace', title: 'Spojitost a derivace', ready: false, html: R`
-<p class="lead">Ve zkoušce je za to třetí příklad (10 bodů). Zatím jsou tu věty o spojitých funkcích a elementární funkce: logaritmus, exponenciála, obecná mocnina a goniometrické funkce (13.–15. přednáška). Derivace (16.–18. přednáška) doplníme, až budou probrané.</p>
+<p class="lead">Ve zkoušce je za to třetí příklad (10 bodů). Zatím jsou tu věty o spojitých funkcích, elementární funkce (13.–15. přednáška) a začátek derivací: definice, vztah ke spojitosti, aritmetika a derivace složené funkce (16. přednáška). Derivace inverzní a elementárních funkcí, lokální extrémy a věty o střední hodnotě (17.–18. přednáška) doplníme, až budou probrané.</p>
 <h3>Spojité funkce na intervalu</h3>
 <div class="thm"><span class="lbl">Nabývání mezihodnot (Bolzano, Věta 29)</span>
 <p>Je-li ${I('f')} spojitá na ${I(R`\langle a,b\rangle`)} a ${I(R`f(a)\lt f(b)`)}, pak pro každé ${I(R`y\in\big(f(a),f(b)\big)`)} existuje ${I(R`\xi\in(a,b)`)} s ${I(R`f(\xi)=y`)}. (Totéž pro ${I(R`f(a)>f(b)`)}.)</p>
@@ -2501,6 +2501,31 @@ ${D(R`\lim_{x\to b^-}f(x)=\sup f\big((a,b)\big),\qquad \lim_{x\to a^+}f(x)=\inf 
 <li>Známé limity v nule: ${I(R`\frac{\sin x}{x}\to1`)}, ${I(R`\frac{\mathrm{tg}\,x}{x}\to1`)}, ${I(R`\frac{1-\cos x}{x^2}\to\frac12`)}. Spolu s ${I(R`\frac{e^x-1}{x}\to1`)} a ${I(R`\frac{\ln(1+x)}{x}\to1`)} je to základní výbava na 2. a 3. příklad 3. písemky.</li></ul></div>
 <div class="thm"><span class="lbl">Cyklometrické funkce (definice, probírají se na 16. přednášce)</span>
 <p>Inverze k zúženým goniometrickým funkcím: ${I(R`\arcsin:\langle-1,1\rangle\to\langle-\frac\pi2,\frac\pi2\rangle`)}, ${I(R`\arccos:\langle-1,1\rangle\to\langle0,\pi\rangle`)}, ${I(R`\mathrm{arctg}:\mathbb R\to(-\frac\pi2,\frac\pi2)`)}, ${I(R`\mathrm{arccotg}:\mathbb R\to(0,\pi)`)}. Všechny jsou spojité (Věta 33); arcsin a arctg rostou, arccos a arccotg klesají. Jejich definice jsou v seznamu požadavků k ústní zkoušce.</p></div>
+<h3>Derivace (16. přednáška)</h3>
+<div class="thm"><span class="lbl">Definice derivace</span>
+<p>Derivace funkce ${I('f')} v bodě ${I('a')} je ${I(R`f'(a)=\lim_{h\to0}\frac{f(a+h)-f(a)}{h}=\lim_{x\to a}\frac{f(x)-f(a)}{x-a}`)}, pokud limita existuje. Může vyjít i ${I(R`\pm\infty`)} (nevlastní derivace). „Má vlastní derivaci“ znamená, že limita je reálné číslo.</p>
+<p>Zlomek ${I(R`\frac{f(x)-f(a)}{x-a}`)} je směrnice sečny bodů ${I(R`(a,f(a))`)} a ${I(R`(x,f(x))`)}; derivace je limita směrnic sečen. Aby limita dávala smysl, musí být ${I('f')} definovaná na celém okolí bodu ${I('a')}.</p></div>
+<div class="thm"><span class="lbl">Jednostranné derivace a tečna</span>
+<p><b>Derivace zprava</b> ${I(R`f'_+(a)`)} je táž limita pro ${I(R`h\to0^+`)}, <b>zleva</b> ${I(R`f'_-(a)`)} pro ${I(R`h\to0^-`)}. Derivace ${I(R`f'(a)`)} existuje, právě když existují obě jednostranné a rovnají se.</p>
+<p>Příklad: ${I(R`f(x)=|x|`)} má v 0 ${I(R`f'_+(0)=1`)} a ${I(R`f'_-(0)=-1`)}, derivace v 0 neexistuje (graf má „zlom“).</p>
+<p>Má-li ${I('f')} v ${I('a')} vlastní derivaci, je <b>tečna</b> ke grafu v bodě ${I(R`(a,f(a))`)} přímka ${I(R`y=f(a)+f'(a)(x-a)`)}.</p></div>
+<div class="thm"><span class="lbl">Derivace a spojitost (Věta 36)</span>
+<p>Má-li ${I('f')} v ${I('a')} <b>vlastní</b> derivaci, je v ${I('a')} spojitá. Důkaz je jeden řádek: ${I(R`f(x)-f(a)=\frac{f(x)-f(a)}{x-a}\cdot(x-a)\to f'(a)\cdot0=0`)}.</p>
+<p>Opačně to neplatí: ${I(R`|x|`)} je v 0 spojitá, ale derivaci nemá. Nevlastní derivace spojitost nezaručuje: ${I(R`\mathrm{sgn}\,x`)} má v 0 derivaci ${I(R`+\infty`)}, a spojitá tam není.</p>
+<p>V příkladech se to používá obráceně: <b>není-li funkce v bodě spojitá, nemá tam vlastní derivaci</b>, a nemusíš nic počítat.</p></div>
+<div class="thm"><span class="lbl">Aritmetika derivací (Věta 37)</span>
+<p>Mají-li ${I('f')} a ${I('g')} v ${I('a')} vlastní derivace, pak</p>
+<p>${D(R`(f\pm g)'=f'\pm g',\qquad (cf)'=c\,f',\qquad (fg)'=f'g+fg',\qquad \Big(\frac fg\Big)'=\frac{f'g-fg'}{g^2}\ \ (g(a)\neq0).`)}</p>
+<p>Příklad: ${I(R`\Big(\frac{x^2}{x+1}\Big)'=\frac{2x(x+1)-x^2}{(x+1)^2}=\frac{x^2+2x}{(x+1)^2}`)} pro ${I(R`x\neq-1`)}.</p></div>
+<div class="thm"><span class="lbl">Derivace složené funkce (Věta 38)</span>
+<p>Má-li ${I('g')} vlastní derivaci v ${I('a')} a ${I('f')} vlastní derivaci v ${I(R`g(a)`)}, pak ${I(R`(f\circ g)'(a)=f'\big(g(a)\big)\cdot g'(a)`)}: derivace vnější funkce (v hodnotě vnitřní) krát derivace vnitřní.</p>
+<p>Příklad: ${I(R`\big((x^2+1)^5\big)'=5(x^2+1)^4\cdot2x`)}. U víc vnořených funkcí se pravidlo opakuje zvenku dovnitř: ${I(R`\big(f(g(h(x)))\big)'=f'(g(h(x)))\cdot g'(h(x))\cdot h'(x)`)}.</p></div>
+<div class="thm"><span class="lbl">Jak vyšetřit derivaci v „podezřelém“ bodě</span><ol class="steps">
+<li>Bod, kde se mění předpis (nebo kde je ${I(R`|\,\cdot\,|`)}, odmocnina z nuly apod.), vzorce neřeší. Nejdřív ověř <b>spojitost</b> v bodě; když chybí, vlastní derivace neexistuje (Věta 36).</li>
+<li>Je-li funkce spojitá, spočítej z <b>definice</b> obě jednostranné derivace: ${I(R`f'_\pm(a)=\lim_{x\to a^\pm}\frac{f(x)-f(a)}{x-a}`)}, vždy s předpisem platným na dané straně.</li>
+<li>Rovnají-li se, je to ${I(R`f'(a)`)}; jinak derivace v ${I('a')} neexistuje.</li>
+<li>Příklad: ${I(R`f(x)=x^2`)} pro ${I(R`x\le1`)}, ${I(R`f(x)=2x-1`)} pro ${I(R`x>1`)}. Spojitá v 1 (obě strany dají 1); ${I(R`f'_-(1)=\lim_{x\to1^-}\frac{x^2-1}{x-1}=2`)}, ${I(R`f'_+(1)=\lim_{x\to1^+}\frac{2x-2}{x-1}=2`)}, tedy ${I(R`f'(1)=2`)}.</li>
+<li>Mimo podezřelé body stačí pravidla (Věty 37, 38). Rychlejší cestu přes limitu derivace (Věta 44) přidáme, až bude probraná.</li></ol></div>
 <h3>Postup</h3>
 <div class="thm"><span class="lbl">Jak dokázat, že rovnice má řešení</span><ol class="steps">
 <li>Převeď rovnici na tvar ${I(R`h(x)=0`)} a ověř, že ${I('h')} je spojitá na zvoleném ${I(R`\langle a,b\rangle`)}.</li>
@@ -2512,7 +2537,11 @@ ${D(R`\lim_{x\to b^-}f(x)=\sup f\big((a,b)\big),\qquad \lim_{x\to a^+}f(x)=\inf 
 <li>Myslet si, že spojitá funkce zobrazí otevřený interval na otevřený.</li>
 <li>Psát ${I(R`a^b`)} pro záporný základ (např. ${I(R`(-8)^{1/3}`)}): obecná mocnina je definovaná jen pro ${I(R`a>0`)}.</li>
 <li>Rozepsat ${I(R`\ln(xy)=\ln x+\ln y`)} i tam, kde ${I('x')} nebo ${I('y')} může být záporné.</li>
-<li>Zapomenout, že ${I(R`e^x>0`)} pro všechna ${I('x')}. Výraz ${I(R`e^x`)} se nikdy nemůže rovnat nule.</li></ul></div>` },
+<li>Zapomenout, že ${I(R`e^x>0`)} pro všechna ${I('x')}. Výraz ${I(R`e^x`)} se nikdy nemůže rovnat nule.</li>
+<li>Derivovat podle vzorců v bodě, kde se mění předpis funkce. Tam je potřeba definice (jednostranné derivace).</li>
+<li>Usoudit ze spojitosti, že derivace existuje (${I(R`|x|`)} v 0 je protipříklad), nebo zapomenout ověřit spojitost dřív, než se počítá derivace z definice.</li>
+<li>Derivovat součin jako ${I(R`(fg)'=f'g'`)}, nebo u podílu přehodit pořadí v čitateli (správně ${I(R`f'g-fg'`)}).</li>
+<li>U složené funkce zapomenout vynásobit derivací vnitřní funkce: ${I(R`(\sin 3x)'=3\cos 3x`)}, ne ${I(R`\cos 3x`)}.</li></ul></div>` },
   { id: 'prubeh', title: 'Průběh funkce', ready: false, html: R`<p>Monotonie, lokální extrémy, konvexita a konkávita, inflexní body, asymptoty, graf. Ve zkoušce je za to čtvrtý příklad (15 bodů).</p>` },
   { id: 'rn', title: 'Funkce více proměnných', ready: false, html: R`<p>${I(R`\mathbb R^n`)}, eukleidovská metrika, otevřené a uzavřené množiny, konvergence posloupností v ${I(R`\mathbb R^n`)}. Je to konec přednášek a látka k ústní části.</p>` }
 ];
@@ -4331,7 +4360,7 @@ ${written ? '<div class="ctas"><button class="more" data-go="pisemky">Všechny v
 
 /* ---------- Termíny ---------- */
 function viewTerms() {
-  return band('', R`<span class="eyebrow">Organizace</span><h1 class="h1">Termíny a zkouška.</h1><p class="sub">Podle stránky přednášejícího, zkontrolováno 18. 11. 2026.</p>`, 'center')
+  return band('', R`<span class="eyebrow">Organizace</span><h1 class="h1">Termíny a zkouška.</h1><p class="sub">Podle stránky přednášejícího, zkontrolováno 21. 11. 2026.</p>`, 'center')
   + band('alt', R`
 <div class="tbl"><table><thead><tr><th>Datum</th><th>Co</th><th>Poznámka</th></tr></thead><tbody>
 ${EVENTS.map(e => { const dn = daysTo(e.d); return `<tr class="${dn < 0 ? 'past' : ''}"><td style="white-space:nowrap">${fmtY(e.d)}<br>${dn < 0 ? '<span class="badge ok">proběhlo</span>' : dn <= 7 ? `<span class="badge soon">za ${dn} ${dayWord(dn)}</span>` : ''}</td><td>${e.key ? '<b>' + e.what + '</b>' : e.what}</td><td>${e.note}</td></tr>`; }).join('')}
