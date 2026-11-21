@@ -5355,10 +5355,10 @@ const NAV = [
     ['ustni-definice', 'Definice', `45 definic s příklady · umíš ${kdCount('definice')} z ${DEFS.length}`]] },
   { id: 'priklady', l: 'Příklady', groups: true },
   { id: 'pisemky', l: 'Písemky', sub: () => [
-    ['pisemky-p2', '2. zápočtová písemka', `${TESTDEF.p2.n} písemek + ${TESTDEF.h2.n} extra těžkých · hotovo ${doneCount('p2') + doneCount('h2')}`],
-    ['pisemky-p3', '3. zápočtová písemka', `${TESTDEF.p3.n} písemek + ${TESTDEF.h3.n} extra těžkých · hotovo ${doneCount('p3') + doneCount('h3')}`],
+    ['pisemky', 'Všechny písemky a výsledky', 'Přehled, průměry a grafy'],
     ['pisemky-zk', 'Písemná zkouška', `${TESTDEF.zk.n} písemek, 4 příklady na 120 minut · hotovo ${doneCount('zk')}`],
-    ['pisemky', 'Všechny písemky a výsledky', 'Přehled, průměry a grafy']] },
+    ['pisemky-p3', '3. zápočtová písemka', `${TESTDEF.p3.n} písemek + ${TESTDEF.h3.n} extra těžkých · hotovo ${doneCount('p3') + doneCount('h3')}`],
+    ['pisemky-p2', '2. zápočtová písemka', `${TESTDEF.p2.n} písemek + ${TESTDEF.h2.n} extra těžkých · hotovo ${doneCount('p2') + doneCount('h2')}`]] },
   { id: 'teorie', l: 'Teorie' }, { id: 'terminy', l: 'Termíny' }
 ];
 const state = { view: 'domu', batch: store.get('batch', 0), randomSeed: null, randomKind: 'p2', topic: store.get('topic', 'odm'), pch: 'all', pq: '', quiz: store.get('quiz', false) };
@@ -5637,7 +5637,7 @@ function viewTests() {
     p3: ['3. zápočet', 'Píše se v pondělí 30. 11. na supersemináři. Stejné typy jako ohlásil přednášející: 1. podíl odmocnin či polynomů, 2. a 3. známé limity a složená funkce (včetně typu 1^∞). 3 × 10 bodů, 30 minut.', 'h3', 'Stejná látka, ale těžší: tg − sin, ln(cos), pasti s |x| pro x → −∞, parametr, aby limita byla vlastní, a Heine na posloupnostech. 3 × 10 bodů za 30 minut.'],
     zk: ['Písemná zkouška', 'Limita posloupnosti (10 b.), limita funkce (15 b.), spojitost a derivace (10 b.), průběh funkce (15 b.). Na úspěch víc než 25 z 50 bodů.'] };
   const anyRes = ['p2', 'h2', 'p3', 'h3', 'zk'].some(k => TESTDEF[k] && statsFor(k).n);
-  const segNav = `<div class="seg pseg" role="tablist" aria-label="Druh písemek">${[['pisemky', 'Všechny'], ['pisemky-p2', '2. zápočet'], ['pisemky-p3', '3. zápočet'], ['pisemky-zk', 'Zkouška']].map(([g, l]) => `<button type="button" role="tab" data-go="${g}" aria-pressed="${state.view === g}" aria-selected="${state.view === g}">${l}</button>`).join('')}</div>`;
+  const segNav = `<div class="seg pseg" role="tablist" aria-label="Druh písemek">${[['pisemky', 'Všechny'], ['pisemky-zk', 'Zkouška'], ['pisemky-p3', '3. zápočet'], ['pisemky-p2', '2. zápočet']].map(([g, l]) => `<button type="button" role="tab" data-go="${g}" aria-pressed="${state.view === g}" aria-selected="${state.view === g}">${l}</button>`).join('')}</div>`;
   const fk = (state.view.match(/^pisemky-(p2|p3|zk)$/) || [])[1];
   if (fk) {
     const T = TESTDEF[fk], fo = firstOpenTest(fk), hk = SEC[fk][2];
