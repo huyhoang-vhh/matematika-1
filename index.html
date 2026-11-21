@@ -915,9 +915,7 @@ html.menu-lock, html.menu-lock body { overflow: hidden; }
 .hp-meta { color: var(--ink-2); font-size: 16px; line-height: 1.45; }
 .hp-lead { font-size: 20px; line-height: 1.3; font-weight: 600; letter-spacing: -.015em; }
 .hp-btns { display: flex; flex-wrap: wrap; gap: 10px; }
-.hp-btns .pill { font-size: 15px; padding: 10px 18px; }
 .hp-btns.three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.hp-btns.three .pill { padding: 11px 6px; }
 .hp-plan { list-style: none; margin: 2px 0 0; padding: 12px 0 0; display: flex; flex-direction: column; gap: 2px; border-top: 1px solid var(--line); }
 .hp-plan button, .hp-row { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 12px; transition: background-color .2s; }
 .hp-plan button:hover, .hp-row:hover { background: color-mix(in srgb, var(--blue) 8%, transparent); }
@@ -927,7 +925,7 @@ html.menu-lock, html.menu-lock body { overflow: hidden; }
 .hp-pt small { font-size: 13px; color: var(--ink-2); line-height: 1.35; }
 .hp-go { flex: none; color: var(--ink-2); font-size: 20px; }
 .hp-rows { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; }
-.hp-rt { flex: 0 0 128px; display: flex; flex-direction: column; }
+.hp-rt { flex: 0 0 150px; display: flex; flex-direction: column; }
 .hp-rt b { font-size: 16px; }
 .hp-rt small { font-size: 12.5px; color: var(--ink-2); }
 .hp-row .meter { flex: 1; }
@@ -1015,6 +1013,52 @@ kbd { font: 600 11px var(--font); padding: 2px 6px; border-radius: 6px; backgrou
 .pmore { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 12px; }
 @media (max-width: 560px) { .ptopic { min-width: 0; flex: 1 1 calc(50% - 10px); } }
 @media (prefers-reduced-motion: reduce) { .hp-when .grad { animation: none; } .dd-box, .gnav.menu-open .links { animation: none; } }
+
+/* =================== zkouška na úvodní stránce: výběr termínu =================== */
+.hp-btns.four { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.hp-btns.four .pill:first-child { grid-column: 1 / -1; }
+.hp-links { display: flex; flex-wrap: wrap; gap: 6px 20px; }
+.hp-note { font-size: 14px; color: var(--new); background: color-mix(in srgb, var(--new) 10%, transparent); border-radius: 10px; padding: 8px 12px; }
+.hp-unhide { align-self: center; margin-top: 4px; }
+.ex-pick { display: flex; flex-direction: column; gap: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.ex-terms { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+.ex-t { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; gap: 1px; padding: 10px 12px; border-radius: 14px; background: color-mix(in srgb, var(--blue) 9%, transparent); color: var(--link); transition: background-color .2s, transform .2s var(--ease-out); }
+.ex-t b { font-size: 15px; font-weight: 600; }
+.ex-t small { font-size: 12px; color: var(--ink-2); }
+.ex-t:hover { background: color-mix(in srgb, var(--blue) 17%, transparent); }
+.ex-t:active { transform: scale(.97); }
+.ex-t:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.ex-other { display: flex; flex-direction: column; gap: 6px; }
+.ex-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.ex-date { font: inherit; font-size: 15px; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--tile); color: var(--ink); }
+
+/* =================== jednotná tlačítka ===================
+   Hlavní akce: plné modré „pill“. Vedlejší akce: světle modrý podklad, modrý text, bez obrysu.
+   Odkaz: modrý tučný text se šipkou ›. Přepínače a filtry: stejné zaoblení a výška, vybraný = světle modrý. */
+:root { --btn-h: 44px; --btn-h-sm: 34px; --btn-2: color-mix(in srgb, var(--blue) 11%, transparent); --btn-2h: color-mix(in srgb, var(--blue) 19%, transparent); }
+.pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: var(--btn-h); padding: 0 22px; font-size: 15px; font-weight: 600; letter-spacing: -.01em; line-height: 1.2; border-radius: 999px; white-space: nowrap; }
+.pill.sm { min-height: var(--btn-h-sm); padding: 0 16px; font-size: 14px; }
+.pill.ghost, .jumpbar .pill.ghost { background: var(--btn-2); color: var(--link); box-shadow: none; }
+.pill.ghost:not(:disabled):hover { background: var(--btn-2h); filter: none; }
+.pill.ghost::after { display: none; }
+.more { font-size: 15px; font-weight: 600; }
+.tile .more, .otile .more { font-size: 15px; }
+.chip { display: inline-flex; align-items: center; box-sizing: border-box; min-height: 36px; padding: 0 16px; font-size: 14px; font-weight: 500; }
+.known { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-height: var(--btn-h-sm); padding: 0 16px; font-size: 14px; font-weight: 600; background: var(--btn-2); color: var(--link); box-shadow: none; transition: background-color .2s; }
+.known:hover { background: var(--btn-2h); }
+.known[aria-pressed="true"] { background: color-mix(in srgb, var(--ok) 15%, transparent); color: var(--ok); }
+.known.big { min-height: var(--btn-h); padding: 0 24px; font-size: 15px; }
+.needref { display: inline-flex; align-items: center; box-sizing: border-box; min-height: var(--btn-h-sm); padding: 0 14px; font-size: 14px; font-weight: 500; background: var(--btn-2); }
+.needref:hover { background: var(--btn-2h); }
+.tl-use .needref { min-height: 28px; font-size: 13px; padding: 0 10px; }
+.seg button { display: inline-flex; align-items: center; min-height: 32px; padding: 0 14px; font-weight: 500; box-sizing: border-box; }
+.kd-tabs button, .pseg button { min-height: 36px; padding: 0 16px; font-size: 14px; }
+.testbar .pill.sm { padding: 0 12px; }
+.hp-hide { font-weight: 500; }
+@media (min-width: 735px) { .nv-b { border-radius: 999px; } }
+@media (max-width: 480px) { .hp-btns .pill { width: 100%; } .hp-btns.four .pill:not(:first-child) { padding: 0 6px; font-size: 13.5px; white-space: normal; line-height: 1.15; } }
+.resume .chips { justify-content: center; max-width: 100%; }
+.resume .chip { white-space: normal; max-width: 100%; padding: 8px 14px; line-height: 1.3; text-align: center; }
 
 </style>
 
@@ -5310,7 +5354,12 @@ const NAV = [
     ['ustni-pojmy', 'Klíčové pojmy', `14 pojmů, bez nich je F · umíš ${kdCount('pojmy')} z ${KEYS.length}`],
     ['ustni-definice', 'Definice', `45 definic s příklady · umíš ${kdCount('definice')} z ${DEFS.length}`]] },
   { id: 'priklady', l: 'Příklady', groups: true },
-  { id: 'pisemky', l: 'Písemky' }, { id: 'teorie', l: 'Teorie' }, { id: 'terminy', l: 'Termíny' }
+  { id: 'pisemky', l: 'Písemky', sub: () => [
+    ['pisemky-p2', '2. zápočtová písemka', `${TESTDEF.p2.n} písemek + ${TESTDEF.h2.n} extra těžkých · hotovo ${doneCount('p2') + doneCount('h2')}`],
+    ['pisemky-p3', '3. zápočtová písemka', `${TESTDEF.p3.n} písemek + ${TESTDEF.h3.n} extra těžkých · hotovo ${doneCount('p3') + doneCount('h3')}`],
+    ['pisemky-zk', 'Písemná zkouška', `${TESTDEF.zk.n} písemek, 4 příklady na 120 minut · hotovo ${doneCount('zk')}`],
+    ['pisemky', 'Všechny písemky a výsledky', 'Přehled, průměry a grafy']] },
+  { id: 'teorie', l: 'Teorie' }, { id: 'terminy', l: 'Termíny' }
 ];
 const state = { view: 'domu', batch: store.get('batch', 0), randomSeed: null, randomKind: 'p2', topic: store.get('topic', 'odm'), pch: 'all', pq: '', quiz: store.get('quiz', false) };
 const $view = document.getElementById('view');
@@ -5331,7 +5380,8 @@ function dayWord(n) { return n === 1 ? 'den' : (n >= 2 && n <= 4) ? 'dny' : 'dn�
 const navCur = v => TEST_RE.test(v) || v === 'nahodna' ? 'pisemky' : (PROOF_RE.test(v) || v === 'dukazy') ? 'ustni' : v.split('-')[0];
 const CHEV = '<svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>';
 function navMenuHTML(n, v) {
-  if (n.sub) return `<div class="dd-list">${n.sub().map(([go, t, d]) => { const on = v === go || (go === 'dukazy' && PROOF_RE.test(v)) || (go !== 'ustni' && v.startsWith(go + '-')); return `<button type="button" class="dd-i" data-go="${go}"${on ? ' aria-current="page"' : ''}><b>${t}</b><span>${d}</span></button>`; }).join('')}</div>`;
+  if (n.sub) return `<div class="dd-list">${n.sub().map(([go, t, d]) => { const tk = v.match(TEST_RE), tkind = tk && ({ h2: 'p2', h3: 'p3' }[tk[1]] || tk[1]);
+    const on = v === go || (go === 'dukazy' && PROOF_RE.test(v)) || (go !== n.id && v.startsWith(go + '-')) || (tkind && go === 'pisemky-' + tkind); return `<button type="button" class="dd-i" data-go="${go}"${on ? ' aria-current="page"' : ''}><b>${t}</b><span>${d}</span></button>`; }).join('')}</div>`;
   const curT = v.startsWith('priklady') ? (v.split('-')[1] || state.topic) : null;
   return `<div class="dd-cols">${PGROUPS.map(g => `<div class="dd-col"><span class="dd-h">${g.l}</span>${g.sec.map(([sl, ks]) => ks.map(tk => `<button type="button" class="dd-i" data-go="priklady-${tk}"${curT === tk ? ' aria-current="page"' : ''}><b>${PLABEL[tk]}</b><span>${sl}</span></button>`).join('')).join('')}</div>`).join('')}</div>`;
 }
@@ -5359,6 +5409,7 @@ function viewTitle(v) {
   const kc = v.match(KC_RE); if (kc) return 'Kartičky · ' + KD[kc[1]].title;
   if (v.startsWith('priklady')) return 'Příklady · ' + (PLABEL[v.split('-')[1] || state.topic] || '');
   if (v === 'dukazy') return 'Důkazy';
+  const pk = v.match(/^pisemky-(p2|p3|zk)$/); if (pk) return 'Písemky · ' + TESTDEF[pk[1]].title;
   const n = NAV.find(x => x.id === navCur(v)); return n ? n.l : null;
 }
 const scrollMem = {};
@@ -5407,34 +5458,59 @@ const PLANS = {
   zk: ['zkoušku', [['Důkazy na ústní', 'Každá věta krok za krokem, s režimem zkoušení.', 'dukazy', 'Důkazy'], ['Průběh funkce', 'Nejvíc bodů na písemné části. Spočítej co nejvíc variant.', 'priklady-pr', 'Příklady'], ['Zkouškové písemky', 'Čtyři příklady za 50 bodů. Potřebuješ víc než 25.', 'pisemky', 'Písemky']]]
 };
 const fmtS = d => d.toLocaleDateString('cs-CZ', { weekday: 'short', day: 'numeric', month: 'numeric' });
+const EXAM_TERMS = () => EVENTS.filter(e => /^Zkouška/.test(e.what));
+const isoOf = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const dOf = (iso, plus = 0) => { const d = new Date(iso + 'T00:00:00'); d.setDate(d.getDate() + plus); return d; };
+function examPick(note) {
+  const terms = EXAM_TERMS().filter(e => daysTo(e.d) >= 0);
+  return `<div class="ex-pick">${note ? `<p class="hp-note">${note}</p>` : ''}
+<p class="hp-lead">Kdy jdeš na zkoušku?</p>
+<p class="hp-meta">Vyber termín písemné části, ústní bývá hned další den. Podle termínu se nastaví odpočet. Web si ho zapamatuje v tomto prohlížeči, takže ho nemusíš zadávat znovu.</p>
+${terms.length ? `<div class="ex-terms">${terms.map(e => `<button type="button" class="ex-t" data-act="exam-set" data-d="${e.d}"><b>${cap(fmtS(dOf(e.d)))}</b><small>${e.what.replace('Zkouška: ', '')}</small></button>`).join('')}</div>` : ''}
+<div class="ex-other"><label class="small muted" for="exDate">Jiné datum, třeba opravný termín:</label><span class="ex-row"><input type="date" id="exDate" class="ex-date" min="${isoOf(today())}"><button type="button" class="pill sm" data-act="exam-custom">Uložit termín</button></span></div>
+<button type="button" class="hp-hide" data-act="exam-set" data-d="?">Termín ještě nevím</button></div>`;
+}
+function examPanel() {
+  const ch = store.get('examDate', null), terms = EXAM_TERMS(), first = terms.find(e => daysTo(e.d) >= 0);
+  const known = knownCount(), kp = kdCount('pojmy'), kd = kdCount('definice'), zs = statsFor('zk');
+  const row = (go, t, k, n, unit) => `<button type="button" class="hp-row" data-go="${go}"><span class="hp-rt"><b>${t}</b><small>${unit} ${k} z ${n}</small></span><span class="meter"><i style="width:${n ? 100 * k / n : 0}%"></i></span><span class="hp-go" aria-hidden="true">›</span></button>`;
+  const btns = `<div class="hp-btns four"><button class="pill" data-go="pisemky-zk">Zkouškové písemky</button><button class="pill ghost" data-go="dukazy">Důkazy</button><button class="pill ghost" data-go="ustni-pojmy">Klíčové pojmy</button><button class="pill ghost" data-go="ustni-definice">Definice</button></div>`;
+  const prep = `<div class="hp-rows">${row('pisemky-zk', 'Zkouškové písemky', doneCount('zk'), TESTDEF.zk.n, 'napsáno')}${row('dukazy', 'Důkazy', known, PROOF_TOTAL, 'umíš')}${row('ustni-pojmy', 'Klíčové pojmy', kp, KEYS.length, 'umíš')}${row('ustni-definice', 'Definice', kd, DEFS.length, 'umíš')}</div>
+${zs.n ? `<p class="hp-stat">Průměr zkouškových písemek: <b>${fmt1(zs.avg)}</b> z 50 b. (na úspěch víc než 25)</p>` : ''}
+${btns}
+<div class="hp-links"><button type="button" class="more" data-go="priklady-zk">Příklady ke zkoušce</button><button type="button" class="more" data-go="ustni">Jak probíhá ústní</button></div>`;
+  const top = what => `<div class="hp-top"><span class="hp-tag o">Zkouška</span><span class="hp-what">${what}</span></div>`;
+  if (!ch || (ch !== '?' && daysTo(ch) < -1)) {
+    const note = ch && ch !== '?' ? `Tvůj termín ${fmtS(dOf(ch))} už proběhl. Jestli jdeš znovu, vyber další.` : '';
+    return `<section class="hp hp-o">${top('Písemná + ústní část')}${examPick(note)}${btns}</section>`;
+  }
+  const target = ch === '?' ? (first ? first.d : null) : ch;
+  if (!target) return `<section class="hp hp-o">${top('Písemná + ústní část')}${examPick('')}${btns}</section>`;
+  const dW = daysTo(target);
+  const when = dW > 1 ? `Za ${dW} ${dayWord(dW)}.` : dW === 1 ? 'Zítra.' : dW === 0 ? 'Dnes písemná.' : 'Dnes ústní.';
+  const what = ch === '?' ? `Do 1. termínu (${fmtS(dOf(target))})` : `Tvůj termín: písemná ${fmtS(dOf(target))}, ústní ${fmtS(dOf(target, 1))}`;
+  return `<section class="hp hp-o">${top(what)}<p class="hp-when"><span class="grad">${when}</span></p>
+<p class="hp-meta">Písemná: 4 příklady na 2 hodiny, potřebuješ víc než 25 z 50 bodů. Ústní: losované otázky, 40 minut přípravy, zase víc než 25 z 50.</p>
+${prep}<button type="button" class="hp-hide" data-act="exam-change">${ch === '?' ? 'Vybrat svůj termín' : 'Změnit termín'}</button></section>`;
+}
 function viewHome() {
-  const next = EVENTS.find(e => daysTo(e.d) >= 0), wHidden = !!store.get('wDone', false), showW = !!next && !wHidden;
-  const exam1 = EVENTS.find(e => /^Zkouška/.test(e.what) && daysTo(e.d) + 1 >= 0);
-  const oralD = exam1 ? new Date(exam1.d + 'T00:00:00') : null; if (oralD) oralD.setDate(oralD.getDate() + 1);
-  const dO = oralD ? Math.round((oralD - today()) / 864e5) : -1;
-  const known = knownCount(), kp = kdCount('pojmy'), kd = kdCount('definice');
+  const next = EVENTS.find(e => daysTo(e.d) >= 0 && !/^Zkouška/.test(e.what)), wHidden = !!store.get('wDone', false), showW = !!next && !wHidden;
   let w = '';
   if (showW) {
     const dn = daysTo(next.d), kind = kindOf(next), first = firstOpenTest(kind), st = statsFor(kind);
     const when = dn === 0 ? 'Dnes.' : dn === 1 ? 'Zítra.' : `Za ${dn} ${dayWord(dn)}.`;
     const [, plan] = PLANS[kind];
-    w = R`<section class="hp hp-w"><div class="hp-top"><span class="hp-tag">Písemka</span><span class="hp-what">${next.what}</span></div>
+    w = R`<section class="hp hp-w"><div class="hp-top"><span class="hp-tag">Zápočet</span><span class="hp-what">${next.what}</span></div>
 <p class="hp-when"><span class="grad">${when}</span></p>
 <p class="hp-meta">${cap(fmt(next.d))} · ${next.note}</p>
 <div class="hp-btns"><button class="pill" data-go="${kind}-${pad(first)}">Napsat cvičnou č. ${first}</button><button class="pill ghost" data-act="random" data-kind="${kind}">Náhodná písemka</button></div>
 <ol class="hp-plan">${plan.map(([h, t, go], i) => `<li><button type="button" data-go="${go}"><span class="n">${i + 1}</span><span class="hp-pt"><b>${h}</b><small>${t}</small></span><span class="hp-go" aria-hidden="true">›</span></button></li>`).join('')}</ol>
 ${st.n ? `<p class="hp-stat">Tvůj průměr z ${st.n} ${st.n === 1 ? 'cvičné' : 'cvičných'}: <b>${fmt1(st.avg)}</b> z ${TESTDEF[kind].max} b.</p>` : ''}
-<button type="button" class="hp-hide" data-act="wdone">Písemky už mám za sebou · skrýt</button></section>`;
+<button type="button" class="hp-hide" data-act="wdone">Zápočet už mám · skrýt</button></section>`;
   }
-  const row = (go, t, k, n) => `<button type="button" class="hp-row" data-go="${go}"><span class="hp-rt"><b>${t}</b><small>umíš ${k} z ${n}</small></span><span class="meter"><i style="width:${n ? 100 * k / n : 0}%"></i></span><span class="hp-go" aria-hidden="true">›</span></button>`;
-  const o = R`<section class="hp hp-o"><div class="hp-top"><span class="hp-tag o">Ústní</span><span class="hp-what">${oralD ? 'Ústní zkouška od ' + fmtS(oralD) : 'Ústní zkouška'}</span></div>
-${showW ? '<p class="hp-lead">Teorie se nedá naučit za víkend. Odškrtávej si průběžně, co umíš.</p>' : `<p class="hp-when"><span class="grad">${dO > 0 ? `Za ${dO} ${dayWord(dO)}.` : dO === 0 ? 'Dnes.' : 'Ústní.'}</span></p><p class="hp-meta">Losuješ sadu otázek, 40 minut přípravy bez pomůcek, pak výklad. Potřebuješ víc než 25 z 50 bodů.</p>`}
-<div class="hp-rows">${row('dukazy', 'Důkazy', known, PROOF_TOTAL)}${row('ustni-pojmy', 'Klíčové pojmy', kp, KEYS.length)}${row('ustni-definice', 'Definice', kd, DEFS.length)}</div>
-<div class="hp-btns three"><button class="pill" data-go="dukazy">Důkazy</button><button class="pill" data-go="ustni-pojmy">Klíčové pojmy</button><button class="pill" data-go="ustni-definice">Definice</button></div>
-<button type="button" class="more hp-more" data-go="ustni">Jak ústní zkouška probíhá</button>
-${wHidden && next ? '<button type="button" class="hp-hide" data-act="wshow">Zobrazit i písemku</button>' : ''}</section>`;
   const written = Object.keys(TESTDEF).reduce((a, k) => a + statsFor(k).n, 0), zs = statsFor('zk');
-  return band('dark', R`<div class="hsplit${showW ? '' : ' solo'}">${w}${o}</div>${resumeHTML()}`)
+  const known = knownCount(), kp = kdCount('pojmy'), kd = kdCount('definice');
+  return band('dark', R`<div class="hsplit${showW ? '' : ' solo'}">${w}${examPanel()}</div>${resumeHTML()}${wHidden && next ? '<button type="button" class="hp-hide hp-unhide" data-act="wshow">Zobrazit i zápočet</button>' : ''}`)
     + band('', R`<div class="row-h"><h2 class="h2">Tvoje čísla.</h2><span class="muted small">${store.ok ? 'Ukládá se jen v tomto prohlížeči.' : 'Prohlížeč ukládání blokuje, data vydrží jen do zavření stránky.'}</span></div>
 <div class="stats"><div class="stat"><b>${written}</b><span>cvičných písemek s body</span></div><div class="stat"><b>${zs.n ? fmt1(zs.avg) : '–'}</b><span>průměr zkouškových (z 50)</span></div><div class="stat"><b>${known + kp + kd}</b><span>důkazů, pojmů a definic umíš (z ${PROOF_TOTAL + KEYS.length + DEFS.length})</span></div></div>
 ${written ? '<div class="ctas"><button class="more" data-go="pisemky">Všechny výsledky a grafy</button></div>' : ''}
@@ -5554,16 +5630,24 @@ function testCards(kind) {
 }
 function viewTests() {
   const hardSub = (kind, desc) => { const T = TESTDEF[kind]; return R`<div class="hardsub"><div class="row-h"><h3 class="h3"><span class="hard-dot" aria-hidden="true"></span>Extra těžké.</h3><span class="muted">${doneCount(kind)}/${T.n} hotovo</span></div><p class="muted">${desc}</p><div class="grid">${testCards(kind)}</div><div class="ctas"><button class="more" data-act="random" data-kind="${kind}">Náhodná extra těžká</button></div></div>`; };
-  const sec = (kind, desc, cls, hk, hdesc) => { const T = TESTDEF[kind]; return band(cls, R`<div id="sec-${kind}"></div><div class="row-h"><h2 class="h2">${T.title}.</h2><span class="muted">${doneCount(kind)}/${T.n} hotovo</span></div><p class="muted">${desc}</p><div class="grid">${testCards(kind)}</div><div class="ctas"><button class="more" data-act="random" data-kind="${kind}">Náhodná písemka tohoto typu</button></div>${hk ? hardSub(hk, hdesc) : ''}`); };
+  const sec = (kind, desc, cls, hk, hdesc, ttl) => { const T = TESTDEF[kind]; return band(cls, R`<div id="sec-${kind}"></div><div class="row-h"><h2 class="h2">${ttl || T.title + '.'}</h2><span class="muted">${doneCount(kind)}/${T.n} hotovo</span></div><p class="muted">${desc}</p><div class="grid">${testCards(kind)}</div><div class="ctas"><button class="more" data-act="random" data-kind="${kind}">Náhodná písemka tohoto typu</button></div>${hk ? hardSub(hk, hdesc) : ''}`); };
   const nx = EVENTS.find(e => daysTo(e.d) >= 0), first = nx ? kindOf(nx) : 'zk';
   const order = first === 'p3' ? ['p3', 'zk', 'p2'] : first === 'zk' ? ['zk', 'p3', 'p2'] : ['p2', 'p3', 'zk'];
   const SEC = { p2: ['2. zápočet', 'Rozdíl odmocnin, n-tá odmocnina, škála. 3 × 10 bodů, 30 minut, na úspěch 20 bodů.', 'h2', 'Stejná látka, ale v každém příkladu je chyták: odečtou se vedoucí členy, rozhoduje číslo e, odhad kombinačního čísla. Pořád 3 × 10 bodů za 30 minut, 20 bodů se dá stihnout.'],
     p3: ['3. zápočet', 'Píše se v pondělí 30. 11. na supersemináři. Stejné typy jako ohlásil přednášející: 1. podíl odmocnin či polynomů, 2. a 3. známé limity a složená funkce (včetně typu 1^∞). 3 × 10 bodů, 30 minut.', 'h3', 'Stejná látka, ale těžší: tg − sin, ln(cos), pasti s |x| pro x → −∞, parametr, aby limita byla vlastní, a Heine na posloupnostech. 3 × 10 bodů za 30 minut.'],
     zk: ['Písemná zkouška', 'Limita posloupnosti (10 b.), limita funkce (15 b.), spojitost a derivace (10 b.), průběh funkce (15 b.). Na úspěch víc než 25 z 50 bodů.'] };
   const anyRes = ['p2', 'h2', 'p3', 'h3', 'zk'].some(k => TESTDEF[k] && statsFor(k).n);
+  const segNav = `<div class="seg pseg" role="tablist" aria-label="Druh písemek">${[['pisemky', 'Všechny'], ['pisemky-p2', '2. zápočet'], ['pisemky-p3', '3. zápočet'], ['pisemky-zk', 'Zkouška']].map(([g, l]) => `<button type="button" role="tab" data-go="${g}" aria-pressed="${state.view === g}" aria-selected="${state.view === g}">${l}</button>`).join('')}</div>`;
+  const fk = (state.view.match(/^pisemky-(p2|p3|zk)$/) || [])[1];
+  if (fk) {
+    const T = TESTDEF[fk], fo = firstOpenTest(fk), hk = SEC[fk][2];
+    return band('', R`<span class="eyebrow">Cvičné písemky</span><h1 class="h1">${T.title}.</h1><p class="sub">${SEC[fk][1]}</p>${segNav}
+<div class="ctas"><button class="pill" data-go="${fk}-${pad(fo)}">Napsat písemku č. ${fo}</button><button class="pill ghost" data-act="random" data-kind="${fk}">Náhodná písemka</button></div>`, 'center')
+      + sec(fk, '', 'alt', hk, SEC[fk][3], `Všech ${T.n} písemek.`) + (statsFor(fk).n || (hk && statsFor(hk).n) ? resultsBand('') : '');
+  }
   return band('', R`<span class="eyebrow">Cvičné písemky</span><h1 class="h1">${ALL_TESTS} písemek. Jedna po druhé.</h1>
 <p class="sub">Každá ve formátu té skutečné. Spusť stopky, piš bez nahlížení, pak se oprav a zapiš si body. Z nich se počítá tvoje statistika.</p>
-<div class="ctas jumpbar">${order.map((k, i) => `<button class="${i ? 'pill ghost' : 'pill'}" data-jump="sec-${k}">${SEC[k][0]}${k === first && nx ? ' · nejbližší' : ''}</button>`).join('')}</div>`, 'center')
+${segNav}`, 'center')
   + order.map((k, i) => sec(k, SEC[k][1], i % 2 ? '' : 'alt', SEC[k][2], SEC[k][3])).join('')
   + (anyRes ? resultsBand(order.length % 2 ? '' : 'alt') : '');
 }
@@ -5580,7 +5664,7 @@ function viewTest(kind, i, seed) {
   const sv = typeof s.score === 'number' ? s.score : '';
   state.timerMin = T.min;
   const scoreInput = cls => `<input type="number" inputmode="numeric" class="${cls}" data-score min="0" max="${T.max}" value="${sv}" aria-label="Body z ${T.max}">`;
-  return R`<div class="testbar"><div class="in"><button class="more back" data-go="pisemky" aria-label="Zpět na písemky">‹ <span class="wide">Písemky</span></button>
+  return R`<div class="testbar"><div class="in"><button class="more back" data-go="pisemky-${({ h2: 'p2', h3: 'p3' }[kind] || kind)}" aria-label="Zpět na písemky">‹ <span class="wide">Písemky</span></button>
 <div class="tb-timer"><span class="timer" id="timer">${T.min}:00</span><button class="pill sm" data-act="timer">▶ Spustit</button><button class="pill sm ghost" data-act="timer0" aria-label="Vynulovat stopky" title="Vynulovat stopky">↺<span class="wide"> Reset</span></button></div>
 <button class="pill sm end" data-act="endtest">Ukončit<span class="wide"> písemku</span></button>
 <label class="tb-score">Body ${scoreInput(typeof s.score === 'number' ? 'is-saved' : '')} / ${T.max}<span class="saved-tag" data-saved>${typeof s.score === 'number' ? '✓ uloženo' : ''}</span></label></div></div>
@@ -5655,7 +5739,7 @@ function render() {
   else if (v === 'terminy') html = viewTerms();
   else if (v.startsWith('teorie')) html = viewTheory();
   else if (v === 'priklady' || v.startsWith('priklady-')) html = viewProblems();
-  else if (v === 'pisemky') html = viewTests();
+  else if (v === 'pisemky' || /^pisemky-(p2|p3|zk)$/.test(v)) html = viewTests();
   else if (v === 'dukazy') html = viewProofs();
   else if (PROOF_RE.test(v) && proofById(v.match(PROOF_RE)[1])) html = viewProof(proofById(v.match(PROOF_RE)[1]));
   else if (v === 'ustni') html = viewOral();
@@ -5790,7 +5874,14 @@ document.addEventListener('click', e => {
   if (!a) return;
   const act = a.dataset.act;
   if (act === 'fc-flip' || act === 'fc-yes' || act === 'fc-no' || act === 'fc-all') { fcAct(act); return; }
-  if (act === 'wdone' || act === 'wshow') { store.set('wDone', act === 'wdone'); const y = scrollY; render(); scrollTo(0, y); if (act === 'wdone') toast('Písemka skrytá. Vrátíš ji tlačítkem „Zobrazit i písemku“.'); return; }
+  if (act === 'wdone' || act === 'wshow') { store.set('wDone', act === 'wdone'); const y = scrollY; render(); scrollTo(0, y); if (act === 'wdone') toast('Zápočet skrytý. Vrátíš ho tlačítkem „Zobrazit i zápočet“.'); return; }
+  if (act === 'exam-set' || act === 'exam-custom' || act === 'exam-change') {
+    let d = act === 'exam-change' ? null : a.dataset.d;
+    if (act === 'exam-custom') { d = (document.getElementById('exDate') || {}).value; if (!d || !/^\d{4}-\d{2}-\d{2}$/.test(d)) { toast('Nejdřív vyber datum.', 'warn'); return; } if (daysTo(d) < 0) { toast('Datum už proběhlo.', 'warn'); return; } }
+    store.set('examDate', d); const y = scrollY; render(); scrollTo(0, y);
+    if (d && d !== '?') toast(`Termín uložen (${fmtS(dOf(d))}). Web si ho pamatuje v tomto prohlížeči.`);
+    return;
+  }
   if (act === 'pmore') {
     const tk = PLABEL[state.topic] ? state.topic : 'odm', from = state.pcount || PER_TOPIC, to = from + 20, box = document.getElementById('plist');
     if (!box) return;
