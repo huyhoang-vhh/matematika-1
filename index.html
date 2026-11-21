@@ -838,6 +838,29 @@ html[data-vt="back"]::view-transition-new(root) { animation-name: fx-in-back; }
 .oral-fmt .step3 b.opts { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
 .grades td:last-child { font-weight: 600; }
 
+/* =================== klíčové pojmy (ústní) =================== */
+.kp-toc { margin-top: 4px; }
+.kp-list { display: flex; flex-direction: column; gap: 20px; }
+.kp { scroll-margin-top: 72px; gap: 14px; }
+.kp-h { display: flex; align-items: center; gap: 12px; }
+.kp-n { flex: none; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-weight: 700; font-size: 15px; background: color-mix(in srgb, var(--blue) 12%, transparent); color: var(--link); }
+.kp .lbl { display: block; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 6px; }
+.kp-def { box-shadow: inset 3px 0 0 var(--blue), var(--card-edge); }
+.kp-def p + p { margin-top: 6px; }
+.kp-say p { font-size: 17px; line-height: 1.6; }
+.kp-ex { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.kp-ex > div { min-width: 0; background: var(--bg-alt); border-radius: 12px; padding: 12px 14px; }
+.kp-ex p, .kp-neg p { font-size: 15px; line-height: 1.55; }
+.kp-neg { background: color-mix(in srgb, var(--hard) 8%, transparent); border-radius: 12px; padding: 12px 14px; }
+.kp-pit { font-size: 15px; color: var(--new); background: color-mix(in srgb, var(--new) 9%, transparent); border-radius: 12px; padding: 10px 14px; }
+.kp-pit b { color: var(--new); }
+.kp-rel .needs { display: flex; flex-wrap: wrap; gap: 8px; }
+details.kp-hide > summary { cursor: pointer; font-weight: 600; color: var(--link); padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--blue) 9%, transparent); list-style: none; }
+details.kp-hide > summary::-webkit-details-marker { display: none; }
+details.kp-hide[open] > summary { margin-bottom: 10px; }
+details.kp-hide { border-top: 0; padding-top: 0; }
+@media (max-width: 640px) { .kp-ex { grid-template-columns: 1fr; } }
+
 </style>
 
 <header class="gnav"><div class="gnav-in">
@@ -4120,6 +4143,224 @@ function initProofPage(p) {
 }
 function revealStep(li) { if (!li) return false; li.classList.remove('hide'); li.querySelector('.reveal')?.remove(); return true; }
 
+/* ---------- Klíčové pojmy k ústní zkoušce ----------
+   Seznam podle oficiálních požadavků (Bárta, mat1_pozadavky, listopad 2026). Definice v zápisu z poznámek k přednášce
+   (B(c,ε), P(c,δ), ℝ*), vysvětlení, příklady a otázky vlastními slovy.
+   Položka: { id, t (název), def (přesná definice), say (jak to říct), ex (příklad), non (protipříklad), neg (negace, nepovinné),
+   ask [[otázka, odpověď]], pit (na co pozor), rel [id důkazů] } */
+const KEYS = [
+{ id: 'sup', t: 'Supremum a infimum množiny',
+  def: R`<p>Nechť \(M\subset\mathbb R\). Číslo \(G\in\mathbb R\) je <b>supremum</b> množiny \(M\), značíme \(G=\sup M\), jestliže</p>
+<p>(i) \(x\le G\) pro všechna \(x\in M\);<br>(ii) pro každé \(G'\lt G\) existuje \(x\in M\) takové, že \(x>G'\).</p>
+<p>Číslo \(g\in\mathbb R\) je <b>infimum</b>, \(g=\inf M\), jestliže (i) \(x\ge g\) pro všechna \(x\in M\); (ii) pro každé \(g'>g\) existuje \(x\in M\) s \(x\lt g'\).</p>`,
+  say: R`Supremum je <b>nejmenší horní závora</b>. Bod (i) říká, že \(G\) je horní závora: žádný prvek \(M\) ho nepřesáhne. Bod (ii) říká, že žádné menší číslo už horní závorou není, protože ho nějaký prvek \(M\) přeskočí. Infimum je totéž zrcadlově: největší dolní závora.`,
+  ex: R`\(M=(0,1)\): \(\sup M=1\), \(\inf M=0\). Ani jedno do \(M\) nepatří. Pro \(G'\lt1\) stačí vzít \(x=\max\{\frac12,\frac{1+G'}2\}\in M\), a to je větší než \(G'\).`,
+  non: R`\(\mathbb N\) nemá supremum v \(\mathbb R\) (není shora omezená), \(\emptyset\) také ne. A rozdíl oproti maximu: \((0,1)\) má supremum 1, ale <b>nemá maximum</b>. Maximum je supremum, které do množiny patří.`,
+  neg: R`\(G\) není supremem \(M\): buď existuje \(x\in M\) s \(x>G\), nebo existuje \(G'\lt G\) takové, že \(x\le G'\) pro všechna \(x\in M\).`,
+  ask: [['Má každá množina supremum?', 'Ne. Tvrzení 3: každá neprázdná shora omezená množina má právě jedno supremum v ℝ. Neomezená nebo prázdná supremum v ℝ nemá.'],
+    ['Jak zapsat bod (ii) pomocí ε?', 'Pro každé ε > 0 existuje x ∈ M s x > G − ε. Stačí položit G′ = G − ε.'],
+    ['Jaký je vztah supremum a posloupnosti?', 'Lemma 17: je-li G = sup M, existuje posloupnost prvků M, která má limitu G (bod (ii) pro G′ = G − 1/n).'],
+    ['Může mít množina dvě suprema?', 'Ne. Kdyby G₁ < G₂ byla obě suprema, bod (ii) pro G₂ a G′ = G₁ dá x ∈ M s x > G₁, což je spor s bodem (i) pro G₁.']],
+  pit: R`Supremum nemusí patřit do \(M\). Nepleť si ho s maximem. A nezapomeň na bod (i): „každé menší číslo je překročeno“ samo nestačí.`,
+  rel: ['t3', 'l17', 'v18'] },
+
+{ id: 'lim', t: 'Vlastní limita posloupnosti',
+  def: R`<p>Číslo \(A\in\mathbb R\) je limitou posloupnosti \(\{a_n\}\), jestliže</p>
+\[\forall\varepsilon>0\ \exists n_0\in\mathbb N\ \forall n\ge n_0:\ |a_n-A|\lt\varepsilon.\]
+<p>Značíme \(\lim_{n\to\infty}a_n=A\) nebo \(a_n\to A\). Posloupnost je <b>konvergentní</b>, má-li limitu v \(\mathbb R\).</p>`,
+  say: R`Ať kolem \(A\) zvolím jakkoli úzký pás \((A-\varepsilon,A+\varepsilon)\), od nějakého indexu \(n_0\) už v něm leží <b>všechny</b> další členy. Mimo pás zůstane jen konečně mnoho členů. Index \(n_0\) smí záviset na \(\varepsilon\): čím užší pás, tím později se do něj posloupnost „usadí“.`,
+  ex: R`\(\frac{(-1)^n}{n}\to0\): \(\big|\frac{(-1)^n}{n}-0\big|=\frac1n\lt\varepsilon\) pro \(n>\frac1\varepsilon\), takže stačí \(n_0>\frac1\varepsilon\).`,
+  non: R`\((-1)^n\) limitu nemá: pro \(\varepsilon=\frac12\) by pás šířky 1 musel obsahovat nakonec čísla \(1\) i \(-1\), jejichž vzdálenost je 2. Neplatí ani „omezená ⇒ konvergentní“.`,
+  neg: R`\(a_n\not\to A\): \(\ \exists\varepsilon>0\ \forall n_0\in\mathbb N\ \exists n\ge n_0:\ |a_n-A|\ge\varepsilon\). Tedy nekonečně mnoho členů leží mimo nějaký pás.`,
+  ask: [['Co se stane, když přehodím kvantifikátory na ∃n₀ ∀ε?', 'Pak by od n₀ platilo |aₙ − A| < ε pro každé ε, tedy aₙ = A. Definovali bychom posloupnosti, které jsou od jistého indexu konstantní.'],
+    ['Může mít posloupnost dvě limity?', 'Ne, Věta 9. Pro ε = |A − B|/3 by od jistého indexu byly členy v obou disjunktních pásech naráz.'],
+    ['Je konvergentní posloupnost omezená?', 'Ano, Věta 10. Od n₀ leží členy v (A − 1, A + 1), a před n₀ je jich jen konečně mnoho.'],
+    ['Změní se limita, když změním prvních 100 členů?', 'Ne. Stačí vzít n₀ > 100, a definice se na prvních 100 členů vůbec nedívá.']],
+  pit: R`Nerovnost je ostrá \(\lt\varepsilon\) (s \(\le\) by definice vyšla stejně, ale piš to jako přednášející). A \(n_0\) se volí <b>po</b> \(\varepsilon\), ne naopak.`,
+  rel: ['v9', 'v10', 'v11', 'v12'] },
+
+{ id: 'nlim', t: 'Nevlastní limita posloupnosti',
+  def: R`<p>Posloupnost má limitu \(+\infty\), jestliže \(\ \forall L\in\mathbb R\ \exists n_0\in\mathbb N\ \forall n\ge n_0:\ a_n>L.\)</p>
+<p>Má limitu \(-\infty\), jestliže \(\ \forall K\in\mathbb R\ \exists n_0\in\mathbb N\ \forall n\ge n_0:\ a_n\lt K.\)</p>`,
+  say: R`Ať zvolím jakkoli vysokou hranici \(L\), posloupnost ji od nějakého indexu <b>natrvalo</b> přeskočí. Nestačí, že je velká občas. Musí nad \(L\) zůstat navždy.`,
+  ex: R`\(n^2\to+\infty\): pro dané \(L\) vezmu \(n_0>|L|\). Pak \(n^2\ge n>|L|\ge L\) pro \(n\ge n_0\).`,
+  non: R`\((-1)^n\,n\) je neomezená, ale nemá ani limitu \(+\infty\) (liché členy jsou záporné), ani \(-\infty\). Stejně tak \(a_{2k}=2k,\ a_{2k-1}=0\). <b>Neomezená neznamená „jde do nekonečna“.</b>`,
+  neg: R`\(a_n\not\to+\infty\): \(\ \exists L\in\mathbb R\ \forall n_0\ \exists n\ge n_0:\ a_n\le L\), tedy nekonečně mnoho členů zůstává pod nějakou hranicí.`,
+  ask: [['Je posloupnost s limitou +∞ konvergentní?', 'Ne. Konvergentní znamená vlastní (konečnou) limitu. +∞ je limita v rozšířené ose ℝ*, posloupnost je divergentní.'],
+    ['Jak souvisí nevlastní limita s převrácenou hodnotou?', 'Věta 16: je-li aₙ > 0 a aₙ → 0, je 1/aₙ → +∞. Naopak z aₙ → ±∞ plyne 1/aₙ → 0.'],
+    ['Proč se nevlastní limita píše s L a ne s ε?', 'Okolí +∞ je interval (L, +∞). V jednotném zápisu přes okolí je to B(+∞, ε) = (1/ε, +∞), tedy L = 1/ε.']],
+  pit: R`Aritmetika limit s \(\pm\infty\) má neurčité výrazy: \(\infty-\infty\), \(0\cdot\infty\), \(\frac\infty\infty\). Ty definice „nespočítá“ za tebe.`,
+  rel: ['v12p', 'v16', 'v18'] },
+
+{ id: 'okoli', t: 'Okolí bodu',
+  def: R`<p>Pro \(c\in\mathbb R\) a \(\varepsilon>0\) je <b>okolí</b> \(B(c,\varepsilon)=(c-\varepsilon,c+\varepsilon)\) a <b>prstencové okolí</b> \(P(c,\varepsilon)=B(c,\varepsilon)\setminus\{c\}\).</p>
+<p>Okolí nekonečna: \(B(+\infty,\varepsilon)=P(+\infty,\varepsilon)=(\frac1\varepsilon,+\infty)\), \(B(-\infty,\varepsilon)=P(-\infty,\varepsilon)=(-\infty,-\frac1\varepsilon)\).</p>
+<p>Jednostranná: \(B^+(c,\varepsilon)=\langle c,c+\varepsilon)\), \(B^-(c,\varepsilon)=(c-\varepsilon,c\rangle\), \(P^+(c,\varepsilon)=(c,c+\varepsilon)\), \(P^-(c,\varepsilon)=(c-\varepsilon,c)\).</p>`,
+  say: R`Okolí jsou body, které jsou od \(c\) blíž než \(\varepsilon\). Prstencové okolí je totéž bez samotného bodu \(c\): u limity nás hodnota v \(c\) nezajímá. Okolí \(+\infty\) jsou „dost velká čísla“; čím menší \(\varepsilon\), tím je okolí \((\frac1\varepsilon,+\infty)\) menší. Díky tomu stačí <b>jedna definice limity</b> pro všechny případy v \(\mathbb R^*\).`,
+  ex: R`\(B(2,\frac1{10})=(1{,}9;\,2{,}1)\), \(P(2,\frac1{10})=(1{,}9;\,2)\cup(2;\,2{,}1)\), \(B(+\infty,\frac1{100})=(100,+\infty)\).`,
+  non: R`\(\langle c-\varepsilon,c+\varepsilon\rangle\) není okolí v tomto smyslu (okolí je otevřený interval). A \(P(c,\varepsilon)\) není interval: má díru v \(c\).`,
+  ask: [['Proč je v definici limity prstencové okolí?', 'Protože f(c) nemusí být definované (sin x/x v 0) a i když je, limita na něm nemá záviset.'],
+    ['Proč je okolí +∞ zrovna (1/ε, +∞)?', 'Aby menší ε dávalo menší okolí jako u reálných bodů. Pak definice ∀ε ∃δ funguje beze změny i pro c = ±∞ a A = ±∞.'],
+    ['K čemu je, že dva různé body ℝ* mají disjunktní malá okolí?', 'Na tom stojí jednoznačnost limity: kdyby funkce měla dvě limity, musela by na malém okolí ležet v obou disjunktních okolích naráz.']],
+  pit: R`V definici spojitosti je \(B(c,\delta)\) (s bodem \(c\)), v definici limity \(P(c,\delta)\) (bez něj). To je přesně rozdíl mezi oběma pojmy.`,
+  rel: ['v20', 'v9'] },
+
+{ id: 'limf', t: 'Limita funkce',
+  def: R`<p>Nechť \(c,A\in\mathbb R^*\) a \(f\) je definována na nějakém prstencovém okolí \(P(c,\eta)\). Říkáme, že \(\lim_{x\to c}f(x)=A\), jestliže</p>
+\[\forall\varepsilon>0\ \exists\delta>0\ \forall x\in P(c,\delta):\ f(x)\in B(A,\varepsilon).\]
+<p>Pro \(c,A\in\mathbb R\) to znamená: \(0\lt|x-c|\lt\delta\ \Rightarrow\ |f(x)-A|\lt\varepsilon\). Pro \(A=\pm\infty\) jde o nevlastní limitu.</p>`,
+  say: R`Ať kolem \(A\) zvolím jakkoli malé okolí, najdu kolem \(c\) tak malé <b>prstencové</b> okolí, že funkce celé zobrazí do toho okolí \(A\). Jinými slovy: když se \(x\) blíží k \(c\) (ale \(x\neq c\)), hodnoty \(f(x)\) se blíží k \(A\). Hodnota \(f(c)\) nehraje žádnou roli.`,
+  ex: R`\(f(x)=1\) pro \(x\neq0\), \(f(0)=5\): \(\lim_{x\to0}f(x)=1\), hodnota 5 nevadí. \(\lim_{x\to0}\frac{\sin x}{x}=1\), přestože v nule funkce není definovaná.`,
+  non: R`\(\mathrm{sgn}\,x\) nemá v 0 limitu (zprava 1, zleva −1). \(\sin\frac1x\) nemá v 0 limitu: podle Heineho věty dají posloupnosti \(\frac1{2k\pi}\) a \(\frac1{2k\pi+\pi/2}\) hodnoty 0 a 1. \(\sqrt x\) v 0 oboustrannou limitu nemá definovanou (není definovaná na \(P(0,\eta)\)), jen limitu zprava.`,
+  neg: R`\(\lim_{x\to c}f(x)\neq A\): \(\ \exists\varepsilon>0\ \forall\delta>0\ \exists x\in P(c,\delta):\ f(x)\notin B(A,\varepsilon)\).`,
+  ask: [['Má hodnota f(c) vliv na limitu?', 'Ne. V definici je prstencové okolí P(c, δ), bod c se vůbec nepoužije.'],
+    ['Jak souvisí limita funkce s limitou posloupnosti?', 'Heineho věta (Věta 27): lim f(x) = A právě když pro každou posloupnost xₙ → c, xₙ ≠ c, je f(xₙ) → A. Na zkoušce stačí znění (polovina bez důkazu).'],
+    ['Jak dokážeš, že limita neexistuje?', 'Najdu dvě posloupnosti xₙ, yₙ → c (různé od c), pro které f(xₙ) a f(yₙ) mají různé limity, nebo ukážu, že se liší jednostranné limity.'],
+    ['Je limita jednoznačná?', 'Ano, Věta 20. Dvě různé hodnoty v ℝ* mají disjunktní malá okolí a funkce nemůže na malém prstencovém okolí ležet v obou.']],
+  pit: R`Funkce musí být definovaná na nějakém prstencovém okolí. Kdo napíše \(\forall x\in B(c,\delta)\), definuje něco jiného (spojitost, a to ještě jen pro \(A=f(c)\)).`,
+  rel: ['v20', 'v22', 'v25', 'v27'] },
+
+{ id: 'limj', t: 'Limita funkce zprava a zleva',
+  def: R`<p>Je-li \(f\) definována na nějakém pravém prstencovém okolí \(P^+(c,\eta)\), \(c\in\mathbb R\), pak</p>
+\[\lim_{x\to c^+}f(x)=A\ \iff\ \forall\varepsilon>0\ \exists\delta>0\ \forall x\in P^+(c,\delta):\ f(x)\in B(A,\varepsilon).\]
+<p>Limitu zleva definujeme stejně s \(P^-(c,\delta)=(c-\delta,c)\). Pro \(c\in\mathbb R\) platí: \(\lim_{x\to c}f(x)=A\) právě když existují obě jednostranné limity a obě jsou rovny \(A\).</p>`,
+  say: R`Je to limita, při které se k \(c\) blížím jen z jedné strany, tedy jen přes \(x>c\) (zprava) nebo \(x\lt c\) (zleva). Hodí se u funkcí, které se v bodě „lámou“ nebo mají různý předpis vlevo a vpravo, a u funkcí definovaných jen na jedné straně.`,
+  ex: R`\(\lim_{x\to0^+}e^{1/x}=+\infty\), \(\lim_{x\to0^-}e^{1/x}=0\). \(\lim_{x\to0^+}\sqrt x=0\) (zleva není funkce definovaná).`,
+  non: R`\(\lim_{x\to0^\pm}\mathrm{sgn}\,x=\pm1\): jednostranné limity existují, ale liší se, takže oboustranná limita v 0 <b>neexistuje</b>. \(\frac1x\) v 0: zprava \(+\infty\), zleva \(-\infty\).`,
+  ask: [['Kdy existuje oboustranná limita?', 'Pro c ∈ ℝ a f definovanou na prstencovém okolí: právě když existují obě jednostranné a rovnají se.'],
+    ['Co je limita zleva v +∞?', 'V nekonečnu se jednostranná limita ztotožňuje s limitou: lim v +∞ je „zleva“ už ze své podstaty, okolí je P(+∞, ε).'],
+    ['Kde se jednostranné limity potřebují v příkladech?', 'Dělení nulou (znaménko jmenovatele), funkce s |x|, e^{1/x}, celá část, funkce zadané po částech a vyšetřování spojitosti a derivace v bodě, kde se mění předpis.']],
+  pit: R`Z toho, že limita zprava existuje, neplyne nic o limitě zleva. A pozor na \(\frac{A}{0}\): rozhoduje znaménko jmenovatele, a to bývá zprava a zleva jiné.`,
+  rel: ['v26', 'v23'] },
+
+{ id: 'spoj', t: 'Spojitost funkce v bodě',
+  def: R`<p>Funkce \(f\) je spojitá v bodě \(c\in D_f\), jestliže</p>
+\[\forall\varepsilon>0\ \exists\delta>0\ \forall x\in B(c,\delta)\cap D_f:\ |f(x)-f(c)|\lt\varepsilon.\]
+<p>Je-li \(f\) definována na celém okolí \(c\), je to totéž jako \(\lim_{x\to c}f(x)=f(c)\).</p>`,
+  say: R`Malá změna \(x\) způsobí jen malou změnu \(f(x)\): hodnota v \(c\) souhlasí s tím, kam se funkce v okolí \(c\) blíží. Pro funkci definovanou na okolí bodu jsou to tři věci naráz: \(f(c)\) existuje, \(\lim_{x\to c}f(x)\) existuje a obě se rovnají.`,
+  ex: R`Polynomy, \(e^x\), \(\sin x\), \(|x|\) jsou spojité v každém bodě. \(|x|\) je spojitá i v 0, přestože tam má „zlom“.`,
+  non: R`\(f(x)=1\) pro \(x\neq0\), \(f(0)=0\): limita v 0 je 1, hodnota 0, funkce není v 0 spojitá. \(\mathrm{sgn}\,x\) v 0: limita neexistuje. Dirichletova funkce (1 na \(\mathbb Q\), 0 jinde) není spojitá nikde.`,
+  neg: R`\(f\) není spojitá v \(c\): \(\ \exists\varepsilon>0\ \forall\delta>0\ \exists x\in B(c,\delta)\cap D_f:\ |f(x)-f(c)|\ge\varepsilon\).`,
+  ask: [['Je funkce 1/x spojitá?', 'Ano, je spojitá v každém bodě svého definičního oboru ℝ∖{0}. V 0 o spojitosti nemá smysl mluvit, protože tam funkce není definovaná. Na ℝ∖{0} ale nejde použít věty o intervalu (to není interval).'],
+    ['Jak spojitost souvisí s posloupnostmi?', 'f je spojitá v c (na okolí c) právě když pro každou xₙ → c je f(xₙ) → f(c). To je Heineho věta pro spojitost.'],
+    ['Zachovává se spojitost při operacích?', 'Ano: součet, součin a podíl (pro g(c) ≠ 0) spojitých funkcí je spojitý (Důsledek věty 22). Složení spojitých funkcí je spojité (důsledek Věty 25).'],
+    ['Plyne ze spojitosti derivace?', 'Ne. |x| je v 0 spojitá, ale derivaci nemá. Naopak vlastní derivace spojitost zaručuje (Věta 36).']],
+  pit: R`Spojitost se definuje jen v bodech, kde je funkce definovaná. „\(\frac1x\) je v 0 nespojitá“ je u zkoušky chyták: v 0 není definovaná vůbec.`,
+  rel: ['d22', 'd25', 'v36'] },
+
+{ id: 'spojj', t: 'Spojitost funkce v bodě zprava a zleva',
+  def: R`<p>Funkce \(f\) je v bodě \(c\in D_f\) <b>spojitá zprava</b>, jestliže \(\lim_{x\to c^+}f(x)=f(c)\), a <b>spojitá zleva</b>, jestliže \(\lim_{x\to c^-}f(x)=f(c)\).</p>
+<p>V řeči \(\varepsilon\)–\(\delta\): \(\forall\varepsilon>0\ \exists\delta>0\ \forall x\in B^+(c,\delta)\cap D_f:\ |f(x)-f(c)|\lt\varepsilon\) (zleva s \(B^-\)).</p>`,
+  say: R`Funkce „navazuje“ na svou hodnotu v \(c\) aspoň z jedné strany. Je-li definovaná na okolí \(c\), je v \(c\) spojitá právě tehdy, když je spojitá zprava i zleva.`,
+  ex: R`\(\lfloor x\rfloor\) v bodě \(k\in\mathbb Z\): na \(\langle k,k+1)\) je rovna \(k\), takže je v \(k\) spojitá <b>zprava</b>. Zleva je limita \(k-1\neq k\), takže zleva spojitá není. \(\sqrt x\) je v 0 spojitá zprava.`,
+  non: R`\(\mathrm{sgn}\,x\) v 0: hodnota 0, limity \(\pm1\), není spojitá ani zprava, ani zleva.`,
+  ask: [['K čemu se jednostranná spojitost potřebuje?', 'Ve spojitosti na intervalu: v levém krajním bodě se požaduje spojitost zprava, v pravém zleva.'],
+    ['Stačí k jednostranné spojitosti, že existuje limita zprava?', 'Ne. Limita zprava se musí rovnat hodnotě f(c).']],
+  pit: R`„Limita zprava existuje“ a „spojitá zprava“ není totéž. Rozhoduje rovnost s \(f(c)\).`,
+  rel: ['v26', 'v30'] },
+
+{ id: 'spoji', t: 'Spojitost funkce na intervalu',
+  def: R`<p>Funkce \(f:J\to\mathbb R\) je <b>spojitá na intervalu</b> \(J\), je-li spojitá v každém vnitřním bodě \(J\), spojitá zprava v levém krajním bodě (pokud do \(J\) patří) a spojitá zleva v pravém krajním bodě (pokud do \(J\) patří).</p>`,
+  say: R`Funkce je spojitá v každém bodě intervalu, jen na krajích se díváme pouze dovnitř intervalu, protože vně nás nic nezajímá. Graf se dá na \(J\) nakreslit „jedním tahem“.`,
+  ex: R`\(\sqrt x\) je spojitá na \(\langle0,+\infty)\) (v 0 zprava). \(\frac1x\) je spojitá na \((0,1\rangle\). \(\lfloor x\rfloor\) je spojitá na \(\langle0,1)\).`,
+  non: R`\(\lfloor x\rfloor\) není spojitá na \(\langle0,1\rangle\): v pravém krajním bodě 1 je limita zleva 0, ale \(\lfloor1\rfloor=1\).`,
+  ask: [['Proč jsou věty 29–31 jen pro spojité funkce na intervalu?', 'Na nespojité funkci neplatí: sgn na ⟨−1, 1⟩ nenabývá hodnoty ½. Na neintervalu také ne: 1/x na ℝ∖{0} nabývá kladné i záporné hodnoty, ale nikdy nuly.'],
+    ['Co dává spojitost na uzavřeném intervalu navíc?', 'Věta 31: funkce nabývá maxima i minima, a je tedy omezená (Důsledek 32). Na otevřeném intervalu to neplatí: x na (0, 1).'],
+    ['Je obraz intervalu spojitou funkcí interval?', 'Ano, Věta 30. Typ intervalu se ale může změnit: x² zobrazí (−1, 1) na ⟨0, 1).']],
+  pit: R`Na krajním bodě nestačí „spojitá“ v obvyklém smyslu, protože funkce vně intervalu definovaná být nemusí. Proto jednostranná spojitost.`,
+  rel: ['v29', 'v30', 'v31', 'd32', 'v33'] },
+
+{ id: 'extr', t: 'Extrém funkce',
+  def: R`<p>Nechť \(M\subset D_f\) a \(x\in M\). Funkce \(f\) nabývá v \(x\) <b>maxima na \(M\)</b>, jestliže \(f(y)\le f(x)\) pro všechna \(y\in M\); <b>minima</b>, platí-li \(f(y)\ge f(x)\) pro všechna \(y\in M\). Extrém je maximum nebo minimum.</p>
+<p><b>Lokální maximum</b> vzhledem k \(M\): existuje \(\delta>0\) s \(f(y)\le f(x)\) pro všechna \(y\in B(x,\delta)\cap M\) (lokální minimum obdobně). <b>Ostré</b>: \(f(y)\lt f(x)\) pro \(y\in P(x,\delta)\cap M\).</p>`,
+  say: R`Maximum na \(M\) je bod, kde má funkce největší hodnotu ze všech bodů \(M\). Lokální maximum je největší hodnota jen v nějakém malém okolí bodu. Každé maximum je lokální, opak neplatí.`,
+  ex: R`\(x^2\) má na \(\mathbb R\) v 0 minimum (ostré), maximum nemá. \(\sin x\) má maximum v bodech \(\frac\pi2+2k\pi\). Konstantní funkce má v každém bodě maximum i minimum (neostré).`,
+  non: R`\(f(x)=x\) na \((0,1)\) nemá maximum ani minimum: \(\sup=1\) se nenabývá. \(x^3\) má \(f'(0)=0\), ale v 0 extrém nemá.`,
+  ask: [['Kdy má funkce jistě maximum i minimum?', 'Věta 31: je-li spojitá na uzavřeném omezeném intervalu ⟨a, b⟩.'],
+    ['Jak souvisí lokální extrém s derivací?', 'Věta 40: má-li f ve vnitřním bodě lokální extrém a existuje f′(x), pak f′(x) = 0. Opak neplatí (x³ v 0) a extrém může být i tam, kde derivace není (|x| v 0).'],
+    ['Je rozdíl mezi maximem funkce a supremem jejích hodnot?', 'Ano. Maximum se nabývá v nějakém bodě, supremum hodnot nemusí: x na (0, 1) má supremum hodnot 1, ale maximum nemá.']],
+  pit: R`Extrém se vždy vztahuje k množině \(M\). A extrém „v bodě“ znamená bod \(x\), kde se nabývá, ne hodnotu \(f(x)\). U nutné podmínky (Věta 40) nezapomeň na <b>vnitřní</b> bod.`,
+  rel: ['v31', 'd32', 'v40', 'v41'] },
+
+{ id: 'der', t: 'Derivace funkce v bodě',
+  def: R`<p>Nechť \(f\) je definována na nějakém okolí bodu \(a\in\mathbb R\). Její derivace v \(a\) je</p>
+\[f'(a)=\lim_{h\to0}\frac{f(a+h)-f(a)}{h},\]
+<p>existuje-li tato limita v \(\mathbb R^*\). Derivace je <b>vlastní</b>, je-li konečná. Ekvivalentně \(f'(a)=\lim_{x\to a}\frac{f(x)-f(a)}{x-a}\).</p>`,
+  say: R`Zlomek \(\frac{f(a+h)-f(a)}{h}\) je směrnice sečny grafu bodů \([a,f(a)]\) a \([a+h,f(a+h)]\). Derivace je limita těchto směrnic, tedy směrnice tečny: jak rychle se funkce v bodě \(a\) mění.`,
+  ex: R`\((x^2)'(a)=\lim_{h\to0}\frac{(a+h)^2-a^2}{h}=\lim_{h\to0}(2a+h)=2a\).`,
+  non: R`\(|x|\) v 0: \(\frac{|h|}{h}=\mathrm{sgn}\,h\), limita neexistuje, derivace v 0 není. \(\sqrt[3]x\) v 0: \(\frac{h^{1/3}}{h}=h^{-2/3}\to+\infty\), derivace je <b>nevlastní</b>.`,
+  ask: [['Plyne z derivace spojitost?', 'Z vlastní ano (Věta 36): f(a + h) − f(a) = h · (f(a + h) − f(a))/h → 0 · f′(a) = 0. Z nevlastní ne: sgn má v 0 derivaci +∞, ale spojitá tam není.'],
+    ['Plyne ze spojitosti derivace?', 'Ne, |x| v 0.'],
+    ['Proč musí být f definovaná na okolí a?', 'Aby limita pro h → 0 měla smysl z obou stran. Je-li definovaná jen z jedné strany (√x v 0), mluvíme o jednostranné derivaci.']],
+  pit: R`Derivace je <b>limita</b>. V bodě, kde se mění předpis funkce, ji nelze spočítat dosazením do zderivovaného vzorce. Tam se počítá z definice (jednostranně).`,
+  rel: ['v36', 'v37', 'v38', 'v39'] },
+
+{ id: 'derj', t: 'Derivace funkce v bodě zprava a zleva',
+  def: R`<p>Derivace zprava a zleva:</p>
+\[f'_+(a)=\lim_{h\to0^+}\frac{f(a+h)-f(a)}{h},\qquad f'_-(a)=\lim_{h\to0^-}\frac{f(a+h)-f(a)}{h},\]
+<p>existují-li tyto limity v \(\mathbb R^*\). Stačí, aby \(f\) byla definovaná na příslušném jednostranném okolí <b>včetně</b> bodu \(a\). Derivace \(f'(a)\) existuje, právě když existují obě jednostranné a rovnají se.</p>`,
+  say: R`Směrnice sečen beru jen s body vpravo (zprava) nebo vlevo (zleva) od \(a\). Používá se v bodech, kde se mění předpis funkce, a na krajích definičního oboru.`,
+  ex: R`\(|x|\) v 0: \(f'_+(0)=1\), \(f'_-(0)=-1\), takže \(f'(0)\) neexistuje. \(\sqrt x\) v 0: \(f'_+(0)=+\infty\). Pro \(f(x)=x^2\) (\(x\le1\)), \(2x-1\) (\(x>1\)) vyjde \(f'_\pm(1)=2\), tedy \(f'(1)=2\).`,
+  non: R`Jednostranná derivace není totéž co jednostranná limita derivace. \(f(x)=x^2\sin\frac1x\), \(f(0)=0\): \(f'(0)=0\), ale \(\lim_{x\to0}f'(x)\) neexistuje.`,
+  ask: [['Jak se jednostranná derivace počítá v praxi?', 'Buď z definice, nebo podle Věty 44: je-li f spojitá zprava v a a existuje lim_{x→a+} f′(x), je f′₊(a) rovna této limitě.'],
+    ['Co když je funkce v bodě nespojitá?', 'Pak tam nemá vlastní derivaci (Věta 36). Jednostranná derivace může vyjít nevlastní, nebo neexistovat.']],
+  pit: R`Při výpočtu z definice dosazuj za \(f(a+h)\) předpis platný na <b>té straně</b>, ze které jdeš, a za \(f(a)\) skutečnou hodnotu v bodě \(a\).`,
+  rel: ['v44', 'v36'] },
+
+{ id: 'tecna', t: 'Tečna ke grafu funkce',
+  def: R`<p>Má-li \(f\) vlastní derivaci v bodě \(a\), je <b>tečna ke grafu</b> \(f\) v bodě \([a,f(a)]\) přímka</p>
+\[T_a=\big\{[x,y]\in\mathbb R^2;\ y=f(a)+f'(a)(x-a)\big\}.\]`,
+  say: R`Tečna je přímka, která prochází bodem grafu \([a,f(a)]\) a má směrnici \(f'(a)\). Je to limitní poloha sečen, když se druhý bod blíží k \(a\). Ze všech přímek bodem \([a,f(a)]\) nejlépe kopíruje graf v blízkosti \(a\).`,
+  ex: R`\(f(x)=x^2\), \(a=1\): \(f(1)=1\), \(f'(1)=2\), tečna \(y=1+2(x-1)=2x-1\).`,
+  non: R`\(|x|\) v 0 tečnu nemá (derivace neexistuje). \(\sqrt[3]x\) v 0 má nevlastní derivaci, takže podle definice tečnu nemá (geometricky by byla svislá).`,
+  ask: [['Má tečna s grafem jen jeden společný bod?', 'Ne. Tečna k x³ v 0 je osa y = 0 a graf ji protíná (inflexní bod). Tečna k sin x v π/2 je y = 1 a graf se jí dotýká v nekonečně mnoha bodech.'],
+    ['Jak tečna souvisí s konvexitou a inflexí?', 'Inflexní bod se definuje polohou grafu vůči tečně: graf přechází z jedné strany tečny na druhou.']],
+  pit: R`Tečna je definovaná jen pro <b>vlastní</b> derivaci. Nepleť si směrnici \(f'(a)\) s hodnotou \(f(a)\) v rovnici přímky.`,
+  rel: ['v36', 'v48', 'v49'] },
+
+{ id: 'konv', t: 'Konvexní a konkávní funkce',
+  def: R`<p>Funkce \(f\) je na intervalu \(I\) <b>konvexní</b>, jestliže pro všechna \(x_1,x_2\in I\) a \(\lambda\in\langle0,1\rangle\) platí</p>
+\[f\big(\lambda x_1+(1-\lambda)x_2\big)\le\lambda f(x_1)+(1-\lambda)f(x_2);\]
+<p><b>konkávní</b>, platí-li opačná nerovnost. <b>Ryze</b> konvexní (konkávní), platí-li ostrá nerovnost pro \(x_1\neq x_2\) a \(\lambda\in(0,1)\).</p>`,
+  say: R`Bod \(\lambda x_1+(1-\lambda)x_2\) leží mezi \(x_1\) a \(x_2\). Pravá strana je výška úsečky (sečny) spojující body grafu nad \(x_1\) a \(x_2\). Konvexní tedy znamená: <b>sečna leží nad grafem</b> (nebo na něm), graf je „prohnutý dolů“ jako \(\cup\). Konkávní je obráceně, \(\cap\).`,
+  ex: R`\(x^2\) a \(e^x\) jsou ryze konvexní na \(\mathbb R\), \(\ln x\) je ryze konkávní na \((0,+\infty)\). Lineární funkce je konvexní i konkávní zároveň (ale ne ryze).`,
+  non: R`\(x^3\) není na \(\mathbb R\) konvexní ani konkávní: na \((-\infty,0\rangle\) je konkávní, na \(\langle0,+\infty)\) konvexní, v 0 je inflexe. \(\frac1x\) je konvexní na \((0,+\infty)\), ale ne na \(\mathbb R\setminus\{0\}\) (to není interval).`,
+  ask: [['Jak se konvexita pozná bez definice?', 'Lemma 46: f je konvexní na I, právě když směrnice sečen rostou: pro x₁ < x₂ < x₃ je (f(x₂) − f(x₁))/(x₂ − x₁) ≤ (f(x₃) − f(x₂))/(x₃ − x₂). Věta 47: je-li f″ ≥ 0 na I, je f konvexní (f″ > 0 dá ryze konvexní).'],
+    ['Je |x| ryze konvexní?', 'Ne. Je konvexní, ale na ⟨0, 1⟩ je lineární a sečna splývá s grafem, takže ostrá nerovnost neplatí.'],
+    ['Co je inflexní bod?', 'Bod, kde graf přechází z jedné strany tečny na druhou. Typicky se tam mění konvexita na konkávnost (x³ v 0).']],
+  pit: R`Konvexita je vlastnost na <b>intervalu</b>, ne v bodě. A pozor na názvy: konvexní je „\(\cup\)“ (jako \(x^2\)), ne „vypouklý nahoru“.`,
+  rel: ['l46', 'v47', 'v48', 'v49'] }
+];
+
+function keyCard(k, i, quiz) {
+  const rel = (k.rel || []).map(id => { const r = proofById(id); return r ? `<button class="needref" data-ref="${id}">${r.no} ${r.name} ›</button>` : ''; }).join('');
+  const def = `<div class="thm kp-def"><span class="lbl">Definice (přesně, jak ji napsat)</span>${k.def}</div>`;
+  return `<article class="card kp" id="kp-${k.id}">
+<header class="kp-h"><span class="kp-n">${i + 1}</span><h2 class="h3">${k.t}</h2></header>
+${quiz ? `<details class="kp-hide"><summary>Nejdřív si ji řekni nahlas. Pak ukaž definici</summary>${def}</details>` : def}
+<div class="kp-say"><span class="lbl">Jak to vysvětlit vlastními slovy</span><p>${k.say}</p></div>
+<div class="kp-ex"><div><span class="lbl">Příklad</span><p>${k.ex}</p></div><div><span class="lbl">Protipříklad a hranice pojmu</span><p>${k.non}</p></div></div>
+${k.neg ? `<div class="kp-neg"><span class="lbl">Negace (častý doplňující dotaz)</span><p>${k.neg}</p></div>` : ''}
+<div class="kp-ask"><span class="lbl">Na co se zkoušející doptá</span>${k.ask.map(([q, a]) => `<details class="qa"><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>
+<p class="kp-pit"><b>Pozor:</b> ${k.pit}</p>
+${rel ? `<div class="kp-rel"><span class="lbl">Souvisí s větami</span><div class="needs">${rel}</div></div>` : ''}
+</article>`;
+}
+
+function viewKeys() {
+  const quiz = !!state.kquiz;
+  return band('', R`<span class="eyebrow">Ústní zkouška</span><h1 class="h1">Klíčové pojmy.</h1>
+<p class="sub">Čtrnáct pojmů z oficiálních požadavků. Body za ně nejsou, ale podstatná neznalost kteréhokoli z nich znamená u ústní automaticky F.</p>
+<div class="ctas"><button class="pill" data-act="kquiz">${quiz ? 'Ukázat všechny definice' : 'Zkoušej mě: skrýt definice'}</button><button class="more" data-go="ustni">Zpět na ústní</button></div>`, 'center')
+    + band('alt', R`<div class="note"><h3 class="h3">Co přednášející u definice chce</h3><ul class="plain">
+<li><b>Přesné znění</b> s kvantifikátory ve správném pořadí a se zápisem z přednášky (\(B(c,\varepsilon)\), \(P(c,\delta)\), \(\mathbb R^*\)).</li>
+<li><b>Porozumění</b>: umět říct vlastními slovy, co která část definice znamená.</li>
+<li><b>Použití</b>: příklad, protipříklad a rozhodnout, jestli daný objekt definici splňuje. U toho se typicky doptává na negaci a na souvislosti s větami.</li></ul>
+<p class="small muted">Definice podle poznámek k přednášce. Vysvětlení, příklady a otázky jsou sepsané vlastními slovy jako příprava; nejsou od přednášejícího.</p></div>
+<nav class="chips kp-toc" aria-label="Obsah">${KEYS.map((k, i) => `<button class="chip" data-kp="${k.id}">${i + 1}. ${k.t}</button>`).join('')}</nav>
+<div class="kp-list">${KEYS.map((k, i) => keyCard(k, i, quiz)).join('')}</div>`, 'narrow');
+}
+
 /* ---------- FX: přechody mezi stránkami, odhalování při scrollu, světlo pod kurzorem, počítání čísel ----------
    Jen opacity a transform (běží na GPU, neblokují scroll). Při prefers-reduced-motion se nic nehýbe. */
 const FX_ON = () => !reduceMotion();
@@ -4525,11 +4766,11 @@ function viewOral() {
   const total = ORAL.reduce((n, g) => n + g[2].length, 0), done = Object.values(st).filter(Boolean).length;
   return band('', R`<span class="eyebrow">Ústní zkouška</span><h1 class="h1">Definice, věty, důkazy.</h1>
 <p class="sub">Podle oficiálních požadavků přednášejícího. Odškrtávej si, co umíš vysvětlit. Důkazy najdeš v samostatné záložce.</p>
-<div class="ctas"><button class="pill" data-go="dukazy">Přejít na důkazy</button><a class="more" href="https://www2.karlin.mff.cuni.cz/~barta/FSV/mat1/mat1_pozadavky.html" target="_blank" rel="noopener">Oficiální seznam</a></div>`, 'center')
+<div class="ctas"><button class="pill" data-go="ustni-pojmy">Klíčové pojmy vysvětlené</button><button class="pill ghost" data-go="dukazy">Důkazy</button><a class="more" href="https://www2.karlin.mff.cuni.cz/~barta/FSV/mat1/mat1_pozadavky.html" target="_blank" rel="noopener">Oficiální seznam</a></div>`, 'center')
   + band('dark', R`<h2 class="h1">Jak vypadá zadání.</h2>
 <p class="sub">Vylosuješ si sadu otázek, 40 minut si odpovědi bez pomůcek písemně připravíš a pak je vysvětlíš zkoušejícímu. Body jsou podle přednášejícího orientační.</p>
 <div class="oral-fmt">
- <div class="step3"><span class="n">1 · klíčový pojem</span><b class="opts">0 b.</b><p class="muted">Definice jednoho klíčového pojmu. Body za ni nejsou, ale podstatná neznalost znamená automaticky F.</p></div>
+ <div class="step3"><span class="n">1 · klíčový pojem</span><b class="opts">0 b.</b><p class="muted">Definice jednoho klíčového pojmu. Body za ni nejsou, ale podstatná neznalost znamená automaticky F.</p><button class="more" data-go="ustni-pojmy">Klíčové pojmy</button></div>
  <div class="step3"><span class="n">2 · dvě definice a věta</span><b class="opts">14 b.</b><p class="muted">Po 3 bodech za každé znění, 5 bodů za odpovědi na doplňující dotazy.</p></div>
  <div class="step3"><span class="n">3 · věta s lehčím důkazem</span><b class="opts">13 b.</b><p class="muted">3 body za znění, 10 za vysvětlení důkazu.</p><button class="more" data-go="dukazy" data-pchset="req-L">Lehčí důkazy</button></div>
  <div class="step3"><span class="n">4 · věta s obtížnějším důkazem</span><b class="opts">23 b.</b><p class="muted">3 body za znění, 20 za vysvětlení důkazu.</p><button class="more" data-go="dukazy" data-pchset="req-T">Těžší důkazy</button></div>
@@ -4552,7 +4793,7 @@ function viewOral() {
 </div></details></article>`, 'narrow')
   + band('alt', R`<h2 class="h2">Co musíš umět.</h2>
 <p class="muted">Seznam definic a vět bez důkazu podle oficiálních požadavků. Věty s důkazem (${REQ.L.length} s lehčím, ${REQ.T.length} s obtížnějším důkazem) jsou v záložce <button class="more" data-go="dukazy">Důkazy</button> Odškrtnuto: <b id="oralDone">${done}</b> z ${total}.</p>
-<div class="tiles">${ORAL.map(([h, note, items], gi) => R`<div class="note${gi === 0 ? ' warn' : ''}"><h3 class="h3">${h}</h3>${note ? `<p class="small muted">${note}</p>` : ''}${items.map((it, ii) => `<label class="check"><input type="checkbox" data-oral="${gi}-${ii}" ${st[gi + '-' + ii] ? 'checked' : ''}> ${it}</label>`).join('')}</div>`).join('')}</div>`);
+<div class="tiles">${ORAL.map(([h, note, items], gi) => R`<div class="note${gi === 0 ? ' warn' : ''}"><h3 class="h3">${h}</h3>${note ? `<p class="small muted">${note}</p>` : ''}${gi === 0 ? '<button class="more" data-go="ustni-pojmy">Každý pojem vysvětlený</button>' : ''}${items.map((it, ii) => `<label class="check"><input type="checkbox" data-oral="${gi}-${ii}" ${st[gi + '-' + ii] ? 'checked' : ''}> ${it}</label>`).join('')}</div>`).join('')}</div>`);
 }
 
 /* ---------- render ---------- */
@@ -4568,6 +4809,7 @@ function render() {
   else if (v === 'dukazy') html = viewProofs();
   else if (PROOF_RE.test(v) && proofById(v.match(PROOF_RE)[1])) html = viewProof(proofById(v.match(PROOF_RE)[1]));
   else if (v === 'ustni') html = viewOral();
+  else if (v === 'ustni-pojmy') html = viewKeys();
   else if (v === 'nahodna') html = viewTest(state.randomKind, 0, state.randomSeed ?? (state.randomSeed = Math.floor(Math.random() * 1e9)));
   else if (TEST_RE.test(v) && +v.match(TEST_RE)[2] >= 1 && +v.match(TEST_RE)[2] <= TESTDEF[v.match(TEST_RE)[1]].n) { const m = v.match(TEST_RE); html = viewTest(m[1], +m[2]); }
   else { state.view = 'domu'; html = viewHome(); }
@@ -4589,7 +4831,7 @@ function typeset(el) {
   return Promise.resolve();
 }
 /* posuvník jen tam, kde se obsah opravdu nevejde (desítky trvalých posuvných oblastí zpomalovaly scrollování) */
-const OVX_SEL = 'mjx-container[display="true"], .task, details > div, .stmt, .goal, .tl-m, .thm, .proof ol li';
+const OVX_SEL = 'mjx-container[display="true"], .task, details > div, .stmt, .goal, .tl-m, .thm, .proof ol li, .kp-ex > div, .kp-neg, .kp-say';
 function markOverflow(root = $view) {
   if (!root) return;
   const els = [...root.querySelectorAll(OVX_SEL)];
@@ -4678,9 +4920,12 @@ document.addEventListener('click', e => {
     toast(val ? `✓ ${proofById(id).no} označena jako umím (${kc}/${PROOF_TOTAL})` : `${proofById(id).no} vrácena mezi neumím`);
     return;
   }
+  const kp = e.target.closest('[data-kp]');
+  if (kp) { document.getElementById('kp-' + kp.dataset.kp)?.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' }); return; }
   const a = e.target.closest('[data-act]');
   if (!a) return;
   const act = a.dataset.act;
+  if (act === 'kquiz') { state.kquiz = !state.kquiz; const y = scrollY; render(); scrollTo(0, y); return; }
   if (act === 'random') { state.randomKind = a.dataset.kind || 'p2'; state.randomSeed = Math.floor(Math.random() * 1e9); go('nahodna'); }
   else if (act === 'batch+') { state.batch++; store.set('batch', state.batch); render(); toast(`Nová sada č. ${state.batch + 1}`); }
   else if (act === 'batch0') { state.batch = 0; store.set('batch', 0); render(); }
