@@ -2130,6 +2130,81 @@ ${D(R`\frac{1-\cos(${kx})}{e^{x^2}-1}=\frac{1-\cos(${kx})}{(${kx})^2}\cdot ${k *
   };
 });
 
+fam('L16', 'fl', r => {
+  const v = ri(r, 0, 3);
+  if (v === 0) {
+    const q = pick(r, [1, -1, 2, -2]), a = ri(r, 1, 4), b = ri(r, 1, 5);
+    const num = q === 2 ? R`x+${a}` : q === -2 ? R`-x+${a}` : q === 1 ? R`x+${a}` : R`-x-${a}`;
+    const den = Math.abs(q) === 2 ? R`2x+${b + 2 * a}` : R`x+${a + b}`;
+    const L = Math.abs(q) === 2 ? (q > 0 ? .5 : -.5) : (q > 0 ? 1 : -1);
+    const Lt = Math.abs(q) === 2 ? (q > 0 ? R`\frac12` : R`-\frac12`) : (q > 0 ? '1' : '-1');
+    const val = Math.acos(L), ans = { '0.5': R`\frac{\pi}{3}`, '-0.5': R`\frac{2\pi}{3}`, '1': '0', '-1': R`\pi` }['' + L];
+    return {
+      task: D(R`\lim_{x\to+\infty}\arccos\frac{${num}}{${den}}`), ans,
+      sol: R`<p>Vnitřní funkce: ${I(R`\frac{${num}}{${den}}\to ${Lt}`)} (vytkneme ${I('x')} v čitateli i jmenovateli). Pro velká ${I('x')} leží zlomek v ${I(R`[-1,1]`)}, takže výraz je definovaný na okolí ${I(R`+\infty`)}.</p>
+<p>${I(R`\arccos`)} je <b>spojitá</b> na ${I(R`[-1,1]`)} (i v krajních bodech, jednostranně), takže podle ${VLSF} (podmínka S) je limita ${I(R`\arccos\left(${Lt}\right)=${ans}`)}.</p>
+<p><b>Pozor:</b> u ${I(R`\pm1`)} nejde o „dosazení do vzorce“ bez rozmyslu: musí platit, že vnitřní funkce z intervalu ${I(R`[-1,1]`)} nevyskočí. Tady ${I(R`|${num}|\lt|${den}|`)} pro velká ${I('x')}.</p>`,
+      f0: x => { const n = q === 2 ? x + a : q === -2 ? -x + a : q === 1 ? x + a : -x - a, d = Math.abs(q) === 2 ? 2 * x + b + 2 * a : x + a + b; return Math.acos(n / d); }, at: Infinity, val, big: 1e12
+    };
+  }
+  if (v === 1) {
+    const m = ri(r, 1, 2), s = pick(r, [1, -1]), k = s * m, inv = r() < .5;
+    const L = s / 2, fn = inv ? R`\arcsin` : R`\arccos`;
+    const val = inv ? Math.asin(L) : Math.acos(L);
+    const ans = inv ? (s > 0 ? R`\frac{\pi}{6}` : R`-\frac{\pi}{6}`) : (s > 0 ? R`\frac{\pi}{3}` : R`\frac{2\pi}{3}`);
+    const mm = m === 1 ? '' : m * m, mx = m === 1 ? 'x' : `${m}x`, kx = k === 1 ? '+x' : k === -1 ? '-x' : (k > 0 ? `+${k}x` : `${k}x`);
+    return {
+      task: D(R`\lim_{x\to+\infty}${fn}\left(\sqrt{${mm}x^2${kx}}-${mx}\right)`), ans,
+      sol: R`<p>Nejdřív vnitřní funkce (typ ${I(R`\infty-\infty`)}, rozšíříme součtem):</p>
+${D(R`\sqrt{${mm}x^2${kx}}-${mx}=\frac{${k}x}{\sqrt{${mm}x^2${kx}}+${mx}}=\frac{${k}}{\sqrt{${m * m}${k > 0 ? '+' : ''}\frac{${k}}{x}}+${m}}\to\frac{${k}}{${2 * m}}=${s > 0 ? R`\frac12` : R`-\frac12`}.`)}
+<p>${I(fn)} je spojitá na ${I(R`[-1,1]`)}, takže podle ${VLSF} (podmínka S) je limita ${I(R`${fn}\left(${s > 0 ? R`\frac12` : R`-\frac12`}\right)=${ans}`)}.</p>`,
+      f0: x => { const t = k * x / (Math.sqrt(m * m * x * x + k * x) + m * x); return inv ? Math.asin(t) : Math.acos(t); }, at: Infinity, val, big: 1e6
+    };
+  }
+  if (v === 2) {
+    const p = ri(r, 1, 5); let q = ri(r, 1, 5); if (q === p) q = p === 5 ? 1 : p + 1;
+    const a = ri(r, 1, 4), b = ri(r, 1, 4), px = cx(p), qx = cx(q);
+    return {
+      task: D(R`\lim_{x\to+\infty}\frac{\ln\left(${a}+e^{${px}}\right)}{\ln\left(${b}+e^{${qx}}\right)}`), ans: fr(p, q),
+      sol: R`<p>Typ ${I(R`\frac\infty\infty`)}. Uvnitř logaritmu vytkneme dominantní člen ${I(R`e^{${px}}`)}, resp. ${I(R`e^{${qx}}`)}:</p>
+${D(R`\ln\left(${a}+e^{${px}}\right)=${px}+\ln\left(1+${a}e^{-${px}}\right),\qquad \ln\left(${b}+e^{${qx}}\right)=${qx}+\ln\left(1+${b}e^{-${qx}}\right).`)}
+<p>Druhé sčítance jdou k ${I(R`\ln 1=0`)} (spojitost ${I(R`\ln`)}). Vydělíme čitatel i jmenovatel ${I('x')}:</p>
+${D(R`\frac{${p}+\frac1x\ln\left(1+${a}e^{-${px}}\right)}{${q}+\frac1x\ln\left(1+${b}e^{-${qx}}\right)}\to ${fr(p, q)}.`)}
+<p><b>Častá chyba:</b> „${I(R`\ln(a+b)=\ln a+\ln b`)}“. To neplatí; správně se vytýká uvnitř logaritmu a pak se použije ${I(R`\ln(uv)=\ln u+\ln v`)}.</p>`,
+      f0: x => Math.log(a + Math.exp(p * x)) / Math.log(b + Math.exp(q * x)), at: Infinity, val: p / q, big: 50
+    };
+  }
+  const k = ri(r, 1, 5), kx = cx(k);
+  return {
+    task: D(R`\lim_{x\to+\infty}x\left(\frac{\pi}{2}-\mathrm{arctg}\,${kx}\right)`), ans: fr(1, k),
+    sol: R`<p>Typ ${I(R`\infty\cdot0`)}. Pro ${I(R`t>0`)} platí ${I(R`\frac\pi2-\mathrm{arctg}\,t=\mathrm{arctg}\,\frac1t`)} (úhly v pravoúhlém trojúhelníku se doplňují do ${I(R`\frac\pi2`)}). Tedy</p>
+${D(R`x\left(\frac{\pi}{2}-\mathrm{arctg}\,${kx}\right)=x\,\mathrm{arctg}\,\frac{1}{${kx}}=\frac{\mathrm{arctg}\,y}{y}\cdot\frac{1}{${k}},\qquad y=\frac{1}{${kx}}\to0+.`)}
+<p>Známá limita ${I(R`\lim_{y\to0}\frac{\mathrm{arctg}\,y}{y}=1`)} se odvodí substitucí ${I(R`y=\mathrm{tg}\,t`)}: ${I(R`\frac{t}{\mathrm{tg}\,t}=\frac{t}{\sin t}\cos t\to1`)}. Vnitřní funkce ${I(R`\frac1{${kx}}`)} je nenulová (podmínka P ${VLSF}), takže limita je ${I(R`1\cdot\frac1{${k}}=${fr(1, k)}`)}.</p>`,
+    f0: x => x * (Math.PI / 2 - Math.atan(k * x)), at: Infinity, val: 1 / k, big: 1e5
+  };
+});
+fam('G10', 'der', r => {
+  const r1 = ri(r, -3, 0), r2 = ri(r, 1, 3), isMax = r() < .5;
+  const sl = r1 + r2, ic = -r1 * r2, line = poly([[sl, 'x'], [ic, '']]) || '0';
+  const lin = x => sl * x + ic, g = x => isMax ? Math.max(x * x, lin(x)) : Math.min(x * x, lin(x));
+  const op = isMax ? R`\max` : R`\min`;
+  const inside = isMax ? line : 'x^2', outside = isMax ? 'x^2' : line;
+  const gin = isMax ? `${sl}` : '2x', gout = isMax ? '2x' : `${sl}`;
+  const dl1 = isMax ? 2 * r1 : sl, dr1 = isMax ? sl : 2 * r1, dl2 = isMax ? sl : 2 * r2, dr2 = isMax ? 2 * r2 : sl;
+  return {
+    task: R`<p>Vyšetřete spojitost a derivaci (příp. jednostranné derivace) funkce</p>${D(R`g(x)=${op}\left\{x^2,\ ${line}\right\}.`)}`,
+    ansHtml: `spojitá na ℝ; g′(x) = ${gin} na (${r1}, ${r2}), g′(x) = ${gout} pro x < ${r1} a x > ${r2}; v bodech ${r1} a ${r2} derivace neexistuje (g′₋(${r1}) = ${dl1}, g′₊(${r1}) = ${dr1}, g′₋(${r2}) = ${dl2}, g′₊(${r2}) = ${dr2})`,
+    sol: R`<p><b>Kde se funkce „přepínají“:</b> ${I(R`x^2=${line}\iff x^2-${sl === 0 ? '' : `(${sl})x`}${ic === 0 ? '' : `-${ic}`}=0\iff(x-(${r1}))(x-${r2})=0`)}, tedy ${I(R`x=${r1}`)} a ${I(R`x=${r2}`)}. Mezi kořeny je parabola pod přímkou, vně nad ní.</p>
+<p>Proto ${I(R`g(x)=${inside}`)} na ${I(R`[${r1},${r2}]`)} a ${I(R`g(x)=${outside}`)} pro ${I(R`x\le ${r1}`)} a ${I(R`x\ge ${r2}`)}. ${I(R`g`)} je maximum/minimum dvou spojitých funkcí, takže je <b>spojitá na</b> ${I(R`\mathbb R`)} (${I(R`${op}\{u,v\}=\frac{u+v\pm|u-v|}{2}`)}).</p>
+<p><b>Mimo body ${I(r1)}, ${I(r2)}</b> se ${I('g')} na okolí shoduje s jednou z funkcí: ${I(R`g'(x)=${gin}`)} na ${I(R`(${r1},${r2})`)} a ${I(R`g'(x)=${gout}`)} pro ${I(R`x\lt ${r1}`)} nebo ${I(R`x>${r2}`)}.</p>
+<p><b>V bodech přepnutí</b> (${I('g')} je spojitá, takže jednostranné derivace jsou limity derivace zleva/zprava, Věta 44; stejně to vyjde i přímo z definice): ${I(R`g'_-(${r1})=${dl1}`)}, ${I(R`g'_+(${r1})=${dr1}`)}; ${I(R`g'_-(${r2})=${dl2}`)}, ${I(R`g'_+(${r2})=${dr2}`)}. V obou bodech se liší (protože ${I(R`2\cdot(${r1})\neq ${sl}\neq 2\cdot ${r2}`)}), takže ${I(R`g'(${r1})`)} ani ${I(R`g'(${r2})`)} <b>neexistuje</b>: graf tam má „hrot“.</p>
+<p><b>Častá chyba:</b> zderivovat jen „vzorec“ a zapomenout, že se v bodech přepnutí musí jednostranné derivace spočítat zvlášť.</p>`,
+    ok: () => { const h = 1e-6, D1 = (x, s) => (g(x + s * h) - g(x)) / (s * h);
+      return near(D1(r1, -1), dl1, 1e-4) && near(D1(r1, 1), dr1, 1e-4) && near(D1(r2, -1), dl2, 1e-4) && near(D1(r2, 1), dr2, 1e-4) && dl1 !== dr1 && dl2 !== dr2
+        && near(ND(g, (r1 + r2) / 2), isMax ? sl : r1 + r2) && near(ND(g, r2 + 1), isMax ? 2 * (r2 + 1) : sl); }
+  };
+});
+
 /* ---------- písemky ---------- */
 const TESTDEF = {
   p2: { title: '2. zápočtová písemka', short: '2. test · posloupnosti', n: 20, lists: [['R1', 'R3', 'R4', 'R5', 'R2', 'R7', 'R8', 'R6', 'R10', 'R9'], ['N1', 'N3', 'N2', 'N4', 'N6', 'N5', 'N8', 'N7', 'N9'], ['S4', 'S1', 'S5', 'S2', 'S7', 'S6', 'S3', 'S10', 'S8', 'S9']], pts: [10, 10, 10], max: 30, pass: 20, min: 30, base: 1000, key: i => 't' + i },
