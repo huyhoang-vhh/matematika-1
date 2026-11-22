@@ -5577,7 +5577,7 @@ function examPick(note) {
 <p class="hp-lead">Kdy jdeš na zkoušku?</p>
 <p class="hp-meta">Vyber termín písemné části, ústní bývá hned další den. Podle termínu se nastaví odpočet. Web si ho zapamatuje v tomto prohlížeči, takže ho nemusíš zadávat znovu.</p>
 ${terms.length ? `<div class="ex-terms">${terms.map(e => `<button type="button" class="ex-t" data-act="exam-set" data-d="${e.d}"><b>${cap(fmtS(dOf(e.d)))}</b><small>${e.what.replace('Zkouška: ', '')}</small></button>`).join('')}</div>` : ''}
-<div class="ex-other"><label class="small muted" for="exDate">Jiné datum, třeba opravný termín:</label><span class="ex-row"><input type="date" id="exDate" class="ex-date" min="${isoOf(today())}"><button type="button" class="pill sm" data-act="exam-custom">Uložit termín</button></span></div>
+<div class="ex-other"><label class="small muted" for="exDate">Jiné datum, třeba opravný termín:</label><span class="ex-row"><input type="date" id="exDate" class="ex-date" min="${isoOf(today())}" aria-describedby="exHint"><span class="small muted" id="exHint">uloží se samo</span></span></div>
 <button type="button" class="hp-hide" data-act="exam-set" data-d="?">Termín ještě nevím</button></div>`;
 }
 function examPanel() {
@@ -6071,6 +6071,13 @@ document.addEventListener('change', e => {
   const t = e.target;
   if (t.dataset.oral) { const st = store.get('oral2', {}); st[t.dataset.oral] = t.checked; store.set('oral2', st); const od = document.getElementById('oralDone'); if (od) od.textContent = Object.values(st).filter(Boolean).length; return; }
   if (t.matches && t.matches('[data-score]')) { clearTimeout(scoreTimer); saveScore(t.value); return; }
+  if (t.id === 'exDate') {
+    /* vlastní termín zkoušky se uloží hned po výběru data; neúplné datum při psaní (např. rok 0002) se ignoruje */
+    const d = t.value, dd = /^\d{4}-\d{2}-\d{2}$/.test(d) ? daysTo(d) : -1;
+    if (dd < 0 || dd > 400) return;
+    store.set('examDate', d); const y = scrollY; render(); scrollTo(0, y);
+    toast(`Termín uložen (${fmtS(dOf(d))}). Web si ho pamatuje v tomto prohlížeči.`); return;
+  }
   if (t.id === 'tdone') {
     const mt = state.view.match(TEST_RE); if (!mt) return;
     const T = TESTDEF[mt[1]], key = T.key(+mt[2]), rec = store.get(key, {});
