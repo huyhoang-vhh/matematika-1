@@ -2205,6 +2205,63 @@ fam('G10', 'der', r => {
   };
 });
 
+/* G11: limita jako derivace a derivace inverzní funkce (17. přednáška) */
+fam('G11', 'der', r => {
+  const v = ri(r, 0, 4);
+  const NOTE = R`<p><b>Proč to smíme:</b> limita ${I(R`\lim_{x\to a}\frac{f(x)-f(a)}{x-a}`)} je přesně definice ${I(R`f'(a)`)}. Funkci ${I('f')} umíme derivovat podle vzorců, takže limitu nemusíme počítat úpravami.</p>`;
+  if (v === 0) {
+    const n = ri(r, 3, 6), a = pick(r, [-2, -1, 2, 3]), an = a ** n;
+    const xa = a < 0 ? R`x+${-a}` : R`x-${a}`, num = an < 0 ? R`x^{${n}}+${-an}` : R`x^{${n}}-${an}`;
+    return {
+      task: D(R`\lim_{x\to${a}}\frac{${num}}{${xa}}`), ans: '' + n * a ** (n - 1),
+      sol: R`<p>Typ ${I(R`\frac00`)}. Pro ${I(R`f(x)=x^{${n}}`)} je ${I(R`f(${a})=${an}`)}, takže zlomek je ${I(R`\frac{f(x)-f(${a})}{x-(${a})}`)}.</p>${NOTE}
+<p>${I(R`f'(x)=${n}x^{${n - 1}}`)}, tedy limita je ${I(R`f'(${a})=${n}\cdot(${a})^{${n - 1}}=${n * a ** (n - 1)}`)}.</p>
+<p>Jinak by šlo vydělit ${I(R`${num}`)} výrazem ${I(xa)} (vzorec ${I(R`x^n-a^n=(x-a)(x^{n-1}+\dots+a^{n-1})`)}), ale přes derivaci je to na jeden řádek.</p>`,
+      f0: x => (x ** n - an) / (x - a), at: a, val: n * a ** (n - 1), h: 1e-6
+    };
+  }
+  if (v === 1) {
+    const c = ri(r, 2, 6), k = ri(r, 1, 4);
+    return {
+      task: D(R`\lim_{x\to${c}}\frac{\ln x-\ln ${c}}{${k === 1 ? '' : k}x-${k * c}}`), ans: fr(1, k * c),
+      sol: R`<p>Typ ${I(R`\frac00`)}. Jmenovatel je ${I(R`${k === 1 ? '' : k + R`\,`}(x-${c})`)}; ${k === 1 ? '' : R`konstantu ${I(R`\frac1{${k}}`)} vytkneme. `}Zbylý zlomek ${I(R`\frac{\ln x-\ln ${c}}{x-${c}}`)} je pro ${I(R`f=\ln`)} přesně ${I(R`\frac{f(x)-f(${c})}{x-${c}}`)}.</p>${NOTE}
+<p>${I(R`(\ln x)'=\frac1x`)}, tedy limita je ${I(R`\frac1{${k}}\cdot\frac1{${c}}=${fr(1, k * c)}`)}.</p>`,
+      f0: x => (Math.log(x) - Math.log(c)) / (k * x - k * c), at: c, val: 1 / (k * c), h: 1e-6
+    };
+  }
+  if (v === 2) {
+    const ch = pick(r, [[1, R`\frac{\pi}{4}`, 1, 2], [-1, R`-\frac{\pi}{4}`, 1, 2], [0, '0', 1, 1]]), [a, fa, p, q] = ch;
+    const xa = a === 0 ? 'x' : a < 0 ? 'x+1' : 'x-1', num = a === 0 ? R`\mathrm{arctg}\,x` : a < 0 ? R`\mathrm{arctg}\,x+\frac{\pi}{4}` : R`\mathrm{arctg}\,x-\frac{\pi}{4}`;
+    return {
+      task: D(R`\lim_{x\to${a}}\frac{${num}}{${xa}}`), ans: fr(p, q),
+      sol: R`<p>Typ ${I(R`\frac00`)}. Pro ${I(R`f=\mathrm{arctg}`)} je ${I(R`f(${a})=${fa}`)}, takže zlomek je ${I(R`\frac{f(x)-f(${a})}{x-(${a})}`)}.</p>${NOTE}
+<p>${I(R`(\mathrm{arctg}\,x)'=\frac1{1+x^2}`)}, tedy limita je ${I(R`\frac1{1+(${a})^2}=${fr(p, q)}`)}.</p>`,
+      f0: x => (Math.atan(x) - Math.atan(a)) / (x - a), at: a, val: p / q, h: 1e-6
+    };
+  }
+  if (v === 3) {
+    const m = ri(r, 2, 5), c = m * m;
+    return {
+      task: D(R`\lim_{x\to${c}}\frac{\sqrt{x}-${m}}{x-${c}}`), ans: fr(1, 2 * m),
+      sol: R`<p>Typ ${I(R`\frac00`)}. Pro ${I(R`f(x)=\sqrt x`)} je ${I(R`f(${c})=${m}`)}, takže zlomek je ${I(R`\frac{f(x)-f(${c})}{x-${c}}`)}.</p>${NOTE}
+<p>${I(R`(\sqrt x)'=\frac{1}{2\sqrt x}`)} pro ${I(R`x>0`)}, tedy limita je ${I(R`\frac{1}{2\sqrt{${c}}}=${fr(1, 2 * m)}`)}. (Stejně to vyjde rozšířením výrazem ${I(R`\sqrt x+${m}`)}.)</p>`,
+      f0: x => (Math.sqrt(x) - m) / (x - c), at: c, val: 1 / (2 * m), h: 1e-6
+    };
+  }
+  const p = ri(r, 1, 4), q = ri(r, -3, 3), a = pick(r, [0, 1, -1]);
+  const f = x => x ** 3 + p * x + q, b = f(a), d = 3 * a * a + p;
+  const fx = poly([[1, 'x^3'], [p, 'x'], [q, '']]);
+  return {
+    task: R`<p>Funkce ${I(R`f(x)=${fx}`)} je na ${I(R`\mathbb R`)} rostoucí. Spočtěte ${I(R`(f^{-1})'(${b})`)}.</p>`, ans: fr(1, d),
+    sol: R`<p>${I(R`f'(x)=3x^2+${p}>0`)}, takže ${I('f')} je rostoucí a spojitá a inverzní funkce existuje. Vzorec pro ${I(R`f^{-1}`)} nepotřebujeme.</p>
+<p><b>Najdi ${I('a')} s ${I(R`f(a)=${b}`)}:</b> zkusíme malá celá čísla, ${I(R`f(${a})=${b}`)}. Protože ${I('f')} je prostá, je to jediné takové ${I('a')}.</p>
+<p>Podle Věty 39 (${I(R`f'(${a})=${d}\neq0`)}): ${I(R`(f^{-1})'(${b})=\frac{1}{f'(${a})}=${fr(1, d)}`)}.</p>
+<p><b>Častá chyba:</b> dosadit ${I(R`${b}`)} do ${I(R`f'`)}, tedy psát ${I(R`\frac1{f'(${b})}`)}. Derivace se bere v bodě ${I('a')}, kde ${I(R`f(a)=${b}`)}.</p>`,
+    ok: () => { let lo = -50, hi = 50; const inv = y => { let l = lo, h = hi; for (let i = 0; i < 200; i++) { const m = (l + h) / 2; if (f(m) < y) l = m; else h = m; } return (l + h) / 2; };
+      return near(inv(b), a, 1e-6) && near((inv(b + 1e-5) - inv(b - 1e-5)) / 2e-5, 1 / d, 1e-4); }
+  };
+});
+
 /* ---------- písemky ---------- */
 const TESTDEF = {
   p2: { title: '2. zápočtová písemka', short: '2. test · posloupnosti', n: 20, lists: [['R1', 'R3', 'R4', 'R5', 'R2', 'R7', 'R8', 'R6', 'R10', 'R9'], ['N1', 'N3', 'N2', 'N4', 'N6', 'N5', 'N8', 'N7', 'N9'], ['S4', 'S1', 'S5', 'S2', 'S7', 'S6', 'S3', 'S10', 'S8', 'S9']], pts: [10, 10, 10], max: 30, pass: 20, min: 30, base: 1000, key: i => 't' + i },
@@ -3078,7 +3135,7 @@ ${D(R`\lim_{x\to b^-}f(x)=\sup f\big((a,b)\big),\qquad \lim_{x\to a^+}f(x)=\inf 
 <li>„Dokázat“ existenci limity Heineho větou pomocí <b>jedné</b> posloupnosti. Jedna posloupnost stačí jen k důkazu <b>neexistence</b> (dvě různé hodnoty), ne existence.</li>
 <li>U Heineho věty vybrat posloupnost, která bodu ${I('c')} nabývá (${I(R`x_n=c`)}), nebo v něm vůbec nekonverguje.</li></ul></div>` },
   { id: 'derivace', title: 'Spojitost a derivace', ready: false, html: R`
-<p class="lead">Ve zkoušce je za to třetí příklad (10 bodů). Zatím jsou tu věty o spojitých funkcích, elementární funkce (13.–15. přednáška) a začátek derivací: definice, vztah ke spojitosti, aritmetika a derivace složené funkce (16. přednáška). Derivace inverzní a elementárních funkcí, lokální extrémy a věty o střední hodnotě (17.–18. přednáška) doplníme, až budou probrané.</p>
+<p class="lead">Ve zkoušce je za to třetí příklad (10 bodů). Zatím jsou tu věty o spojitých funkcích, elementární funkce (13.–15. přednáška) a derivace: definice, vztah ke spojitosti, aritmetika a derivace složené funkce (16. přednáška), derivace inverzní a elementárních funkcí a nutná podmínka lokálního extrému (17. přednáška). Věty o střední hodnotě, monotonii a l’Hospitalovo pravidlo (18. přednáška) doplníme, až budou probrané.</p>
 <h3>Spojité funkce na intervalu</h3>
 <div class="thm"><span class="lbl">Nabývání mezihodnot (Bolzano, Věta 29)</span>
 <p>Je-li ${I('f')} spojitá na ${I(R`\langle a,b\rangle`)} a ${I(R`f(a)\lt f(b)`)}, pak pro každé ${I(R`y\in\big(f(a),f(b)\big)`)} existuje ${I(R`\xi\in(a,b)`)} s ${I(R`f(\xi)=y`)}. (Totéž pro ${I(R`f(a)>f(b)`)}.)</p>
@@ -3144,6 +3201,45 @@ ${D(R`\lim_{x\to b^-}f(x)=\sup f\big((a,b)\big),\qquad \lim_{x\to a^+}f(x)=\inf 
 <li>Rovnají-li se, je to ${I(R`f'(a)`)}; jinak derivace v ${I('a')} neexistuje.</li>
 <li>Příklad: ${I(R`f(x)=x^2`)} pro ${I(R`x\le1`)}, ${I(R`f(x)=2x-1`)} pro ${I(R`x>1`)}. Spojitá v 1 (obě strany dají 1); ${I(R`f'_-(1)=\lim_{x\to1^-}\frac{x^2-1}{x-1}=2`)}, ${I(R`f'_+(1)=\lim_{x\to1^+}\frac{2x-2}{x-1}=2`)}, tedy ${I(R`f'(1)=2`)}.</li>
 <li>Mimo podezřelé body stačí pravidla (Věty 37, 38). Rychlejší cestu přes limitu derivace (Věta 44) přidáme, až bude probraná.</li></ol></div>
+<h3>Derivace inverzní a elementárních funkcí, lokální extrémy (17. přednáška)</h3>
+<div class="thm"><span class="lbl">Derivace inverzní funkce (Věta 39)</span>
+<p>Nechť ${I('f')} je na otevřeném intervalu ${I('J')} spojitá a ryze monotónní, ${I(R`a\in J`)} a ${I(R`f'(a)`)} je vlastní a <b>nenulová</b>. Pak inverzní funkce ${I(R`f^{-1}`)} má v bodě ${I(R`b=f(a)`)} derivaci</p>
+<p>${D(R`(f^{-1})'(b)=\frac{1}{f'(a)}=\frac{1}{f'\big(f^{-1}(b)\big)}.`)}</p>
+<p>Názorně: graf ${I(R`f^{-1}`)} je graf ${I('f')} překlopený přes přímku ${I(R`y=x`)}, takže se směrnice tečny převrátí. Je-li ${I(R`f'(a)=0`)}, tečna inverzní funkce je svislá a vlastní derivace ${I(R`(f^{-1})'(b)`)} neexistuje (příklad: ${I(R`f(x)=x^3`)}, ${I(R`f^{-1}(y)=\sqrt[3]{y}`)} v nule).</p>
+<p>Příklad: ${I(R`f(x)=x^3+x`)} je rostoucí a ${I(R`f(1)=2`)}, ${I(R`f'(1)=4`)}, takže ${I(R`(f^{-1})'(2)=\frac14`)}, i když vzorec pro ${I(R`f^{-1}`)} vůbec neznáme.</p></div>
+<div class="thm"><span class="lbl">Derivace elementárních funkcí</span>
+<div class="tbl"><table><thead><tr><th>Funkce</th><th>Derivace</th><th>Kde platí</th></tr></thead><tbody>
+<tr><td>${I(R`x^n`)}, ${I(R`n\in\mathbb N`)}</td><td>${I(R`n\,x^{n-1}`)}</td><td>${I(R`\mathbb R`)}</td></tr>
+<tr><td>${I(R`x^a`)}, ${I(R`a\in\mathbb R`)}</td><td>${I(R`a\,x^{a-1}`)}</td><td>${I(R`(0,+\infty)`)}</td></tr>
+<tr><td>${I(R`e^x`)}</td><td>${I(R`e^x`)}</td><td>${I(R`\mathbb R`)}</td></tr>
+<tr><td>${I(R`a^x`)}, ${I(R`a>0`)}</td><td>${I(R`a^x\ln a`)}</td><td>${I(R`\mathbb R`)}</td></tr>
+<tr><td>${I(R`\ln x`)}</td><td>${I(R`\frac1x`)}</td><td>${I(R`(0,+\infty)`)}</td></tr>
+<tr><td>${I(R`\sin x`)}, ${I(R`\cos x`)}</td><td>${I(R`\cos x`)}, ${I(R`-\sin x`)}</td><td>${I(R`\mathbb R`)}</td></tr>
+<tr><td>${I(R`\mathrm{tg}\,x`)}</td><td>${I(R`\frac{1}{\cos^2x}`)}</td><td>${I(R`\cos x\neq0`)}</td></tr>
+<tr><td>${I(R`\mathrm{cotg}\,x`)}</td><td>${I(R`-\frac{1}{\sin^2x}`)}</td><td>${I(R`\sin x\neq0`)}</td></tr>
+<tr><td>${I(R`\arcsin x`)}, ${I(R`\arccos x`)}</td><td>${I(R`\frac{1}{\sqrt{1-x^2}}`)}, ${I(R`-\frac{1}{\sqrt{1-x^2}}`)}</td><td>${I(R`(-1,1)`)}</td></tr>
+<tr><td>${I(R`\mathrm{arctg}\,x`)}, ${I(R`\mathrm{arccotg}\,x`)}</td><td>${I(R`\frac{1}{1+x^2}`)}, ${I(R`-\frac{1}{1+x^2}`)}</td><td>${I(R`\mathbb R`)}</td></tr>
+</tbody></table></div>
+<p>Odkud to je: ${I(R`(e^x)'=\lim_{h\to0}e^x\frac{e^h-1}{h}=e^x`)} ze známé limity, ${I(R`(\sin x)'`)} podobně z ${I(R`\frac{\sin h}{h}\to1`)} a ${I(R`\frac{1-\cos h}{h}\to0`)}. Logaritmus a cyklometrické funkce jsou inverzní, takže jdou z Věty 39: ${I(R`(\ln x)'=\frac{1}{e^{\ln x}}=\frac1x`)}, ${I(R`(\arcsin x)'=\frac{1}{\cos(\arcsin x)}=\frac{1}{\sqrt{1-x^2}}`)} (na ${I(R`(-\frac\pi2,\frac\pi2)`)} je kosinus kladný). Obecná mocnina: ${I(R`x^a=e^{a\ln x}`)}, a derivace složené funkce dá ${I(R`e^{a\ln x}\cdot\frac ax=a\,x^{a-1}`)}.</p>
+<p>V bodech ${I(R`\pm1`)} nemají ${I(R`\arcsin`)} ani ${I(R`\arccos`)} vlastní derivaci (tečna je svislá). Stejně ${I(R`\sqrt x`)} v nule: ${I(R`(\sqrt x)'=\frac{1}{2\sqrt x}`)} platí jen pro ${I(R`x>0`)}.</p></div>
+<div class="thm"><span class="lbl">Funkce typu f(x)^g(x)</span>
+<p>Vždy přepiš ${I(R`f(x)^{g(x)}=e^{g(x)\ln f(x)}`)} (pro ${I(R`f(x)>0`)}) a derivuj jako složenou funkci:</p>
+<p>${D(R`\big(f^g\big)'=e^{g\ln f}\Big(g'\ln f+g\,\frac{f'}{f}\Big)=f^g\Big(g'\ln f+\frac{g\,f'}{f}\Big).`)}</p>
+<p>Příklad: ${I(R`(x^x)'=x^x(\ln x+1)`)} pro ${I(R`x>0`)}. Pozor: ani vzorec pro mocninu (${I(R`x\cdot x^{x-1}`)}), ani vzorec pro exponenciálu (${I(R`x^x\ln x`)}) samotný nestačí, protože proměnná je v základu i v exponentu.</p></div>
+<div class="thm"><span class="lbl">Limita jako derivace</span>
+<p>Limita tvaru ${I(R`\lim_{x\to a}\frac{f(x)-f(a)}{x-a}`)} je podle definice ${I(R`f'(a)`)}. Když ${I('f')} umíme derivovat podle vzorců, máme limitu zadarmo.</p>
+<p>Příklad: ${I(R`\lim_{x\to1}\frac{\mathrm{arctg}\,x-\frac\pi4}{x-1}`)} je derivace ${I(R`\mathrm{arctg}`)} v bodě 1, tedy ${I(R`\frac{1}{1+1^2}=\frac12`)}. Stejně ${I(R`\lim_{x\to2}\frac{x^5-32}{x-2}=5\cdot2^4=80`)}.</p>
+<p>V čitateli musí být přesně ${I(R`f(x)-f(a)`)} a ve jmenovateli ${I(R`x-a`)}; jinak výraz nejdřív uprav (vytkni konstantu, rozšiř zlomek).</p></div>
+<div class="thm"><span class="lbl">Lokální extrém a nutná podmínka (Věta 40)</span>
+<p>${I('f')} má v bodě ${I('a')} <b>lokální maximum</b>, existuje-li ${I(R`\delta>0`)} tak, že ${I(R`f(x)\le f(a)`)} pro všechna ${I(R`x\in U(a,\delta)`)} (minimum: ${I(R`f(x)\ge f(a)`)}). <b>Ostré</b> lokální maximum: ${I(R`f(x)\lt f(a)`)} pro ${I(R`x\in P(a,\delta)`)}.</p>
+<p><b>Věta 40.</b> Má-li ${I('f')} v bodě ${I('a')} lokální extrém a existuje-li ${I(R`f'(a)`)}, pak ${I(R`f'(a)=0`)}.</p>
+<p>Idea důkazu (maximum): pro ${I(R`x>a`)} je ${I(R`\frac{f(x)-f(a)}{x-a}\le0`)}, tedy ${I(R`f'(a)=f'_+(a)\le0`)}; pro ${I(R`x\lt a`)} je zlomek ${I(R`\ge0`)}, tedy ${I(R`f'(a)=f'_-(a)\ge0`)}. Dohromady ${I(R`f'(a)=0`)}.</p>
+<p>Obrácení <b>neplatí</b>: ${I(R`x^3`)} má ${I(R`f'(0)=0`)}, ale extrém v 0 nemá. A extrém může být i tam, kde derivace neexistuje: ${I(R`|x|`)} má v 0 minimum.</p></div>
+<div class="thm"><span class="lbl">Jak najít největší a nejmenší hodnotu na uzavřeném intervalu</span><ol class="steps">
+<li>Ověř, že ${I('f')} je spojitá na ${I(R`\langle a,b\rangle`)}; podle Věty 31 maximum i minimum existují.</li>
+<li>Sepiš <b>kandidáty</b>: krajní body ${I('a')}, ${I('b')}; body z ${I(R`(a,b)`)}, kde ${I(R`f'(x)=0`)} (stacionární body); body z ${I(R`(a,b)`)}, kde ${I(R`f'`)} neexistuje.</li>
+<li>Spočítej ve všech kandidátech funkční hodnotu. Největší je maximum, nejmenší minimum. Jinde extrém být nemůže (Věta 40).</li>
+<li>Příklad: ${I(R`f(x)=x^3-3x`)} na ${I(R`\langle0,2\rangle`)}: ${I(R`f'(x)=3x^2-3=0`)} dává ${I(R`x=1`)}. Hodnoty ${I(R`f(0)=0`)}, ${I(R`f(1)=-2`)}, ${I(R`f(2)=2`)}: minimum ${I(R`-2`)} v bodě 1, maximum ${I('2')} v bodě 2.</li></ol></div>
 <h3>Postup</h3>
 <div class="thm"><span class="lbl">Jak dokázat, že rovnice má řešení</span><ol class="steps">
 <li>Převeď rovnici na tvar ${I(R`h(x)=0`)} a ověř, že ${I('h')} je spojitá na zvoleném ${I(R`\langle a,b\rangle`)}.</li>
@@ -3159,7 +3255,10 @@ ${D(R`\lim_{x\to b^-}f(x)=\sup f\big((a,b)\big),\qquad \lim_{x\to a^+}f(x)=\inf 
 <li>Derivovat podle vzorců v bodě, kde se mění předpis funkce. Tam je potřeba definice (jednostranné derivace).</li>
 <li>Usoudit ze spojitosti, že derivace existuje (${I(R`|x|`)} v 0 je protipříklad), nebo zapomenout ověřit spojitost dřív, než se počítá derivace z definice.</li>
 <li>Derivovat součin jako ${I(R`(fg)'=f'g'`)}, nebo u podílu přehodit pořadí v čitateli (správně ${I(R`f'g-fg'`)}).</li>
-<li>U složené funkce zapomenout vynásobit derivací vnitřní funkce: ${I(R`(\sin 3x)'=3\cos 3x`)}, ne ${I(R`\cos 3x`)}.</li></ul></div>` },
+<li>U složené funkce zapomenout vynásobit derivací vnitřní funkce: ${I(R`(\sin 3x)'=3\cos 3x`)}, ne ${I(R`\cos 3x`)}.</li>
+<li>Derivovat ${I(R`a^x`)} jako mocninu (${I(R`x\,a^{x-1}`)}) nebo ${I(R`x^x`)} jen jedním ze vzorců. U ${I(R`f^g`)} vždy přes ${I(R`e^{g\ln f}`)}.</li>
+<li>U derivace inverzní funkce dosadit do ${I(R`f'`)} špatný bod: ${I(R`(f^{-1})'(b)=\frac{1}{f'(a)}`)}, kde ${I(R`f(a)=b`)}, ne ${I(R`\frac{1}{f'(b)}`)}.</li>
+<li>Usoudit z ${I(R`f'(a)=0`)}, že v ${I('a')} je extrém (${I(R`x^3`)} v 0), nebo při hledání extrémů vynechat krajní body intervalu a body, kde derivace neexistuje.</li></ul></div>` },
   { id: 'prubeh', title: 'Průběh funkce', ready: false, html: R`<p>Monotonie, lokální extrémy, konvexita a konkávita, inflexní body, asymptoty, graf. Ve zkoušce je za to čtvrtý příklad (15 bodů).</p>` },
   { id: 'rn', title: 'Funkce více proměnných', ready: false, html: R`<p>${I(R`\mathbb R^n`)}, eukleidovská metrika, otevřené a uzavřené množiny, konvergence posloupností v ${I(R`\mathbb R^n`)}. Je to konec přednášek a látka k ústní části.</p>` }
 ];
@@ -3198,7 +3297,7 @@ const ORAL = [
   ['Definice: posloupnosti', '', ['shora omezená posloupnost', 'zdola omezená posloupnost', 'omezená posloupnost', 'rostoucí posloupnost', 'klesající posloupnost', 'nerostoucí posloupnost', 'neklesající posloupnost', 'monotónní posloupnost', 'ryze monotónní posloupnost', 'konvergentní posloupnost', 'vybraná posloupnost']],
   ['Definice: zobrazení a funkce', '', ['vzor množiny při zobrazení', 'zobrazení na', 'prosté zobrazení', 'bijekce', 'rostoucí funkce', 'klesající funkce', 'nerostoucí funkce', 'neklesající funkce', 'monotónní funkce', 'omezená funkce', 'sudá a lichá funkce', 'periodická funkce', 'prstencové okolí bodu', 'lokální maximum', 'lokální minimum']],
   ['Definice: elementární funkce, derivace, průběh', '', ['obecná mocnina aᵇ', 'funkce arcsin', 'funkce arccos', 'funkce arctg', 'funkce arccotg', 'ryze konvexní funkce', 'ryze konkávní funkce', 'n-tá derivace funkce v bodě', 'inflexní bod', 'asymptota funkce']],
-  ['Věty jen se zněním (bez důkazu)', 'Stačí přesné znění, pochopení předpokladů a použití na příkladu.', ['existence celé části čísla (Věta 5)', 'polovina Heineovy věty (Věta 27)', 'spojitost složené funkce na intervalu (Důsledek věty 25)', 'zavedení funkce sinus (Věta 35)', 'l’Hospitalovo pravidlo (Věta 45)']]
+  ['Věty jen se zněním (bez důkazu)', 'Stačí přesné znění, pochopení předpokladů a použití na příkladu.', ['existence celé části čísla (Věta 5)', 'polovina Heineovy věty (Věta 27)', 'spojitost složené funkce na intervalu (Důsledek věty 25)', 'zavedení exponenciální funkce a její vlastnosti', 'zavedení funkce sinus (Věta 35)', 'l’Hospitalovo pravidlo (Věta 45)']]
 ];
 
 
@@ -4571,9 +4670,9 @@ const pKind = p => { const m = p.no.match(/^(.+?)\s+(\d+\S*)$/); return m ? [m[1
 /* oficiální požadavky k ústní zkoušce (Bárta, stránka mat1_pozadavky, listopad 2026):
    L = věta s lehčím důkazem, T = s obtížnějším důkazem, B = jen znění (bez důkazu), jinak mimo seznam */
 const REQ = {
-  L: ['t1', 't3', 'l4', 'v6', 'v8', 'v9', 'v10', 'v11', 'v13', 'v14', 'v15', 'v16', 'l17', 'v18', 'v20', 'v21', 'd22', 'v23', 'v24', 'v28', 'v30', 'd32', 'v34', 'exp', 'v36', 'v40', 'v41', 'v42', 'v43', 'l46', 't50'],
+  L: ['t1', 't3', 'l4', 'v6', 'v8', 'v9', 'v10', 'v11', 'v13', 'v14', 'v15', 'v16', 'l17', 'v18', 'v20', 'v21', 'd22', 'v23', 'v24', 'v28', 'v30', 'd32', 'v34', 'v36', 'v40', 'v41', 'v42', 'v43', 'l46', 't50'],
   T: ['v7', 'v12', 'v12p', 'v19', 'v22', 'v25', 'v29', 'v31', 'v33', 'v37', 'v38', 'v39', 'v44', 'v47', 'v48', 'v49'],
-  B: ['v5', 'v27', 'd25', 'v35', 'v45']
+  B: ['v5', 'v27', 'd25', 'exp', 'v35', 'v45']
 };
 const reqOf = p => Object.keys(REQ).find(k => REQ[k].includes(p.id)) || 'X';
 const REQ_LBL = { L: 'lehčí důkaz', T: 'těžší důkaz', B: 'jen znění', X: 'mimo seznam' };
@@ -5629,7 +5728,7 @@ ${written ? '<div class="ctas"><button class="more" data-go="pisemky">Všechny v
 
 /* ---------- Termíny ---------- */
 function viewTerms() {
-  return band('', R`<span class="eyebrow">Organizace</span><h1 class="h1">Termíny a zkouška.</h1><p class="sub">Podle stránky přednášejícího, zkontrolováno 21. 11. 2026.</p>`, 'center')
+  return band('', R`<span class="eyebrow">Organizace</span><h1 class="h1">Termíny a zkouška.</h1><p class="sub">Podle stránky přednášejícího, zkontrolováno 24. 11. 2026.</p>`, 'center')
   + band('alt', R`
 <div class="tbl"><table><thead><tr><th>Datum</th><th>Co</th><th>Poznámka</th></tr></thead><tbody>
 ${EVENTS.map(e => { const dn = daysTo(e.d); return `<tr class="${dn < 0 ? 'past' : ''}"><td style="white-space:nowrap">${fmtY(e.d)}<br>${dn < 0 ? '<span class="badge ok">proběhlo</span>' : dn <= 7 ? `<span class="badge soon">za ${dn} ${dayWord(dn)}</span>` : ''}</td><td>${e.key ? '<b>' + e.what + '</b>' : e.what}</td><td>${e.note}</td></tr>`; }).join('')}
@@ -5823,7 +5922,7 @@ function viewOral() {
  <button class="step3" data-go="dukazy" data-pchset="req-T"><span class="n">4 · věta s obtížnějším důkazem</span><b class="opts">23 b.</b><p class="muted">3 body za znění, 20 za vysvětlení důkazu.</p><span class="more">Těžší důkazy</span></button>
  <div class="step3"><span class="n">5 · bonus</span><b class="opts">10 b.</b><p class="muted">Dobrovolná teoretická úloha. Losuje se zvlášť, jen když už máš víc než 25 bodů.</p></div>
 </div>
-<p class="muted small">Na stránce přednášejícího stojí u 3. i 4. otázky „lehčí věta“; podle bodů a seznamu vět je čtvrtá otázka zjevně věta s obtížnějším důkazem. Věty jen se zněním najdeš v Důkazech pod filtrem „Jen znění“.</p>`)
+<p class="muted small">Věty jen se zněním najdeš v Důkazech pod filtrem „Jen znění“.</p>`)
   + band('', R`<h2 class="h2">Vyzkoušej si teoretickou úlohu.</h2>
 <p class="muted">Typ úlohy ze starších ročníků. Takhle může vypadat třeba bonus: rozhodnout, které implikace platí, a zdůvodnit to.</p>
 <article class="card"><p>Nechť \(f\) je definovaná na \((-1,1)\). Které implikace mezi následujícími tvrzeními platí?</p>
