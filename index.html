@@ -1229,9 +1229,9 @@ ${D(R`C_n-D_n=\frac{${2 * b}n^2}{C_n^2+C_nD_n+D_n^2}=\frac{${2 * b}}{\left(\frac
 fam('R8', 'odm', r => {
   const a = ri(r, 1, 6), b = ri(r, 1, 6);
   return {
-    task: D(R`\lim_{n\to\infty} n\left(\sqrt[3]{n^3+${a}n}-\sqrt[3]{n^3-${b}n}\right)`), ans: fr(a + b, 3),
-    sol: R`<p>Označíme ${I(R`C_n=\sqrt[3]{n^3+${a}n},\ D_n=\sqrt[3]{n^3-${b}n}`)}. Obě se chovají jako ${I('n')} (${I(R`\frac{C_n}{n}=\sqrt[3]{1+\frac{${a}}{n^2}}\to1`)}, obdobně ${I('D_n')}). Vzorec pro ${I(R`a^3-b^3`)}:</p>
-${D(R`n(C_n-D_n)=n\cdot\frac{(n^3+${a}n)-(n^3-${b}n)}{C_n^2+C_nD_n+D_n^2}=\frac{${a + b}n^2}{n^2\left[\left(\frac{C_n}{n}\right)^2+\frac{C_n}{n}\frac{D_n}{n}+\left(\frac{D_n}{n}\right)^2\right]}\to\frac{${a + b}}{3}`)}`,
+    task: D(R`\lim_{n\to\infty} n\left(\sqrt[3]{n^3+${mn(a)}}-\sqrt[3]{n^3-${mn(b)}}\right)`), ans: fr(a + b, 3),
+    sol: R`<p>Označíme ${I(R`C_n=\sqrt[3]{n^3+${mn(a)}},\ D_n=\sqrt[3]{n^3-${mn(b)}}`)}. Obě se chovají jako ${I('n')} (${I(R`\frac{C_n}{n}=\sqrt[3]{1+\frac{${a}}{n^2}}\to1`)}, obdobně ${I('D_n')}). Vzorec pro ${I(R`a^3-b^3`)}:</p>
+${D(R`n(C_n-D_n)=n\cdot\frac{(n^3+${mn(a)})-(n^3-${mn(b)})}{C_n^2+C_nD_n+D_n^2}=\frac{${a + b}n^2}{n^2\left[\left(\frac{C_n}{n}\right)^2+\frac{C_n}{n}\frac{D_n}{n}+\left(\frac{D_n}{n}\right)^2\right]}\to\frac{${a + b}}{3}`)}`,
     f: n => n * (Math.cbrt(n ** 3 + a * n) - Math.cbrt(n ** 3 - b * n)), val: (a + b) / 3
   };
 });
@@ -1548,7 +1548,7 @@ const ND2 = (f, x, h = 1e-4) => (f(x + h) - 2 * f(x) + f(x - h)) / (h * h);
 
 /* --- Limity funkcí --- */
 fam('L1', 'fl', r => {
-  const a = ri(r, 1, 5), b = ri(r, 1, 6);
+  const a = ri(r, 1, 5); let b = ri(r, 1, 6); if (b === a) b = a + 1; /* b = a by dalo triviální zlomek (x²−a²)/(x²−a²) */
   const N = poly([[1, 'x^2'], [b - a, 'x'], [-a * b, '']]), Dn = poly([[1, 'x^2'], [-a * a, '']]);
   return {
     task: D(R`\lim_{x\to ${a}}\frac{${N}}{${Dn}}`), ans: fr(a + b, 2 * a),
@@ -1600,7 +1600,7 @@ ${D(R`\frac{e^{${cx(k)}}-1}{\ln(1+${cx(m)})}=\frac{e^{${cx(k)}}-1}{${cx(k)}}\cdo
   };
 });
 fam('L6', 'fl', r => {
-  const k = ri(r, 1, 8);
+  let k = ri(r, 1, 8); if (k === 2) k = 3; /* k = 2 dává (x+1)², limita by byla triviální */
   if (r() < .5) return {
     task: D(R`\lim_{x\to+\infty}\left(\sqrt{x^2+${cx(k)}+1}-x\right)`), ans: fr(k, 2),
     sol: R`<p>Typ ${I(R`\infty-\infty`)}, rozšíříme. Pro ${I('x>0')} je ${I(R`\sqrt{x^2}=x`)}:</p>
