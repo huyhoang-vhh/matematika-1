@@ -5846,7 +5846,7 @@ if (window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matche
   }, { passive: true });
 }
 
-/* ---------- přepínač IES ▾ (rozcestník Studium IES ↔ Matematika I ↔ Ekonomie I) ----------
+/* ---------- přepínač IES ▾ (rozcestník IES ↔ Matematika I ↔ Ekonomie I) ----------
    Stejný soubor je v MAT I/WEB/src i EKO I/WEB/src (liší se jen IES_SELF). Na GitHub Pages vede na
    huyhoang-vhh.github.io/, /matematika-1/, /ekonomie-1/; v Artifactu na artifacty (nová karta). */
 const IES_SELF = 'mat';
@@ -5855,7 +5855,7 @@ const IES_URL = IES_GH
   ? { hub: '/', mat: '/matematika-1/', eko: '/ekonomie-1/' }
   : { hub: 'https://claude.ai/artifact/A2jswPH4vjmm3EAghcXGCg', mat: 'https://claude.ai/artifact/GBUD1Pozz6yiuu1kuV3z4H', eko: 'https://claude.ai/artifact/Pxpy6GJsuRUEFgzC3kgg71' };
 function iesSwitch() {
-  const it = [['hub', 'Studium IES', 'Rozcestník: termíny, pokrok a plán na dnes'], ['mat', 'Matematika I', 'Písemky, důkazy, pojmy a definice'], ['eko', 'Ekonomie I', 'Teorie s grafy, kvíz, testy a kartičky']];
+  const it = [['hub', 'IES', 'Rozcestník: termíny, pokrok a plán na dnes'], ['mat', 'Matematika I', 'Písemky, důkazy, pojmy a definice'], ['eko', 'Ekonomie I', 'Teorie s grafy, kvíz, testy a kartičky']];
   const tg = IES_GH ? '' : ' target="_blank" rel="noopener"';
   return `<div class="nv has-dd ies-sw"><button type="button" class="nv-b" data-dd="ies" aria-expanded="false" aria-haspopup="true" title="Přepnout předmět"><span>IES</span>${CHEV}</button><div class="dd"><div class="dd-box"><div class="dd-list">${it.map(([k, t, d]) => k === IES_SELF
     ? `<span class="dd-i" aria-current="page"><b>${t}</b><span>právě tady</span></span>`
