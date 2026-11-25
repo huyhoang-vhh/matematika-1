@@ -1095,11 +1095,63 @@ kbd { font: 600 11px var(--font); padding: 2px 6px; border-radius: 6px; backgrou
 .hsplit.solo .hp-row .meter { flex: none; width: 100%; height: 6px; }
 .hsplit.solo .hp-row { justify-content: space-between; }
 
+/* =================== hledání, Co dál, tahák, skutečné písemky, tisk =================== */
+.gnav-in .srch-btn { margin-left: auto; }
+.gnav-in .srch-btn + .theme { margin-left: 0; }
+.srch-btn svg { width: 18px; height: 18px; }
+.srch { position: fixed; inset: 0; z-index: 60; background: rgba(10, 12, 25, .38); display: flex; justify-content: center; align-items: flex-start; padding: calc(env(safe-area-inset-top, 0px) + 72px) 16px 16px; animation: dd-in .15s var(--ease-out); }
+.srch[hidden] { display: none; }
+.srch-box { width: 100%; max-width: 620px; background: var(--tile); border-radius: 18px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 10%, transparent), 0 30px 80px -20px rgba(0, 0, 0, .45); overflow: hidden; }
+.srch-in { display: flex; align-items: center; gap: 10px; padding: 0 16px; border-bottom: 1px solid var(--line); }
+.srch-in svg { width: 20px; height: 20px; flex: none; fill: none; stroke: var(--ink-2); stroke-width: 2; stroke-linecap: round; }
+.srch-in input { flex: 1; min-width: 0; font: inherit; font-size: 18px; border: 0; outline: none; background: none; color: var(--ink); padding: 16px 0; }
+.srch-in kbd { color: var(--ink-2); }
+.srch-res { max-height: min(60vh, 520px); overflow-y: auto; padding: 6px; }
+.srch-i { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 110px minmax(0, 1fr); column-gap: 12px; width: 100%; padding: 10px 12px; border-radius: 12px; }
+.srch-i b { font-size: 15px; font-weight: 600; color: var(--ink); grid-column: 2; }
+.srch-i span:last-child { grid-column: 2; font-size: 13px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.srch-k { grid-row: 1 / span 2; align-self: center; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--link); }
+.srch-i:hover, .srch-i.on { background: color-mix(in srgb, var(--blue) 10%, transparent); }
+.srch-hint { padding: 16px; color: var(--ink-2); font-size: 15px; }
+@media (max-width: 560px) { .srch-i { grid-template-columns: minmax(0, 1fr); } .srch-k { grid-row: auto; } .srch-i b, .srch-i span:last-child { grid-column: 1; } }
+.nextstep { display: flex; align-items: center; gap: 14px; width: 100%; max-width: 860px; align-self: center; padding: 14px 16px; border-radius: 18px; background: color-mix(in srgb, var(--tile) 80%, transparent); box-shadow: var(--card-edge), var(--card-sh); text-align: left; }
+.ns-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ns-txt b { font-size: 16px; }
+.ns-txt small { font-size: 13.5px; color: var(--ink-2); line-height: 1.35; }
+@media (max-width: 560px) { .nextstep { flex-wrap: wrap; } .nextstep .pill { width: 100%; } }
+.tk { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.tk-box { background: var(--tile); border-radius: 16px; padding: 16px 18px; box-shadow: var(--card-edge), var(--card-sh); min-width: 0; font-size: 15px; line-height: 1.55; overflow-x: auto; }
+.tk-box p + p { margin-top: 6px; }
+.tk-h { font-size: 15px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 8px; color: var(--link); }
+.tk-note { font-size: 13px; color: var(--ink-2); }
+.tk .steps { margin: 0; padding-left: 20px; }
+@media (max-width: 760px) { .tk { grid-template-columns: minmax(0, 1fr); } }
+.ar { display: flex; flex-direction: column; gap: 10px; }
+.ar-row { background: var(--tile); border-radius: 16px; padding: 16px 18px; box-shadow: var(--card-edge), var(--card-sh); }
+.ar-row h3 { margin-bottom: 6px; }
+.ar-row p { font-size: 15.5px; line-height: 1.55; color: var(--ink); }
+.ar-links li { margin-bottom: 8px; }
+@media print {
+  :root:not(#_p) { --bg: #fff; --bg-alt: #fff; --tile: #fff; --ink: #000; --ink-2: #333; --line: #bbb; --hero-bg: #fff; --hero-ink: #000; --hero-ink-2: #333; --card-sh: 0 0 #0000; --card-edge: 0 0 #0000; --link: #000; color-scheme: light; }
+  body { background: #fff !important; color: #000; }
+  .gnav, .testbar, .pbar, .no-print, #toasts, .srch, footer, .resume, .score, .pp-next, .pmore, details, .gnav::after { display: none !important; }
+  #view > section.band:first-of-type::before { display: none !important; }
+  .band { padding-block: 10px !important; background: #fff !important; }
+  .band .sub { font-size: 14px; }
+  .card { box-shadow: none !important; border: 1px solid #999; break-inside: avoid; min-height: 7cm; margin-bottom: 8px; }
+  .tk { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .tk-box { box-shadow: none !important; border: 1px solid #999; break-inside: avoid; font-size: 11px; padding: 8px 10px; overflow: visible; }
+  .tk-h { font-size: 12px; margin-bottom: 4px; color: #000; }
+  .grad { -webkit-text-fill-color: #000; color: #000; background: none; }
+  .fx .rv { opacity: 1 !important; transform: none !important; }
+}
+
 </style>
 
 <header class="gnav"><div class="gnav-in">
   <button class="brand" type="button" data-go="domu" title="Na úvodní stránku" aria-label="Matematika I – úvodní stránka"><span class="bm" aria-hidden="true"><svg viewBox="0 1.75 32 32"><path class="bm-tan" d="M8.5 11h15"/><path class="bm-cur" pathLength="1" d="M4.5 24.5C9.5 24.5 10.8 11 16 11s6.5 13.5 11.5 13.5"/><circle class="bm-dot" cx="16" cy="11" r="2.1"/></svg></span><span class="bt"><b>Matematika I</b><small>IES FSV UK</small></span></button>
   <nav class="links" id="links" aria-label="Sekce"></nav>
+  <button class="theme srch-btn" type="button" data-act="search" aria-label="Hledat na webu (klávesa /)" title="Hledat (/ nebo Ctrl+K)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg></button>
   <button class="theme" id="themeBtn" type="button"></button>
   <button class="menu-btn" id="menuBtn" type="button" aria-label="Otevřít menu" aria-expanded="false" aria-controls="links"><span></span><span></span><span></span></button>
 </div></header>
@@ -2976,6 +3028,100 @@ Object.assign(TESTDEF.zk, {
   lists2: [['E4', 'E1', 'E5', 'E2', 'E6', 'E3', 'E7'], ['X1', 'L7', 'X2', 'X4', 'L13', 'X3', 'X5', 'X6', 'L15'], ['G6', 'G1', 'G7', 'G3', 'G8', 'G5', 'G9', 'G2', 'G4'], ['P7', 'P1', 'P8', 'P2', 'P9', 'P3', 'P10', 'P4', 'P5', 'P6']]
 });
 
+/* ---------- Zkouškové limity funkcí ve stylu Bárty (2. příklad za 15 b., podle typů z písemek 2022/23) ----------
+   Více kroků v jednom příkladu: 0^0 a ∞^0, 1^∞ s podílem kosinů, ∞·0 s růstem, rozdíl tangent, kombinace známých limit.
+   Zadání jsou vlastní (parametrizovaná), jen styl odpovídá skutečným písemkám. */
+fam('Y1', 'zfl', r => {
+  const k = ri(r, 1, 5), m = ri(r, 1, 4), M = ex1(m);
+  const g = x => (1 / x + k) ** Math.sin(m * x);
+  return {
+    task: D(R`\lim_{x\to0^+}\left(\frac1x+${k}\right)^{\sin(${M})}`), ans: '1',
+    sol: R`<p>Základ jde k ${I(R`+\infty`)}, exponent k ${I(0)}: typ ${I(R`\infty^0`)}, o kterém AL nic neříká. Přepíšeme přes exponenciálu (základ je kladný):</p>
+${D(R`\left(\frac1x+${k}\right)^{\sin(${M})}=\exp\Big(\sin(${M})\,\ln\Big(\frac1x+${k}\Big)\Big)`)}
+<p>Logaritmus rozdělíme: ${I(R`\ln\left(\frac1x+${k}\right)=\ln\frac{1+${ex1(k)}}{x}=-\ln x+\ln(1+${ex1(k)})`)}. Exponent je tedy</p>
+${D(R`-\frac{\sin(${M})}{${M}}\cdot ${m}\cdot x\ln x\;+\;\sin(${M})\,\ln(1+${ex1(k)})`)}
+<p>${I(R`\frac{\sin(${M})}{${M}}\to1`)} (${VLSF}, podmínka P). Klíčová limita ${I(R`\lim_{x\to0^+}x\ln x=0`)}: substitucí ${I(R`y=\frac1x\to+\infty`)} je ${I(R`x\ln x=-\frac{\ln y}{y}\to0`)}, protože logaritmus roste pomaleji než ${I('y')} (věta o limitě složené funkce, ${I(R`\frac1x\neq+\infty`)}). Druhý sčítanec je ${I(R`0\cdot0`)}. Exponent jde k ${I(0)}.</p>
+<p>Ze spojitosti exponenciály (podmínka S) je limita ${I(R`e^0=1`)}.</p>
+<p><b>Pozor:</b> limitu nestačí „dosadit do exponentu“. Napiš výslovně, že ${I(R`\exp`)} je spojitá a používáš větu o limitě složené funkce. U zkoušky se za chybějící zdůvodnění strhávají body.</p>`,
+    ok: () => near(g(1e-7), 1, 1e-3) && near(g(1e-9), 1, 1e-3)
+  };
+});
+fam('Y2', 'zfl', r => {
+  const a = ri(r, 1, 3), p = ri(r, 1, 3), P = p === 1 ? '' : p;
+  const t = Math.tan(a), val = Math.exp(-p * t);
+  return {
+    task: D(R`\lim_{x\to+\infty}\left(\frac{\cos\left(${a}+\frac{${p}}{x}\right)}{\cos\left(${a}+\frac{1}{x^2}\right)}\right)^{x}`), ans: R`e^{-${P}\,\mathrm{tg}\,${a}}`,
+    sol: R`<p>Podíl jde k ${I(R`\frac{\cos ${a}}{\cos ${a}}=1`)} (${I(R`\cos ${a}\neq0`)}), exponent k ${I(R`+\infty`)}: typ ${I(R`1^\infty`)}. Zapíšeme základ jako ${I('1+w')}:</p>
+${D(R`w=\frac{\cos\left(${a}+\frac{${p}}{x}\right)-\cos\left(${a}+\frac{1}{x^2}\right)}{\cos\left(${a}+\frac1{x^2}\right)}\to0,\qquad \left(1+w\right)^{x}=\exp\Big(x\,w\cdot\frac{\ln(1+w)}{w}\Big)`)}
+<p>${I(R`\frac{\ln(1+w)}{w}\to1`)} (${VLSF}, ${I(R`w\neq0`)} pro velká ${I('x')}). Zbývá ${I(R`x\,w`)}. Rozdíl kosinů převedeme vzorcem ${I(R`\cos u-\cos v=-2\sin\frac{u+v}{2}\sin\frac{u-v}{2}`)}:</p>
+${D(R`x\Big(\cos\Big(${a}+\tfrac{${p}}{x}\Big)-\cos\Big(${a}+\tfrac1{x^2}\Big)\Big)=-2\sin\Big(${a}+\tfrac{${p}}{2x}+\tfrac1{2x^2}\Big)\cdot\frac{\sin y}{y}\cdot x\,y,\qquad y=\frac{${p}}{2x}-\frac{1}{2x^2}\to0`)}
+<p>${I(R`x\,y=\frac{${p}}2-\frac1{2x}\to\frac{${p}}{2}`)}, ${I(R`\frac{\sin y}{y}\to1`)} (podmínka P) a ${I(R`\sin(\ldots)\to\sin ${a}`)} (spojitost). Čitatel ${I(R`x\,w`)} jde k ${I(R`-2\sin ${a}\cdot\frac{${p}}{2}=-${P}\sin ${a}`)}, jmenovatel k ${I(R`\cos ${a}`)}, tedy ${I(R`x\,w\to-${P}\,\mathrm{tg}\,${a}`)}.</p>
+<p>Exponent jde k ${I(R`-${P}\,\mathrm{tg}\,${a}`)} a ze spojitosti exponenciály je limita ${I(R`e^{-${P}\,\mathrm{tg}\,${a}}`)}.</p>`,
+    f0: x => Math.exp(x * Math.log(Math.cos(a + p / x) / Math.cos(a + 1 / (x * x)))), at: Infinity, val
+  };
+});
+fam('Y3', 'zfl', r => {
+  const b = pick(r, [2, 3, 5]), m = ri(r, 1, 3), k = ri(r, 1, 2), M = m === 1 ? 'x' : `${m}x`, xk = k === 1 ? 'x' : 'x^2';
+  const f = x => (Math.log(x) + x * Math.log(b) + Math.log1p(x ** (k - 1) * Math.sin(Math.sqrt(x)) * Math.exp(-x * Math.log(b)))) * Math.tan(m * x / (x * x + 1));
+  return {
+    task: D(R`\lim_{x\to+\infty}\ln\left(x\cdot ${b}^x+${xk}\sin\sqrt{x}\right)\cdot\mathrm{tg}\,\frac{${M}}{x^2+1}`), ans: R`${m === 1 ? '' : m}\ln ${b}`,
+    sol: R`<p>Typ ${I(R`\infty\cdot0`)}. Každý činitel upravíme zvlášť.</p>
+<p><b>Logaritmus.</b> Vytkneme nejrychleji rostoucí člen ${I(R`x\cdot ${b}^x`)}:</p>
+${D(R`\ln\left(x\cdot ${b}^x+${xk}\sin\sqrt x\right)=x\ln ${b}+\ln x+\ln\Big(1+\frac{${k === 1 ? '' : 'x'}\sin\sqrt x}{${b}^x}\Big)`)}
+<p>Poslední člen jde k ${I(R`\ln1=0`)}: ${I(R`\left|\frac{${k === 1 ? '' : 'x'}\sin\sqrt x}{${b}^x}\right|\le\frac{${k === 1 ? '1' : 'x'}}{${b}^x}\to0`)} (exponenciála roste rychleji, omezená krát nulová).</p>
+<p><b>Tangens.</b> ${I(R`u=\frac{${M}}{x^2+1}\to0`)}, ${I(R`u\neq0`)}, takže ${I(R`\mathrm{tg}\,u=\frac{\mathrm{tg}\,u}{u}\cdot u`)} s ${I(R`\frac{\mathrm{tg}\,u}{u}\to1`)} (${VLSF}, podmínka P).</p>
+<p><b>Dohromady:</b></p>
+${D(R`\Big(x\ln ${b}+\ln x+o(1)\Big)\cdot\frac{${M}}{x^2+1}\cdot\frac{\mathrm{tg}\,u}{u}=\Big(\ln ${b}+\frac{\ln x}{x}+\frac{o(1)}x\Big)\cdot\frac{${m}x^2}{x^2+1}\cdot\frac{\mathrm{tg}\,u}{u}\ \longrightarrow\ \ln ${b}\cdot ${m}\cdot1`)}
+<p>(${I(R`\frac{\ln x}{x}\to0`)}, ${I(R`\frac{x^2}{x^2+1}\to1`)}, symbol ${I('o(1)')} značí výraz jdoucí k nule.) Limita je ${I(R`${m === 1 ? '' : m}\ln ${b}`)}.</p>`,
+    f0: f, at: Infinity, val: m * Math.log(b)
+  };
+});
+fam('Y4', 'zfl', r => {
+  const c = ri(r, 1, 3), k = ri(r, 1, 3), K = k === 1 ? '' : k, num = 4 * k * c * c;
+  const A = c === 1 ? R`\frac{\pi}{2x}` : R`\frac{${c}\pi}{2x}`, xc = R`x-${c}`;
+  const f = x => Math.tan(Math.PI * c / (2 * x)) - Math.tan(Math.PI * c / (2 * x) + k * (x - c) ** 2);
+  return {
+    task: D(R`\lim_{x\to ${c}^+}\left(\mathrm{tg}\,${A}-\mathrm{tg}\Big(${A}+${K}(${xc})^2\Big)\right)`), ans: R`-\frac{${num}}{\pi^2}`,
+    sol: R`<p>Pro ${I(R`x\to ${c}`)} jdou oba argumenty k ${I(R`\frac\pi2`)} a oba tangenty k nekonečnu: typ ${I(R`\infty-\infty`)}. Použijeme ${I(R`\mathrm{tg}\,u-\mathrm{tg}\,v=\frac{\sin(u-v)}{\cos u\cos v}`)}:</p>
+${D(R`\mathrm{tg}\,${A}-\mathrm{tg}\Big(${A}+${K}(${xc})^2\Big)=\frac{\sin\big(-${K}(${xc})^2\big)}{\cos ${A}\;\cos\big(${A}+${K}(${xc})^2\big)}`)}
+<p>Kosiny převedeme na siny: ${I(R`\cos u=\sin\left(\frac\pi2-u\right)`)}, a ${I(R`\frac\pi2-${A}=\frac{\pi(${xc})}{2x}`)}. Označíme ${I(R`t=x-${c}\to0^+`)}:</p>
+${D(R`\frac{-\frac{\sin(${K}t^2)}{${K}t^2}\cdot ${K}t^2}{\frac{\sin\frac{\pi t}{2x}}{\frac{\pi t}{2x}}\cdot\frac{\pi t}{2x}\;\cdot\;\frac{\sin\left(\frac{\pi t}{2x}-${K}t^2\right)}{\frac{\pi t}{2x}-${K}t^2}\cdot\left(\frac{\pi t}{2x}-${K}t^2\right)}`)}
+<p>Všechny zlomky typu ${I(R`\frac{\sin y}{y}`)} jdou k 1 (${VLSF}, vnitřní funkce jsou na ${I(R`P^+(${c},\delta)`)} nenulové). Zbude</p>
+${D(R`\frac{-${K}t^2}{\frac{\pi t}{2x}\left(\frac{\pi t}{2x}-${K}t^2\right)}=\frac{-${K}}{\frac{\pi}{2x}\left(\frac{\pi}{2x}-${K}t\right)}\ \longrightarrow\ \frac{-${K}}{\frac{\pi}{${2 * c}}\cdot\frac{\pi}{${2 * c}}}=-\frac{${num}}{\pi^2}`)}`,
+    f0: f, at: c, val: -num / (Math.PI ** 2), h: 1e-4
+  };
+});
+fam('Y5', 'zfl', r => {
+  const a = ri(r, 1, 5), b = ri(r, 1, 4), c = ri(r, 1, 4), A = ex1(a), B = ex1(b), C = ex1(c);
+  return {
+    task: D(R`\lim_{x\to0}\frac{e^{${A}}-\cos(${B})}{\ln(1+${C})}`), ans: fr(a, c),
+    sol: R`<p>Typ ${I(R`\frac00`)}. V čitateli přičteme a odečteme 1 a celý zlomek vydělíme ${I('x')} nahoře i dole:</p>
+${D(R`\frac{e^{${A}}-\cos(${B})}{\ln(1+${C})}=\frac{${a === 1 ? '' : a + R`\cdot`}\frac{e^{${A}}-1}{${A}}+${b * b}\,x\cdot\frac{1-\cos(${B})}{(${B})^2}}{${c === 1 ? '' : c + R`\cdot`}\frac{\ln(1+${C})}{${C}}}`)}
+<p>Známé limity: ${I(R`\frac{e^y-1}{y}\to1`)}, ${I(R`\frac{1-\cos y}{y^2}\to\frac12`)}, ${I(R`\frac{\ln(1+y)}{y}\to1`)} (${VLSF}, vnitřní funkce jsou na ${I(R`P(0,\delta)`)} nenulové). Druhý sčítanec v čitateli je ${I(R`${b * b}x\cdot\frac12\to0`)}. Podle AL:</p>
+${D(R`\frac{${a}\cdot1+0}{${c}\cdot1}=${fr(a, c)}`)}
+<p>Kosinus tu přispívá nulou, protože ${I(R`1-\cos`)} je „malé řádu ${I('x^2')}“, kdežto ${I(R`e^{${A}}-1`)} je řádu ${I('x')}. Bez vydělení ${I('x')} se to ale ukázat nedá.</p>`,
+    f0: x => (Math.exp(a * x) - Math.cos(b * x)) / Math.log1p(c * x), at: 0, val: a / c, h: 1e-5
+  };
+});
+fam('Y6', 'zfl', r => {
+  const k = ri(r, 1, 4), m = ri(r, 1, 3), K = ex1(k), Mx = m === 1 ? 'x' : `${m}x`;
+  return {
+    task: D(R`\lim_{x\to+\infty}\left(\frac{2}{\pi}\,\mathrm{arctg}(${K})\right)^{${Mx}}`), ans: R`e^{-\frac{${2 * m / gcd(2 * m, k)}}{${k / gcd(2 * m, k) === 1 ? '' : k / gcd(2 * m, k)}\pi}}`,
+    sol: R`<p>${I(R`\mathrm{arctg}(${K})\to\frac\pi2`)}, základ jde k 1 a exponent k ${I(R`+\infty`)}: typ ${I(R`1^\infty`)}. Pro ${I(R`y>0`)} platí ${I(R`\mathrm{arctg}\,y=\frac\pi2-\mathrm{arctg}\,\frac1y`)}, takže</p>
+${D(R`\frac2\pi\,\mathrm{arctg}(${K})=1+w,\qquad w=-\frac2\pi\,\mathrm{arctg}\frac{1}{${K}}\to0,\ w\neq0`)}
+${D(R`(1+w)^{${Mx}}=\exp\Big(${Mx}\,w\cdot\frac{\ln(1+w)}{w}\Big),\qquad ${Mx}\,w=-\frac{${2 * m}}{${k === 1 ? '' : k}\pi}\cdot\frac{\mathrm{arctg}\,z}{z},\quad z=\frac1{${K}}\to0`)}
+<p>${I(R`\frac{\mathrm{arctg}\,z}{z}\to1`)} (známá limita, podmínka P) a ${I(R`\frac{\ln(1+w)}{w}\to1`)}. Exponent jde k ${I(R`-\frac{${2 * m}}{${k === 1 ? '' : k}\pi}`)}, ze spojitosti exponenciály je limita ${I(R`e^{-\frac{${2 * m}}{${k === 1 ? '' : k}\pi}}`)}.</p>
+<p>Známou limitu ${I(R`\frac{\mathrm{arctg}\,z}{z}\to1`)} dostaneš substitucí ${I(R`z=\mathrm{tg}\,s`)} z ${I(R`\frac{\mathrm{tg}\,s}{s}\to1`)}.</p>`,
+    f0: x => Math.pow(2 / Math.PI * Math.atan(k * x), m * x), at: Infinity, val: Math.exp(-2 * m / (k * Math.PI))
+  };
+});
+
+/* 2. příklad všech zkouškových písemek: typy ve stylu skutečných písemek */
+TESTDEF.zk.lists[1] = ['Y2', 'X2', 'Y4', 'Y1', 'X6', 'Y3', 'Y5', 'X4', 'Y6'];
+TESTDEF.zk.lists2[1] = ['Y4', 'Y2', 'X6', 'Y3', 'Y1', 'X2', 'Y6', 'Y5', 'X4'];
+/* 3. zápočtová písemka: o něco těžší varianty ve stejném formátu (podíl odmocnin/polynomů, známé limity a složená funkce) */
+TESTDEF.p3.lists = [['L14', 'HL4', 'L2', 'HL5'], ['L15', 'HL2', 'L4', 'X1', 'L3'], ['X4', 'L11', 'HL6', 'L7', 'L16']];
+
 /* ---------- obsah: teorie ---------- */
 const THEORY = [
   { id: 'vyroky', title: 'Výroky, množiny, důkazy', ready: true, html: R`
@@ -3259,7 +3405,37 @@ ${D(R`\lim_{x\to b^-}f(x)=\sup f\big((a,b)\big),\qquad \lim_{x\to a^+}f(x)=\inf 
 <li>Derivovat ${I(R`a^x`)} jako mocninu (${I(R`x\,a^{x-1}`)}) nebo ${I(R`x^x`)} jen jedním ze vzorců. U ${I(R`f^g`)} vždy přes ${I(R`e^{g\ln f}`)}.</li>
 <li>U derivace inverzní funkce dosadit do ${I(R`f'`)} špatný bod: ${I(R`(f^{-1})'(b)=\frac{1}{f'(a)}`)}, kde ${I(R`f(a)=b`)}, ne ${I(R`\frac{1}{f'(b)}`)}.</li>
 <li>Usoudit z ${I(R`f'(a)=0`)}, že v ${I('a')} je extrém (${I(R`x^3`)} v 0), nebo při hledání extrémů vynechat krajní body intervalu a body, kde derivace neexistuje.</li></ul></div>` },
-  { id: 'prubeh', title: 'Průběh funkce', ready: false, html: R`<p>Monotonie, lokální extrémy, konvexita a konkávita, inflexní body, asymptoty, graf. Ve zkoušce je za to čtvrtý příklad (15 bodů).</p>` },
+  { id: 'prubeh', title: 'Průběh funkce', ready: false, html: R`
+<p class="lead">Ve zkoušce je za to čtvrtý příklad (15 bodů). Konvexitu, inflexi a asymptoty probírá 19.–21. přednáška; postup níž si můžeš osvojit už teď na příkladech ze sbírky. Body se dávají za každý krok zvlášť, takže i neúplné řešení se vyplatí sepsat celé a pořádně.</p>
+<h3>Postup krok za krokem</h3>
+<div class="thm"><span class="lbl">1. Definiční obor a vlastnosti funkce</span>
+<p>Urči ${I('D_f')} (jmenovatel ${I(R`\neq0`)}, pod sudou odmocninou ${I(R`\ge0`)}, v logaritmu ${I(R`>0`)}, u ${I(R`\mathrm{tg}`)} kosinus ${I(R`\neq0`)}, ${I(R`\arcsin,\arccos`)} jen na ${I(R`\langle-1,1\rangle`)}). Zjisti, jestli je ${I('f')} sudá, lichá nebo periodická: pak stačí vyšetřit jen část a zbytek dokreslit. Najdi průsečíky s osami a znaménko ${I('f')} (kde je nad osou a kde pod ní).</p>
+<p>Napiš, kde je ${I('f')} spojitá (elementární funkce jsou spojité na celém svém definičním oboru). Bez toho nemůžeš používat Větu 43 o monotonii ani Větu 30 o oboru hodnot.</p></div>
+<div class="thm"><span class="lbl">2. Limity v krajních bodech definičního oboru</span>
+<p>Spočítej limity v ${I(R`\pm\infty`)} (pokud tam ${I('f')} je) a jednostranné limity v každém „děravém“ bodě ${I('D_f')} a v krajních bodech intervalů. Nevlastní limita v bodě ${I('c')} znamená svislou přímku ${I('x=c')}, ke které se graf blíží.</p></div>
+<div class="thm"><span class="lbl">3. První derivace: monotonie a lokální extrémy</span>
+<p>Spočítej ${I("f'")} a <b>uprav ji na součin nebo podíl</b>, ze kterého je vidět znaménko. Najdi nulové body ${I("f'")} a body, kde ${I("f'")} neexistuje. Na každém intervalu mezi nimi urči znaménko ${I("f'")}: kladná znamená rostoucí, záporná klesající (Věta 43, ${I('f')} musí být spojitá na tom intervalu).</p>
+<p>Lokální extrém je tam, kde se mění znaménko ${I("f'")}. Pozor i na body, kde ${I("f'")} neexistuje (např. ${I(R`|x|`)} v 0) a na krajní body definičního oboru. V bodech, kde se mění předpis nebo je absolutní hodnota či odmocnina z nuly, spočítej <b>jednostranné derivace</b> (z definice nebo Větou 44): určují, jestli má graf hrot nebo svislou tečnu.</p></div>
+<div class="thm"><span class="lbl">4. Druhá derivace: konvexita, konkávnost, inflexe</span>
+<p>Spočítej ${I("f''")}, uprav na součin nebo podíl a urči znaménko na intervalech. ${I(R`f''>0`)} znamená konvexní, ${I(R`f''\lt0`)} konkávní (Věta 47). Inflexní bod je tam, kde se znaménko ${I("f''")} mění a ${I("f'")} je vlastní (Věty 48 a 49). Bod mimo definiční obor inflexním bodem není, i když se v něm konvexita mění.</p></div>
+<div class="thm"><span class="lbl">5. Asymptoty</span>
+<p>V ${I(R`+\infty`)} i zvlášť v ${I(R`-\infty`)} spočítej ${I(R`k=\lim\frac{f(x)}{x}`)} a pak ${I(R`q=\lim\big(f(x)-kx\big)`)} (Tvrzení 50). Asymptota existuje, jen když jsou obě limity <b>vlastní</b>. Svislé přímky z kroku 2 uveď zvlášť. U funkcí s odmocninou nebo absolutní hodnotou vychází v ${I(R`+\infty`)} a ${I(R`-\infty`)} často jiná asymptota (${I(R`\sqrt{x^2}=|x|`)}).</p></div>
+<div class="thm"><span class="lbl">6. Obor hodnot a graf</span>
+<p>Obor hodnot sestav z monotonie, hodnot v extrémech a limit: na každém intervalu je ${I('f')} spojitá, takže obraz intervalu je interval (Věta 30). Nakonec načrtni graf, který <b>souhlasí</b> se vším, co jsi spočítal: extrémy, inflexe, asymptoty, limity, průsečíky.</p></div>
+<h3>Vzorový náčrt postupu</h3>
+<div class="thm"><span class="lbl">\(f(x)=\frac{x^2}{x-1}\)</span><ol class="steps">
+<li>${I(R`D_f=\mathbb R\setminus\{1\}`)}, ani sudá, ani lichá, ${I('f(0)=0')}; ${I(R`f>0`)} pro ${I(R`x>1`)}, ${I(R`f\lt0`)} pro ${I(R`x\lt1`)}, ${I(R`x\neq0`)}.</li>
+<li>${I(R`\lim_{x\to1^\pm}f(x)=\pm\infty`)}, ${I(R`\lim_{x\to\pm\infty}f(x)=\pm\infty`)}.</li>
+<li>${I(R`f'(x)=\frac{x(x-2)}{(x-1)^2}`)}: roste na ${I(R`(-\infty,0\rangle`)} a ${I(R`\langle2,\infty)`)}, klesá na ${I(R`\langle0,1)`)} a ${I(R`(1,2\rangle`)}; lokální maximum ${I('f(0)=0')}, lokální minimum ${I('f(2)=4')}.</li>
+<li>${I(R`f''(x)=\frac{2}{(x-1)^3}`)}: konkávní na ${I(R`(-\infty,1)`)}, konvexní na ${I(R`(1,\infty)`)}, inflexe není (${I(R`1\notin D_f`)}).</li>
+<li>${I(R`k=1`)}, ${I(R`q=\lim\left(\frac{x^2}{x-1}-x\right)=\lim\frac{x}{x-1}=1`)}: asymptota ${I('y=x+1')} v obou nekonečnech, svislá přímka ${I('x=1')}.</li>
+<li>${I(R`H_f=(-\infty,0\rangle\cup\langle4,\infty)`)}.</li></ol></div>
+<div class="note warn"><b>Nejčastější chyby</b><ul class="plain">
+<li>Monotonii psát „na sjednocení“: ${I(R`\frac1x`)} je klesající na ${I(R`(-\infty,0)`)} a na ${I(R`(0,\infty)`)}, ale <b>ne</b> na ${I(R`\mathbb R\setminus\{0\}`)}.</li>
+<li>Prohlásit bod s ${I(R`f'=0`)} automaticky za extrém (${I('x^3')} v 0) nebo zapomenout na body, kde derivace neexistuje.</li>
+<li>Počítat asymptotu jen v jednom nekonečnu, nebo zapomenout, že ${I('k')} a ${I('q')} musí být konečné.</li>
+<li>Chyba v derivaci: celý zbytek příkladu pak nesedí. Derivaci si zkontroluj dvakrát (třeba dosazením jednoho bodu).</li>
+<li>Graf, který odporuje výpočtům (extrém jinde, chybí asymptota). Zkoušející to vidí na první pohled.</li></ul></div>` },
   { id: 'rn', title: 'Funkce více proměnných', ready: false, html: R`<p>${I(R`\mathbb R^n`)}, eukleidovská metrika, otevřené a uzavřené množiny, konvergence posloupností v ${I(R`\mathbb R^n`)}. Je to konec přednášek a látka k ústní části.</p>` }
 ];
 
@@ -5421,6 +5597,138 @@ ${oralTile('ustni-definice', 'Otázka 2 · 14 b.', 'Definice', '45 definic s vys
 </div>`;
 }
 
+/* ---------- Tahák k tisku, Skutečné písemky, hledání přes celý web, „Co dál“ na úvodu ---------- */
+
+/* ===== Tahák na písemnou zkoušku (literatura je u písemné části povolená) ===== */
+function viewTahak() {
+  const box = (t, html) => `<section class="tk-box"><h2 class="tk-h">${t}</h2>${html}</section>`;
+  return band('tight no-print-bg', R`<span class="eyebrow">Písemná zkouška · literatura je povolená</span><h1 class="h1">Tahák.</h1>
+<p class="sub">Všechno podstatné na pár stránkách: známé limity, věty, které se citují, derivace a postup na všechny čtyři příklady. Vytiskni si ho a vezmi na písemnou zkoušku.</p>
+<div class="ctas no-print"><button class="pill" data-act="print">Vytisknout tahák</button><button class="pill ghost" data-go="pisemky-zk">Zkouškové písemky</button></div>`, 'center')
+  + band('alt', R`<div class="tk">
+${box('Známé limity (x → 0)', R`<p>\(\dfrac{\sin x}{x}\to1\), \(\dfrac{\mathrm{tg}\,x}{x}\to1\), \(\dfrac{1-\cos x}{x^2}\to\dfrac12\), \(\dfrac{\arcsin x}{x}\to1\), \(\dfrac{\mathrm{arctg}\,x}{x}\to1\)</p>
+<p>\(\dfrac{e^x-1}{x}\to1\), \(\dfrac{\ln(1+x)}{x}\to1\), \(\dfrac{(1+x)^a-1}{x}\to a\), \((1+x)^{1/x}\to e\)</p>
+<p class="tk-note">Místo \(x\) smí být libovolná vnitřní funkce \(u(x)\to0\), která je na \(P(c,\delta)\) nenulová (věta o limitě složené funkce, podmínka P).</p>`)}
+${box('Posloupnosti', R`<p>\(\sqrt[n]{a}\to1\ (a>0)\), \(\sqrt[n]{n}\to1\), \(\left(1+\tfrac1n\right)^n\to e\), \(q^n\to0\ (|q|\lt1)\)</p>
+<p><b>Růstová škála:</b> \(\ln n\ll n^a\ll q^n\ll n!\ll n^n\) \((a>0\), \(q>1)\). Zdůvodnění: podílové kritérium \(\lim\frac{a_{n+1}}{a_n}\lt1\Rightarrow a_n\to0\) pro \(a_n>0\).</p>
+<p><b>Rozdíl odmocnin:</b> \(\sqrt a-\sqrt b=\frac{a-b}{\sqrt a+\sqrt b}\), \(\sqrt[3]a-\sqrt[3]b=\frac{a-b}{\sqrt[3]{a^2}+\sqrt[3]{ab}+\sqrt[3]{b^2}}\). <b>n-tá odmocnina:</b> dva policajti \(\max\le\sqrt[n]{\text{součet}}\le\sqrt[n]{k}\cdot\max\).</p>`)}
+${box('Věty, které se citují při výpočtu', R`<ul class="plain">
+<li><b>AL</b> (aritmetika limit): platí, je-li výsledek definovaný. Neurčité: \(\infty-\infty\), \(0\cdot\infty\), \(\frac00\), \(\frac\infty\infty\), \(1^\infty\), \(0^0\), \(\infty^0\).</li>
+<li><b>Dělení nulou:</b> \(\frac{A}{0^+}=\pm\infty\) podle znaménka \(A\neq0\); zjisti znaménko jmenovatele zprava i zleva.</li>
+<li><b>Limita složené funkce:</b> \(\lim f(g(x))=B\), je-li \(g\to A\), \(f\to B\) a (P) \(g\neq A\) na \(P(c,\delta)\), nebo (S) \(f\) je spojitá v \(A\).</li>
+<li><b>Dva policajti, omezená × nulová, Heine</b> (neexistence: dvě posloupnosti s různou limitou).</li>
+<li><b>\(f^g=e^{g\ln f}\):</b> spočítej limitu exponentu a napiš, že \(\exp\) je spojitá (podmínka S).</li>
+<li><b>l'Hospital:</b> typ \(\frac00\) nebo \(\frac{\cdot}{\pm\infty}\), existuje \(\lim\frac{f'}{g'}\); pak \(\lim\frac fg=\lim\frac{f'}{g'}\).</li></ul>`)}
+${box('Derivace', R`<p>\((x^a)'=ax^{a-1}\), \((e^x)'=e^x\), \((a^x)'=a^x\ln a\), \((\ln x)'=\frac1x\)</p>
+<p>\((\sin x)'=\cos x\), \((\cos x)'=-\sin x\), \((\mathrm{tg}\,x)'=\frac1{\cos^2x}\), \((\mathrm{cotg}\,x)'=-\frac1{\sin^2x}\)</p>
+<p>\((\arcsin x)'=\frac1{\sqrt{1-x^2}}\), \((\arccos x)'=-\frac1{\sqrt{1-x^2}}\), \((\mathrm{arctg}\,x)'=\frac1{1+x^2}\), \((\mathrm{arccotg}\,x)'=-\frac1{1+x^2}\)</p>
+<p>\((fg)'=f'g+fg'\), \(\left(\frac fg\right)'=\frac{f'g-fg'}{g^2}\), \((f(g))'=f'(g)\,g'\), \((f^g)'=f^g\left(g'\ln f+g\frac{f'}{f}\right)\)</p>`)}
+${box('Goniometrie', R`<p>\(\sin\frac\pi6=\frac12\), \(\sin\frac\pi4=\frac{\sqrt2}2\), \(\sin\frac\pi3=\frac{\sqrt3}2\); \(\mathrm{tg}\,\frac\pi4=1\); \(\mathrm{arctg}\,1=\frac\pi4\), \(\lim_{x\to\pm\infty}\mathrm{arctg}\,x=\pm\frac\pi2\)</p>
+<p>\(\sin(u\pm v)=\sin u\cos v\pm\cos u\sin v\), \(\cos u-\cos v=-2\sin\frac{u+v}2\sin\frac{u-v}2\)</p>
+<p>\(\mathrm{tg}\,u-\mathrm{tg}\,v=\frac{\sin(u-v)}{\cos u\cos v}\), \(\cos u=\sin\left(\frac\pi2-u\right)\), \(\mathrm{arctg}\,y=\frac\pi2-\mathrm{arctg}\,\frac1y\ (y>0)\)</p>`)}
+${box('1. příklad · limita posloupnosti (10 b.)', R`<ol class="steps"><li>Najdi nejrychleji rostoucí člen v každé části a vytkni ho.</li><li>Rozdíl odmocnin rozšiř (vzorec výš), u n-té odmocniny použij dva policajty.</li><li>Každou dílčí limitu zdůvodni: AL, škála (podílové kritérium), \(\sqrt[n]{\cdot}\to1\).</li></ol>`)}
+${box('2. příklad · limita funkce (15 b.)', R`<ol class="steps"><li>Urči typ výrazu. U \(1^\infty\), \(0^0\), \(\infty^0\) přepiš na \(e^{g\ln f}\).</li><li>Převeď na známé limity se stejnou vnitřní funkcí nahoře i dole; ověř podmínku P.</li><li>Rozdíl goniometrických funkcí převeď vzorcem na součin. U \(\infty\cdot0\) vytkni dominantní člen.</li><li>Na konci napiš, která věta dovoluje každý krok.</li></ol>`)}
+${box('3. příklad · spojitost a derivace (10 b.)', R`<ol class="steps"><li>Mimo „podezřelé“ body: elementární funkce, spojitá, derivace podle vzorců.</li><li>V podezřelém bodě (změna předpisu, \(|\cdot|\), \(\mathrm{sgn}\), celá část): nejdřív spojitost, bez ní vlastní derivace není (Věta 36).</li><li>Jednostranné derivace z definice nebo Větou 44 (spojitost + limita derivace).</li></ol>`)}
+${box('4. příklad · průběh funkce (15 b.)', R`<ol class="steps"><li>\(D_f\), sudost/lichost, znaménko, spojitost.</li><li>Limity v krajních bodech \(D_f\).</li><li>\(f'\): monotonie, lokální extrémy, jednostranné derivace v okrajích.</li><li>\(f''\): konvexita, konkávnost, inflexe.</li><li>Asymptoty zvlášť v \(+\infty\) a \(-\infty\): \(k=\lim\frac{f}{x}\), \(q=\lim(f-kx)\).</li><li>Obor hodnot a graf, který odpovídá výpočtům.</li></ol>`)}
+</div>
+<p class="muted small no-print">Sepsáno vlastními slovy podle přednášky. Ověř si u přednášejícího, co přesně smíš mít u zkoušky s sebou (podle podmínek libovolnou literaturu, ale žádnou elektroniku).</p>`, 'narrow');
+}
+
+/* ===== Skutečné písemky z minulosti ===== */
+function viewArchiv() {
+  const row = (h, t) => `<div class="ar-row"><h3 class="h3">${h}</h3><p>${t}</p></div>`;
+  return band('tight', R`<span class="eyebrow">Písemky</span><h1 class="h1">Skutečné písemky.</h1>
+<p class="sub">Kde najdeš zadání z minulých let a čím se Bártovy skutečné písemky liší od cvičných na tomhle webu. Zadání sem nekopírujeme, jen je popisujeme a odkazujeme.</p>`, 'center')
+  + band('alt', R`<h2 class="h2">Jak vypadá Bártova písemná zkouška.</h2>
+<p class="muted">Podle zkouškových písemek z let 2022/23 (4 termíny). U každého příkladu je pokyn spočítat limitu nebo vyšetřit funkci a <b>řádně odůvodnit jednotlivé kroky</b>. Body se strhávají i za správný výsledek bez zdůvodnění.</p>
+<div class="ar">
+${row('1. příklad · limita posloupnosti (10 b.)', 'Součin nebo podíl dvou částí: polynom s odmocninou (binomický rozvoj, vytýkání) a podíl exponenciál s různými základy, nebo rozdíl odmocnin (i třetích) s exponenciálami pod odmocninou, nebo n-tá odmocnina z podílu exponenciálních výrazů. <b>Odpovídá cvičným</b> (typy E1–E7).')}
+${row('2. příklad · limita funkce (15 b.)', 'Nejtěžší příklad. V jednom zadání se kombinuje víc triků: typ 0⁰ nebo ∞⁰ s rozdílem zlomků v základu, 1^∞ s podílem kosinů umocněným na x, součin logaritmu (s exponenciálou uvnitř) a tangenty typu ∞·0, rozdíl dvou tangent u π/2. <b>Cvičné byly lehčí</b>, proto mají zkouškové písemky nově typy Y1–Y6 v tomhle stylu.')}
+${row('3. příklad · spojitost a derivace (10 b.)', 'Funkce se signem logaritmu, celá část vynásobená sinem, absolutní hodnota ze součinu s arkustangentou, funkce zadaná po částech se složenými funkcemi. Vždy je potřeba vyšetřit „podezřelé“ body jednostrannými derivacemi.')}
+${row('4. příklad · průběh funkce (15 b.)', 'Lineární člen plus arkustangens zlomku (v bodě nespojitosti skok), odmocnina z kvadratického polynomu plus lineární člen (mezera v definičním oboru, jednostranné derivace na okrajích, různé asymptoty v ±∞), mocnina dělená třetí odmocninou, racionální funkce plus lineární člen. Skutečné jsou o kus pracnější než cvičné.')}
+</div>`, 'narrow')
+  + band('', R`<h2 class="h2">Zápočtové písemky.</h2>
+<p>Letošní 2. zápočtová písemka (2. 11. 2026) měla dvě skupiny po třech příkladech: rozdíl <b>třetích</b> odmocnin (jednou dělený další odmocninou, jednou vynásobený n), n-tou odmocninu ze součtu exponenciál s polynomem a zdůvodnění, že podíl jde k nule (podílové kritérium). 3. písemka má podle přednášejícího typy: podíl odmocnin či polynomů, dvakrát známé limity a složená funkce. Cvičné 3. písemky jsou proto nově o něco těžší.</p>`, 'narrow')
+  + band('alt', R`<h2 class="h2">Kde najdeš zadání.</h2>
+<ul class="plain ar-links">
+<li><a href="https://e-klub.cz/subjects/JEB005" target="_blank" rel="noopener">E-klub, Matematika I (po přihlášení)</a>: písemné zkoušky Bárta 2022/23 s řešením a 2014/15, letošní 2. zápočet, starší zápočty, řešené limity.</li>
+<li><a href="https://www.karlin.mff.cuni.cz/~kalenda/edu.php?edutype=archpis" target="_blank" rel="noopener">O. Kalenda: archiv písemek</a> z Matematiky I pro IES FSV (1997/98–2019/20).</li>
+<li><a href="http://www.karlin.mff.cuni.cz/~zeleny/fsv/mat1.htm" target="_blank" rel="noopener">M. Zelený: staré zkouškové písemky FSV</a>.</li>
+<li><a href="https://www2.karlin.mff.cuni.cz/~barta/FSV/mat1.html" target="_blank" rel="noopener">T. Bárta: stránka předmětu</a> (vzorová písemka s bodováním, až ji zveřejní).</li>
+<li><a href="https://www2.karlin.mff.cuni.cz/~kuncova/historie33.php" target="_blank" rel="noopener">K. Kuncová</a> a <a href="https://www.karlin.mff.cuni.cz/~kubicek/" target="_blank" rel="noopener">D. Kubíček</a>: sbírky příkladů s řešením.</li></ul>
+<div class="note"><h3 class="h3">Jak je používat</h3><ul class="plain"><li>Starou písemku počítej <b>na čas</b> (120 minut) a bez řešení, až potom porovnej.</li><li>Ohodnoť se přísně: chybí-li zdůvodnění kroku (věta o limitě složené funkce, spojitost exponenciály), strhni si body.</li><li>Písemky jiných přednášejících (Johanis, Zelený, Vlasák) mají podobnou strukturu, ale jiný styl. Bártovy jsou nejbližší.</li></ul></div>`, 'narrow');
+}
+
+/* ===== Hledání přes celý web ===== */
+const fold = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+let SEARCH_IDX = null;
+function searchIndex() {
+  if (SEARCH_IDX) return SEARCH_IDX;
+  const out = [], strip = h => String(h || '').replace(/<[^>]+>/g, ' ').replace(/\\\(|\\\)|\\\[|\\\]/g, ' ').replace(/\s+/g, ' ').trim();
+  PROOFS.forEach(p => out.push({ k: 'Důkaz', t: `${p.no} ${p.name}`, d: strip(p.plain), go: 'dukaz-' + p.id }));
+  KEYS.forEach(it => out.push({ k: 'Klíčový pojem', t: it.t, d: it.short, go: 'ustni-pojmy-' + it.id }));
+  DEFS.forEach(it => out.push({ k: 'Definice', t: it.t, d: it.short, go: 'ustni-definice-' + it.id }));
+  THEORY.forEach(th => {
+    out.push({ k: 'Teorie', t: th.title, d: 'kapitola teorie', go: 'teorie-' + th.id });
+    for (const m of th.html.matchAll(/<span class="lbl">(.*?)<\/span>/g)) out.push({ k: 'Teorie', t: strip(m[1]).replace(/\$\{[^}]*\}/g, ''), d: th.title, go: 'teorie-' + th.id });
+  });
+  Object.entries(PLABEL).forEach(([tk, l]) => { const [g, sl] = topicSec(tk); out.push({ k: 'Příklady', t: l, d: `${g.l} · ${sl}`, go: 'priklady-' + tk }); });
+  [['pisemky-zk', 'Písemná zkouška', 'cvičné zkouškové písemky'], ['pisemky-p3', '3. zápočtová písemka', 'cvičné písemky'], ['pisemky-p2', '2. zápočtová písemka', 'cvičné písemky'],
+   ['pisemky-tahak', 'Tahák na písemnou zkoušku', 'známé limity, derivace, postupy'], ['pisemky-archiv', 'Skutečné písemky z minulosti', 'archivy a jak se liší'],
+   ['terminy', 'Termíny a zkouška', 'písemky, zkouškové termíny, známky'], ['ustni', 'Ústní zkouška', 'jak probíhá, body']].forEach(([go, t, d]) => out.push({ k: 'Stránka', t, d, go }));
+  out.forEach(o => { o.ft = fold(o.t); o.fd = fold(o.d); });
+  return SEARCH_IDX = out;
+}
+function searchRun(q) {
+  const f = fold(q.trim()); if (!f) return [];
+  const words = f.split(/\s+/);
+  return searchIndex().map(o => {
+    let sc = 0;
+    for (const w of words) { if (o.ft.startsWith(w)) sc += 6; else if (o.ft.includes(' ' + w)) sc += 4; else if (o.ft.includes(w)) sc += 3; else if (o.fd.includes(w)) sc += 1; else return null; }
+    return [sc, o];
+  }).filter(Boolean).sort((a, b) => b[0] - a[0]).slice(0, 14).map(x => x[1]);
+}
+function openSearch() {
+  let ov = document.getElementById('srch');
+  if (!ov) {
+    ov = document.createElement('div'); ov.id = 'srch'; ov.className = 'srch'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Hledat na webu');
+    ov.innerHTML = `<div class="srch-box"><div class="srch-in"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg><input id="srchQ" type="search" placeholder="Hledej důkaz, pojem, definici, kapitolu…" autocomplete="off" aria-label="Hledat"><kbd>Esc</kbd></div><div class="srch-res" id="srchRes" role="listbox"></div></div>`;
+    document.body.appendChild(ov);
+  }
+  ov.hidden = false; document.documentElement.classList.add('menu-lock');
+  const q = document.getElementById('srchQ'); q.value = ''; renderSearch(''); setTimeout(() => q.focus(), 10);
+}
+function closeSearch() { const ov = document.getElementById('srch'); if (ov && !ov.hidden) { ov.hidden = true; document.documentElement.classList.remove('menu-lock'); } }
+function renderSearch(q) {
+  const box = document.getElementById('srchRes'); if (!box) return;
+  const res = searchRun(q);
+  box.innerHTML = !q.trim() ? '<p class="srch-hint">Například: <b>supremum</b>, <b>Rolle</b>, <b>bijekce</b>, <b>průběh</b>, <b>tahák</b>.</p>'
+    : res.length ? res.map((o, i) => `<button type="button" class="srch-i${i ? '' : ' on'}" role="option" data-go="${o.go}"><span class="srch-k">${o.k}</span><b>${esc(o.t)}</b><span>${esc(o.d)}</span></button>`).join('') : '<p class="srch-hint">Nic nenalezeno.</p>';
+}
+
+/* ===== „Co dál“ na úvodní stránce ===== */
+function nextStep() {
+  const ev = EVENTS.find(e => daysTo(e.d) >= 0 && !/^Zkouška/.test(e.what));
+  if (ev && !store.get('wDone', false) && daysTo(ev.d) <= 14) {
+    const kind = kindOf(ev), dn = daysTo(ev.d), done = doneCount(kind), first = firstOpenTest(kind);
+    if (done < 3) return { t: `Napiš cvičnou ${({ p2: '2. zápočtovou písemku', p3: '3. zápočtovou písemku' })[kind] || 'písemku'} č. ${first}`, d: `Do písemky ${dn === 0 ? 'zbývá dnešek' : dn === 1 ? 'zbývá den' : `zbývá ${dn} ${dayWord(dn)}`} a na čas máš napsané ${done}. Tři cvičné na čas jsou minimum.`, go: `${kind}-${pad(first)}`, b: 'Napsat písemku' };
+  }
+  const kk = kdKnown('pojmy'), k1 = KEYS.find(it => !kk[it.id]);
+  if (k1) return { t: `Klíčový pojem: ${k1.t}`, d: `Bez klíčových pojmů je ústní automaticky F. Umíš ${Object.keys(kk).length} z ${KEYS.length}.`, go: 'ustni-pojmy-' + k1.id, b: 'Naučit se' };
+  if (doneCount('zk') < 3) { const f = firstOpenTest('zk'); return { t: `Napiš zkouškovou písemku č. ${f}`, d: 'Čtyři příklady za 120 minut. Na úspěch potřebuješ víc než 25 z 50 bodů.', go: `zk-${pad(f)}`, b: 'Napsat písemku' }; }
+  const known = knownSet();
+  const p = PROOFS.find(x => REQ.L.includes(x.id) && !known[x.id]) || PROOFS.find(x => REQ.T.includes(x.id) && !known[x.id]);
+  if (p) return { t: `Důkaz: ${p.no} ${p.name}`, d: `${REQ.T.includes(p.id) ? 'Věta s obtížnějším důkazem' : 'Věta s lehčím důkazem'} z požadavků k ústní. Umíš ${knownCount()} z ${PROOF_TOTAL}.`, go: 'dukaz-' + p.id, b: 'Projít důkaz' };
+  const dk = kdKnown('definice'), d1 = DEFS.find(it => !dk[it.id]);
+  if (d1) return { t: `Definice: ${d1.t}`, d: `Umíš ${Object.keys(dk).length} z ${DEFS.length} definic.`, go: 'ustni-definice-' + d1.id, b: 'Naučit se' };
+  const f = firstOpenTest('zk');
+  return { t: 'Napiš další zkouškovou písemku', d: 'Důkazy, pojmy i definice máš odškrtané. Teď hlavně počítat na čas.', go: `zk-${pad(f)}`, b: 'Napsat písemku' };
+}
+function nextStepHTML() {
+  const n = nextStep();
+  return `<div class="nextstep"><span class="hp-tag">Co dál</span><span class="ns-txt"><b>${esc(n.t)}</b><small>${esc(n.d)}</small></span><button class="pill sm" data-go="${n.go}">${n.b}</button></div>`;
+}
+
 /* ---------- FX: přechody mezi stránkami, odhalování při scrollu, světlo pod kurzorem, počítání čísel ----------
    Jen opacity a transform (běží na GPU, neblokují scroll). Při prefers-reduced-motion se nic nehýbe. */
 const FX_ON = () => !reduceMotion();
@@ -5567,7 +5875,9 @@ const NAV = [
     ['pisemky', 'Všechny písemky a výsledky', 'Přehled, průměry a grafy'],
     ['pisemky-zk', 'Písemná zkouška', `${TESTDEF.zk.n} písemek, 4 příklady na 120 minut · hotovo ${doneCount('zk')}`],
     ['pisemky-p3', '3. zápočtová písemka', `${TESTDEF.p3.n} písemek + ${TESTDEF.h3.n} extra těžkých · hotovo ${doneCount('p3') + doneCount('h3')}`],
-    ['pisemky-p2', '2. zápočtová písemka', `${TESTDEF.p2.n} písemek + ${TESTDEF.h2.n} extra těžkých · hotovo ${doneCount('p2') + doneCount('h2')}`]] },
+    ['pisemky-p2', '2. zápočtová písemka', `${TESTDEF.p2.n} písemek + ${TESTDEF.h2.n} extra těžkých · hotovo ${doneCount('p2') + doneCount('h2')}`],
+    ['pisemky-tahak', 'Tahák na písemnou zkoušku', 'Známé limity, derivace a postupy k tisku'],
+    ['pisemky-archiv', 'Skutečné písemky z minulosti', 'Kde najdeš zadání a čím se liší od cvičných']] },
   { id: 'teorie', l: 'Teorie' }, { id: 'terminy', l: 'Termíny' }
 ];
 const state = { view: 'domu', batch: store.get('batch', 0), randomSeed: null, randomKind: 'p2', topic: store.get('topic', 'odm'), pch: 'all', pq: '', quiz: store.get('quiz', false) };
@@ -5619,10 +5929,12 @@ function viewTitle(v) {
   if (v.startsWith('priklady')) return 'Příklady · ' + (PLABEL[v.split('-')[1] || state.topic] || '');
   if (v === 'dukazy') return 'Důkazy';
   const pk = v.match(/^pisemky-(p2|p3|zk)$/); if (pk) return 'Písemky · ' + TESTDEF[pk[1]].title;
+  if (v === 'pisemky-tahak') return 'Tahák na písemnou zkoušku'; if (v === 'pisemky-archiv') return 'Skutečné písemky';
   const n = NAV.find(x => x.id === navCur(v)); return n ? n.l : null;
 }
 const scrollMem = {};
 function go(token, push = true, restore = false) {
+  if (typeof closeSearch === 'function') closeSearch();
   if (timer.id && state.view !== token && !confirmLeave()) return;
   stopTimer(false);
   scrollMem[state.view] = window.scrollY;
@@ -5687,7 +5999,7 @@ function examPanel() {
   const prep = `<div class="hp-rows">${row('pisemky-zk', 'Zkouškové písemky', doneCount('zk'), TESTDEF.zk.n, 'napsáno')}${row('dukazy', 'Důkazy', known, PROOF_TOTAL, 'umíš')}${row('ustni-pojmy', 'Klíčové pojmy', kp, KEYS.length, 'umíš')}${row('ustni-definice', 'Definice', kd, DEFS.length, 'umíš')}</div>
 ${zs.n ? `<p class="hp-stat">Průměr zkouškových písemek: <b>${fmt1(zs.avg)}</b> z 50 b. (na úspěch víc než 25)</p>` : ''}
 ${btns}
-<div class="hp-links"><button type="button" class="more" data-go="priklady-zk">Příklady ke zkoušce</button><button type="button" class="more" data-go="ustni">Jak probíhá ústní</button></div>`;
+<div class="hp-links"><button type="button" class="more" data-go="priklady-zk">Příklady ke zkoušce</button><button type="button" class="more" data-go="pisemky-tahak">Tahák</button><button type="button" class="more" data-go="ustni">Jak probíhá ústní</button></div>`;
   const top = what => `<div class="hp-top"><span class="hp-tag o">Zkouška</span><span class="hp-what">${what}</span></div>`;
   if (!ch || (ch !== '?' && daysTo(ch) < -1)) {
     const note = ch && ch !== '?' ? `Tvůj termín ${fmtS(dOf(ch))} už proběhl. Jestli jdeš znovu, vyber další.` : '';
@@ -5719,7 +6031,7 @@ ${st.n ? `<p class="hp-stat">Tvůj průměr z ${st.n} ${st.n === 1 ? 'cvičné' 
   }
   const written = Object.keys(TESTDEF).reduce((a, k) => a + statsFor(k).n, 0), zs = statsFor('zk');
   const known = knownCount(), kp = kdCount('pojmy'), kd = kdCount('definice');
-  return band('dark', R`<div class="hsplit${showW ? '' : ' solo'}">${w}${examPanel()}</div>${resumeHTML()}${wHidden && next ? '<button type="button" class="hp-hide hp-unhide" data-act="wshow">Zobrazit i zápočet</button>' : ''}`)
+  return band('dark', R`<div class="hsplit${showW ? '' : ' solo'}">${w}${examPanel()}</div>${nextStepHTML()}${resumeHTML()}${wHidden && next ? '<button type="button" class="hp-hide hp-unhide" data-act="wshow">Zobrazit i zápočet</button>' : ''}`)
     + band('', R`<div class="row-h"><h2 class="h2">Tvoje čísla.</h2><span class="muted small">${store.ok ? 'Ukládá se jen v tomto prohlížeči.' : 'Prohlížeč ukládání blokuje, data vydrží jen do zavření stránky.'}</span></div>
 <div class="stats"><div class="stat"><b>${written}</b><span>cvičných písemek s body</span></div><div class="stat"><b>${zs.n ? fmt1(zs.avg) : '–'}</b><span>průměr zkouškových (z 50)</span></div><div class="stat"><b>${known + kp + kd}</b><span>důkazů, pojmů a definic umíš (z ${PROOF_TOTAL + KEYS.length + DEFS.length})</span></div></div>
 ${written ? '<div class="ctas"><button class="more" data-go="pisemky">Všechny výsledky a grafy</button></div>' : ''}
@@ -5770,7 +6082,7 @@ const PGROUPS = [
   { id: 'zk', l: 'Zkouškové', d: 'Čtyři příklady písemné části zkoušky.', sec: [['1. příklad · 10 b.', ['zk']], ['2. příklad · 15 b.', ['zfl']], ['3. příklad · 10 b.', ['der']], ['4. příklad · 15 b.', ['pr']]] }
 ];
 const PLABEL = { odm: 'Rozdíl odmocnin', nte: 'n-tá odmocnina a policajti', skala: 'Růstová škála', fl: 'Limity funkcí', zk: 'Limity posloupností', zfl: 'Limity funkcí', der: 'Spojitost a derivace', pr: 'Průběh funkce' };
-const TOPIC_FAMS = { zfl: ['X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'L7', 'L13', 'L15', 'L10', 'L11'] };
+const TOPIC_FAMS = { zfl: ['Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'Y6', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'L7', 'L13', 'L15', 'L10', 'L11'] };
 const famIds = tk => TOPIC_FAMS[tk] || Object.keys(FAM).filter(id => FAM[id].topic === tk && !FAM[id].hard);
 const TOPIC_LETTER = { odm: 'A', nte: 'B', skala: 'C', fl: 'D', zk: 'E', zfl: 'F', der: 'G', pr: 'H' };
 const topicSec = tk => { for (const g of PGROUPS) for (const [sl, ks] of g.sec) if (ks.includes(tk)) return [g, sl]; return [PGROUPS[0], '']; };
@@ -5879,7 +6191,8 @@ function viewTest(kind, i, seed) {
 <label class="tb-score">Body ${scoreInput(typeof s.score === 'number' ? 'is-saved' : '')} / ${T.max}<span class="saved-tag" data-saved>${typeof s.score === 'number' ? '✓ uloženo' : ''}</span></label></div></div>
 <div id="endslot" class="endslot"></div>`
   + band(T.hard ? 'hard' : '', R`<span class="eyebrow">${T.title} · ${isRandom ? 'náhodná' : 'cvičná'}</span><h1 class="h1">${isRandom ? 'Náhodná písemka.' : 'Písemka ' + i + '.'}</h1>
-<p class="sub">${T.pts.length} příklady · ${T.max} bodů · na úspěch ${kind === 'zk' ? 'víc než 25' : T.pass} bodů${kind === 'zk' ? ' · stopky na 120 minut jsou orientační, délku zkoušky si ověř' : ' · 30 minut'}. Zdůvodňuj každý krok.</p>`, 'center')
+<p class="sub">${T.pts.length} příklady · ${T.max} bodů · na úspěch ${kind === 'zk' ? 'víc než 25' : T.pass} bodů${kind === 'zk' ? ' · stopky na 120 minut jsou orientační, délku zkoušky si ověř' : ' · 30 minut'}. Zdůvodňuj každý krok.</p>
+<div class="ctas no-print"><button class="pill ghost sm" data-act="print">Vytisknout zadání</button></div>`, 'center')
   + band('alt', R`<div class="list">${probs.map((p, k) => probHTML(p, `${k + 1}.`, { pts: T.pts[k] + ' bodů' })).join('')}</div>
 <div class="score"><span class="h3">Kolik ti vyšlo?</span>
 <label>Body: ${scoreInput('big' + (typeof s.score === 'number' ? ' is-saved' : ''))} / ${T.max}</label><button class="pill sm" data-act="savescore">Uložit body</button>
@@ -5948,6 +6261,8 @@ function render() {
   else if (v === 'terminy') html = viewTerms();
   else if (v.startsWith('teorie')) html = viewTheory();
   else if (v === 'priklady' || v.startsWith('priklady-')) html = viewProblems();
+  else if (v === 'pisemky-tahak') html = viewTahak();
+  else if (v === 'pisemky-archiv') html = viewArchiv();
   else if (v === 'pisemky' || /^pisemky-(p2|p3|zk)$/.test(v)) html = viewTests();
   else if (v === 'dukazy') html = viewProofs();
   else if (PROOF_RE.test(v) && proofById(v.match(PROOF_RE)[1])) html = viewProof(proofById(v.match(PROOF_RE)[1]));
@@ -6083,6 +6398,8 @@ document.addEventListener('click', e => {
   if (!a) return;
   const act = a.dataset.act;
   if (act === 'fc-flip' || act === 'fc-yes' || act === 'fc-no' || act === 'fc-all') { fcAct(act); return; }
+  if (act === 'print') { document.querySelectorAll('#view details').forEach(d => { d.dataset.wasOpen = d.open ? '1' : ''; d.open = false; }); window.print(); return; }
+  if (act === 'search') { openSearch(); return; }
   if (act === 'wdone' || act === 'wshow') { store.set('wDone', act === 'wdone'); const y = scrollY; render(); scrollTo(0, y); if (act === 'wdone') toast('Zápočet skrytý. Vrátíš ho tlačítkem „Zobrazit i zápočet“.'); return; }
   if (act === 'exam-set' || act === 'exam-custom' || act === 'exam-change') {
     let d = act === 'exam-change' ? null : a.dataset.d;
@@ -6141,7 +6458,16 @@ function fcAct(act) {
   render();
 }
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { if (document.querySelector('.gnav.menu-open')) setMobileMenu(false); closeMenus(); }
+  if (e.key === 'Escape') { closeSearch(); if (document.querySelector('.gnav.menu-open')) setMobileMenu(false); closeMenus(); }
+  const typing = e.target.closest && e.target.closest('input, textarea, select, [contenteditable]');
+  if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !typing)) { e.preventDefault(); openSearch(); return; }
+  const ov = document.getElementById('srch');
+  if (ov && !ov.hidden && (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter')) {
+    const items = [...ov.querySelectorAll('.srch-i')]; if (!items.length) return;
+    let i = items.findIndex(x => x.classList.contains('on')); if (i < 0) i = 0;
+    if (e.key === 'Enter') { e.preventDefault(); items[i].click(); return; }
+    e.preventDefault(); items[i].classList.remove('on'); i = (i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length; items[i].classList.add('on'); items[i].scrollIntoView({ block: 'nearest' }); return;
+  }
   if (!KC_RE.test(state.view) || !state.fc || (e.target.closest && e.target.closest('input, textarea, select')) || e.metaKey || e.ctrlKey || e.altKey) return;
   if (!state.fc.flip && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); fcAct('fc-flip'); }
   else if (state.fc.flip && e.key === 'ArrowRight') { e.preventDefault(); fcAct('fc-yes'); }
@@ -6154,11 +6480,13 @@ document.addEventListener('click', e => {
   const dd = e.target.closest('[data-dd]');
   if (dd) { const nv = dd.closest('.nv'), open = !nv.classList.contains('open'); closeMenus(nv); nv.classList.toggle('open', open); dd.setAttribute('aria-expanded', open); return; }
   if (!e.target.closest('.nv')) closeMenus();
+  if (e.target.id === 'srch') closeSearch();
   if (document.querySelector('.gnav.menu-open') && !e.target.closest('.gnav')) setMobileMenu(false);
 });
 let searchT;
 document.addEventListener('input', e => {
   if (e.target.id === 'pq') { state.pq = e.target.value; clearTimeout(searchT); searchT = setTimeout(rerenderProofList, 250); }
+  if (e.target.id === 'srchQ') { renderSearch(e.target.value); return; }
   if (e.target.id === 'kq') {
     const q = e.target.value.trim().toLowerCase(); let any = false;
     document.querySelectorAll('.kc').forEach(c => { const hit = !q || c.dataset.s.includes(q); c.hidden = !hit; any = any || hit; });
