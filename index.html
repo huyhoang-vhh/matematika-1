@@ -1151,6 +1151,38 @@ a.dd-i, a.dd-i:hover { text-decoration: none; }
 span.dd-i[aria-current] { cursor: default; }
 .ies-sw > .nv-b span { font-weight: 600; letter-spacing: .02em; }
 
+/* odkaz „Přeskočit na obsah“ – viditelný jen při ovládání klávesnicí */
+.skip { position: fixed; left: 12px; top: 8px; z-index: 100; transform: translateY(-160%); background: var(--ink); color: var(--bg); border: 0; border-radius: 10px; padding: 10px 16px; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+.skip:focus-visible { transform: none; outline: 2px solid var(--blue); outline-offset: 2px; }
+#view:focus { outline: none; }
+
+/* =================== pravidla animací (2026-11-25) ===================
+   UI animace do ~250 ms (Doherty: odezva hned), postupný nástup (stagger 35 ms), menu vyrůstá z tlačítka,
+   časté ovládání (pilulky, čipy, odpovědi) bez efektů navíc, okamžitá odezva na stisk (:active).
+   Výrazné zůstává jen to, co je „vrchol“: úvodní pás, odpočet a kreslení grafu. */
+.fx .rv { transform: translate3d(0, 10px, 0); transition: opacity .24s var(--ease-out), transform .28s var(--ease-out); transition-delay: calc(var(--d, 0) * 35ms); }
+.fx .tl-i.rv::before { transition: transform .3s var(--ease-out) .05s; }
+.meter i { transition: transform .45s var(--ease-out) .05s; }
+.pill { transition: transform .15s var(--ease-out), box-shadow .2s var(--ease-out), filter .15s, background-color .15s; }
+.pill::after { display: none; }
+.tile, .tcard, .step3, .pp-nb, .prow, .rcard { transition: transform .2s var(--ease-out), box-shadow .2s var(--ease-out); }
+::view-transition-new(root) { animation-duration: .22s; }
+::view-transition-old(root) { animation-duration: .15s; }
+.dd-box { transform-origin: 24px 0; animation: dd-in .14s var(--ease-out); }
+@keyframes dd-in { from { opacity: 0; transform: translateY(-4px) scale(.97); } }
+.chip:active, .dd-i:active, .opt:active, .seg button:active, .prow:active, .srch-i:active, .tile:active { transform: scale(.98); transition-duration: .06s; }
+.pill:not(:disabled):active { transform: scale(.97); transition-duration: .06s; }
+@media (prefers-reduced-motion: reduce) { .chip:active, .dd-i:active, .opt:active, .seg button:active, .prow:active, .srch-i:active, .tile:active, .pill:active { transform: none; } }
+
+/* =================== bez kapitálek (2026-11-25): štítky a podtitulky normálním písmem ===================
+   ALL CAPS podtitulky působí jako generický „AI“ design a hůř se čtou; nechávám jen velikost, barvu a tučnost. */
+.thm .lbl, .lbl, .pp-h, .why-l, .kp .lbl, .dd-h, .hp-tag, .srch-k, .soon, .badge { text-transform: none; letter-spacing: -.005em; }
+.thm .lbl, .lbl, .kp .lbl, .why-l, .hp-tag, .srch-k { font-size: 13px; }
+.pp-h { font-size: 14px; }
+.dd-h { font-size: 13px; }
+.tag, .prow-no small, th { text-transform: none; letter-spacing: 0; }
+.prow-no small { font-size: 11px; }
+
 </style>
 
 <header class="gnav"><div class="gnav-in">
@@ -5530,7 +5562,7 @@ function viewKDList(kind) {
   const sub = kind === 'pojmy'
     ? 'Čtrnáct pojmů, bez kterých je u ústní automaticky F. Klikni na pojem: přesná definice, vysvětlení, příklady a otázky zkoušejícího.'
     : 'Všech 45 definic z oficiálních požadavků. U každé přesné znění, vysvětlení vlastními slovy, příklad a protipříklad.';
-  return band('tight', R`<span class="eyebrow">Ústní zkouška · ${kind === 'pojmy' ? 'otázka 1' : 'otázka 2'}</span><h1 class="h1">${K.title}.</h1>
+  return band('tight', R`<span class="eyebrow">Ústní zkouška · ${kind === 'pojmy' ? 'otázka 1' : 'otázka 2'}</span><h1 class="h1">${K.title}</h1>
 <p class="sub">${sub}</p>
 <div class="kprog"><div class="meter"><i id="kdMeter" style="width:${100 * k / n}%"></i></div><span class="muted small" id="kdCount">Umíš ${k} z ${n}</span></div>
 <div class="ctas"><button class="pill" data-go="ustni-karticky-${kind}">Procvičit kartičkami</button><button class="pill ghost" data-go="ustni-${other[0]}">${other[1]}</button></div>`, 'center')
@@ -5576,7 +5608,7 @@ function viewKDCards(kind) {
   const fc = state.fc, done = fc.total - fc.q.length;
   const head = R`<span class="eyebrow">Kartičky · ${K.title}</span>
 <div class="kprog"><div class="meter"><i style="width:${100 * done / fc.total}%"></i></div><span class="muted small">${fc.q.length ? `Zbývá ${fc.q.length} z ${fc.total}` : 'Hotovo'}</span></div>`;
-  if (!fc.q.length) return band('', R`${head}<div class="fcard fdone"><h1 class="h2">Hotovo.</h1><p class="muted">Všechny kartičky v tomhle kole jsou označené jako „umím“.</p>
+  if (!fc.q.length) return band('', R`${head}<div class="fcard fdone"><h1 class="h2">Hotovo</h1><p class="muted">Všechny kartičky v tomhle kole jsou označené jako „umím“.</p>
 <div class="ctas"><button class="pill" data-act="fc-all">Projít znovu všechny</button><button class="more" data-go="ustni-${kind}">Zpět na ${K.title.toLowerCase()}</button></div></div>`, 'center narrow');
   const it = kdItem(kind, fc.q[0]);
   const back = fc.flip ? `<div class="kd-def">${it.def}</div><p class="fc-say">${it.say}</p>
@@ -5607,7 +5639,7 @@ ${oralTile('ustni-definice', 'Otázka 2 · 14 b.', 'Definice', '45 definic s vys
 /* ===== Tahák na písemnou zkoušku (literatura je u písemné části povolená) ===== */
 function viewTahak() {
   const box = (t, html) => `<section class="tk-box"><h2 class="tk-h">${t}</h2>${html}</section>`;
-  return band('tight no-print-bg', R`<span class="eyebrow">Písemná zkouška · literatura je povolená</span><h1 class="h1">Tahák.</h1>
+  return band('tight no-print-bg', R`<span class="eyebrow">Písemná zkouška · literatura je povolená</span><h1 class="h1">Tahák</h1>
 <p class="sub">Všechno podstatné na pár stránkách: známé limity, věty, které se citují, derivace a postup na všechny čtyři příklady. Vytiskni si ho a vezmi na písemnou zkoušku.</p>
 <div class="ctas no-print"><button class="pill" data-act="print">Vytisknout tahák</button><button class="pill ghost" data-go="pisemky-zk">Zkouškové písemky</button></div>`, 'center')
   + band('alt', R`<div class="tk">
@@ -5642,9 +5674,9 @@ ${box('4. příklad · průběh funkce (15 b.)', R`<ol class="steps"><li>\(D_f\)
 /* ===== Skutečné písemky z minulosti ===== */
 function viewArchiv() {
   const row = (h, t) => `<div class="ar-row"><h3 class="h3">${h}</h3><p>${t}</p></div>`;
-  return band('tight', R`<span class="eyebrow">Písemky</span><h1 class="h1">Skutečné písemky.</h1>
+  return band('tight', R`<span class="eyebrow">Písemky</span><h1 class="h1">Skutečné písemky</h1>
 <p class="sub">Kde najdeš zadání z minulých let a čím se Bártovy skutečné písemky liší od cvičných na tomhle webu. Zadání sem nekopírujeme, jen je popisujeme a odkazujeme.</p>`, 'center')
-  + band('alt', R`<h2 class="h2">Jak vypadá Bártova písemná zkouška.</h2>
+  + band('alt', R`<h2 class="h2">Jak vypadá Bártova písemná zkouška</h2>
 <p class="muted">Podle zkouškových písemek z let 2022/23 (4 termíny). U každého příkladu je pokyn spočítat limitu nebo vyšetřit funkci a <b>řádně odůvodnit jednotlivé kroky</b>. Body se strhávají i za správný výsledek bez zdůvodnění.</p>
 <div class="ar">
 ${row('1. příklad · limita posloupnosti (10 b.)', 'Součin nebo podíl dvou částí: polynom s odmocninou (binomický rozvoj, vytýkání) a podíl exponenciál s různými základy, nebo rozdíl odmocnin (i třetích) s exponenciálami pod odmocninou, nebo n-tá odmocnina z podílu exponenciálních výrazů. <b>Odpovídá cvičným</b> (typy E1–E7).')}
@@ -5652,9 +5684,9 @@ ${row('2. příklad · limita funkce (15 b.)', 'Nejtěžší příklad. V jednom
 ${row('3. příklad · spojitost a derivace (10 b.)', 'Funkce se signem logaritmu, celá část vynásobená sinem, absolutní hodnota ze součinu s arkustangentou, funkce zadaná po částech se složenými funkcemi. Vždy je potřeba vyšetřit „podezřelé“ body jednostrannými derivacemi.')}
 ${row('4. příklad · průběh funkce (15 b.)', 'Lineární člen plus arkustangens zlomku (v bodě nespojitosti skok), odmocnina z kvadratického polynomu plus lineární člen (mezera v definičním oboru, jednostranné derivace na okrajích, různé asymptoty v ±∞), mocnina dělená třetí odmocninou, racionální funkce plus lineární člen. Skutečné jsou o kus pracnější než cvičné.')}
 </div>`, 'narrow')
-  + band('', R`<h2 class="h2">Zápočtové písemky.</h2>
+  + band('', R`<h2 class="h2">Zápočtové písemky</h2>
 <p>Letošní 2. zápočtová písemka (2. 11. 2026) měla dvě skupiny po třech příkladech: rozdíl <b>třetích</b> odmocnin (jednou dělený další odmocninou, jednou vynásobený n), n-tou odmocninu ze součtu exponenciál s polynomem a zdůvodnění, že podíl jde k nule (podílové kritérium). 3. písemka má podle přednášejícího typy: podíl odmocnin či polynomů, dvakrát známé limity a složená funkce. Cvičné 3. písemky jsou proto nově o něco těžší.</p>`, 'narrow')
-  + band('alt', R`<h2 class="h2">Kde najdeš zadání.</h2>
+  + band('alt', R`<h2 class="h2">Kde najdeš zadání</h2>
 <ul class="plain ar-links">
 <li><a href="https://e-klub.cz/subjects/JEB005" target="_blank" rel="noopener">E-klub, Matematika I (po přihlášení)</a>: písemné zkoušky Bárta 2022/23 s řešením a 2014/15, letošní 2. zápočet, starší zápočty, řešené limity.</li>
 <li><a href="https://www.karlin.mff.cuni.cz/~kalenda/edu.php?edutype=archpis" target="_blank" rel="noopener">O. Kalenda: archiv písemek</a> z Matematiky I pro IES FSV (1997/98–2019/20).</li>
@@ -5786,7 +5818,7 @@ function rvCheck() {
     else if (el.matches('.display')) fxCount(el.querySelector('.grad') || el);
     const end = ev => { if (ev.target === el && !ev.pseudoElement && ev.propertyName === 'opacity') { fxDone(el); el.removeEventListener('transitionend', end); } };
     el.addEventListener('transitionend', end);
-    setTimeout(() => fxDone(el), 1700); /* pojistka, kdyby transitionend nepřišel */
+    setTimeout(() => fxDone(el), 700); /* pojistka, kdyby transitionend nepřišel */
   });
 }
 const rvSoon = () => { if (!rvT) rvT = setTimeout(rvCheck, 40); };
@@ -5861,6 +5893,11 @@ function iesSwitch() {
     ? `<span class="dd-i" aria-current="page"><b>${t}</b><span>právě tady</span></span>`
     : `<a class="dd-i" href="${IES_URL[k]}"${tg}><b>${t}</b><span>${d}</span></a>`).join('')}</div></div></div></div>`;
 }
+
+/* „Přeskočit na obsah“ pro ovládání klávesnicí (první Tab na stránce) */
+(() => { const m = document.getElementById('view'); if (!m || document.querySelector('.skip')) return; m.setAttribute('tabindex', '-1');
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'skip'; b.textContent = 'Přeskočit na obsah';
+  b.addEventListener('click', () => { m.focus({ preventScroll: true }); m.scrollIntoView(); }); document.body.prepend(b); })();
 
 /* ---------- úložiště (jen v tomto prohlížeči) ---------- */
 const store = {
@@ -5955,6 +5992,8 @@ function viewTitle(v) {
 }
 const scrollMem = {};
 function go(token, push = true, restore = false) {
+  token = String(token || '');
+  if (!/^[a-z0-9-]{1,80}$/i.test(token)) token = 'domu'; /* bezpečnost: do stavu a úložiště jen platné cesty (ne HTML z adresy) */
   if (typeof closeSearch === 'function') closeSearch();
   if (timer.id && state.view !== token && !confirmLeave()) return;
   stopTimer(false);
@@ -6053,7 +6092,7 @@ ${st.n ? `<p class="hp-stat">Tvůj průměr z ${st.n} ${st.n === 1 ? 'cvičné' 
   const written = Object.keys(TESTDEF).reduce((a, k) => a + statsFor(k).n, 0), zs = statsFor('zk');
   const known = knownCount(), kp = kdCount('pojmy'), kd = kdCount('definice');
   return band('dark', R`<div class="hsplit${showW ? '' : ' solo'}">${w}${examPanel()}</div>${nextStepHTML()}${resumeHTML()}${wHidden && next ? '<button type="button" class="hp-hide hp-unhide" data-act="wshow">Zobrazit i zápočet</button>' : ''}`)
-    + band('', R`<div class="row-h"><h2 class="h2">Tvoje čísla.</h2><span class="muted small">${store.ok ? 'Ukládá se jen v tomto prohlížeči.' : 'Prohlížeč ukládání blokuje, data vydrží jen do zavření stránky.'}</span></div>
+    + band('', R`<div class="row-h"><h2 class="h2">Tvoje čísla</h2><span class="muted small">${store.ok ? 'Ukládá se jen v tomto prohlížeči.' : 'Prohlížeč ukládání blokuje, data vydrží jen do zavření stránky.'}</span></div>
 <div class="stats"><div class="stat"><b>${written}</b><span>cvičných písemek s body</span></div><div class="stat"><b>${zs.n ? fmt1(zs.avg) : '–'}</b><span>průměr zkouškových (z 50)</span></div><div class="stat"><b>${known + kp + kd}</b><span>důkazů, pojmů a definic umíš (z ${PROOF_TOTAL + KEYS.length + DEFS.length})</span></div></div>
 ${written ? '<div class="ctas"><button class="more" data-go="pisemky">Všechny výsledky a grafy</button></div>' : ''}
 <footer class="foot">Neoficiální studijní stránka k předmětu Matematika I na IES FSV UK, ZS 2026/27. Příklady se generují ze šablon a výsledky jsou ověřené numericky. Důkazy sledují číslování přednášky. Termíny se můžou změnit, ověřuj je na stránce přednášejícího.</footer>`);
@@ -6061,7 +6100,7 @@ ${written ? '<div class="ctas"><button class="more" data-go="pisemky">Všechny v
 
 /* ---------- Termíny ---------- */
 function viewTerms() {
-  return band('', R`<span class="eyebrow">Organizace</span><h1 class="h1">Termíny a zkouška.</h1><p class="sub">Podle stránky přednášejícího, zkontrolováno 24. 11. 2026.</p>`, 'center')
+  return band('', R`<span class="eyebrow">Organizace</span><h1 class="h1">Termíny a zkouška</h1><p class="sub">Podle stránky přednášejícího, zkontrolováno 24. 11. 2026.</p>`, 'center')
   + band('alt', R`
 <div class="tbl"><table><thead><tr><th>Datum</th><th>Co</th><th>Poznámka</th></tr></thead><tbody>
 ${EVENTS.map(e => { const dn = daysTo(e.d); return `<tr class="${dn < 0 ? 'past' : ''}"><td style="white-space:nowrap">${fmtY(e.d)}<br>${dn < 0 ? '<span class="badge ok">proběhlo</span>' : dn <= 7 ? `<span class="badge soon">za ${dn} ${dayWord(dn)}</span>` : ''}</td><td>${e.key ? '<b>' + e.what + '</b>' : e.what}</td><td>${e.note}</td></tr>`; }).join('')}
@@ -6070,7 +6109,7 @@ ${EVENTS.map(e => { const dn = daysTo(e.d); return `<tr class="${dn < 0 ? 'past'
  <div class="note"><h3 class="h3">Zápočet</h3><ul class="plain"><li>3 písemky po 30 minutách, 3 příklady × 10 bodů.</li><li>Písemka je úspěšná od 20 bodů.</li><li>Zápočet: 2 ze 3 písemek, nebo 1 ze 3 + 1 opravná.</li></ul></div>
  <div class="note"><h3 class="h3">Rozvrh</h3><ul class="plain"><li>Přednášky: Po 9:00 a Pá 10:40, M1</li><li>Superseminář: Po 10:40, M1. Tady se píšou písemky.</li><li>Cvičení: jedna ze 7 skupin podle SIS</li></ul></div>
 </div>`)
-  + band('', R`<h2 class="h1">Zkouška.</h2>
+  + band('', R`<h2 class="h1">Zkouška</h2>
 <div class="tbl"><table><thead><tr><th>Část</th><th>Obsah</th><th>Body</th></tr></thead><tbody>
 <tr><td rowspan="4">Písemná</td><td>Limita posloupnosti</td><td>10</td></tr><tr><td>Limita funkce</td><td>15</td></tr><tr><td>Spojitost a derivace</td><td>10</td></tr><tr><td>Průběh funkce</td><td>15</td></tr>
 <tr><td>Ústní</td><td>Definice, věty, důkazy, souvislosti</td><td>50</td></tr></tbody></table></div>
@@ -6084,7 +6123,7 @@ ${EVENTS.map(e => { const dn = daysTo(e.d); return `<tr class="${dn < 0 ? 'past'
 <tr><td>91–100</td><td>A</td></tr><tr><td>81–90</td><td>B</td></tr><tr><td>71–80</td><td>C</td></tr><tr><td>61–70</td><td>D</td></tr><tr><td>51–60</td><td>E</td></tr><tr><td>0–50</td><td>F</td></tr></tbody></table></div>
 <p class="muted small">Hodnocení je podle přednášejícího přibližné. Podrobnosti: <a href="https://www2.karlin.mff.cuni.cz/~barta/FSV/mat1/mat1_podminkyZK.html" target="_blank" rel="noopener">podmínky zkoušky</a>.</p>
 <div class="note"><h3 class="h3">Rady starších ročníků</h3><ul class="plain"><li>Počítej průběžně. Na konci semestru se to dohnat nedá.</li><li>Před zkouškou spočítej co nejvíc starých písemek svého zkoušejícího. Typy příkladů se opakují.</li><li>U derivací si výsledek zkontroluj vícekrát. Chyba v derivaci shodí celý průběh funkce.</li><li>U \(f^g=e^{g\ln f}\) nejdřív zdůvodni přesun limity do exponentu (spojitost exponenciály), teprve pak počítej.</li></ul></div>`, 'narrow')
-  + band('alt', R`<h2 class="h2">Odkazy.</h2>
+  + band('alt', R`<h2 class="h2">Odkazy</h2>
 <ul class="plain">${LINKS.map(([t, u]) => `<li><a href="${u}" target="_blank" rel="noopener">${t}</a></li>`).join('')}
 <li><a href="https://e-klub.cz/subjects/JEB005" target="_blank" rel="noopener">E-klub – materiály studentů k Matematice I (po přihlášení)</a></li></ul>
 <p class="muted">Učebnice: Hájek, Johanis, John, Kalenda, Zelený: <i>Matematika</i>, Matfyzpress 2012.</p>`, 'narrow');
@@ -6092,7 +6131,7 @@ ${EVENTS.map(e => { const dn = daysTo(e.d); return `<tr class="${dn < 0 ? 'past'
 
 /* ---------- Teorie ---------- */
 function viewTheory() {
-  return band('', R`<span class="eyebrow">Teorie a postupy</span><h1 class="h1">Celý semestr. Přehledně.</h1>
+  return band('', R`<span class="eyebrow">Teorie a postupy</span><h1 class="h1">Celý semestr přehledně</h1>
 <div class="chips">${THEORY.map(t => `<button class="chip" data-jump="th-${t.id}">${t.title}</button>`).join('')}</div>`, 'center')
   + THEORY.map((t, i) => band(i % 2 ? '' : 'alt', R`<div class="topic" id="th-${t.id}"><h2 class="h2">${t.title}${t.ready ? '' : '<span class="soon">doplníme</span>'}</h2>${t.html}</div>`, 'narrow')).join('');
 }
@@ -6123,7 +6162,7 @@ function viewProblems() {
   if (vt && PLABEL[vt]) { state.topic = vt; store.set('topic', vt); }
   const tk = PLABEL[state.topic] ? state.topic : 'odm', b = state.batch, [grp, sl] = topicSec(tk), n = state.pcount = PER_TOPIC;
   const types = famIds(tk).length;
-  return band('', R`<span class="eyebrow">Příklady · ${grp.l.toLowerCase()} · ${sl}</span><h1 class="h1">${PLABEL[tk]}.</h1>
+  return band('', R`<span class="eyebrow">Příklady · ${grp.l.toLowerCase()} · ${sl}</span><h1 class="h1">${PLABEL[tk]}</h1>
 <p class="sub">${types} typů příkladů, každý s výsledkem a celým řešením. Příkladů je neomezeně: další přidáš dole, úplně novou sadu jedním klikem.</p>
 <div class="seg pseg" role="tablist" aria-label="Druh příkladů">${PGROUPS.map(g => `<button type="button" role="tab" data-go="priklady-${g.sec[0][1][0]}" aria-pressed="${g === grp}" aria-selected="${g === grp}">${g.l}</button>`).join('')}</div>
 <div class="ptopics">${grp.sec.map(([l, ks]) => ks.map(k => `<button class="ptopic" data-go="priklady-${k}" aria-pressed="${k === tk}"><small>${l}</small><b>${PLABEL[k]}</b></button>`).join('')).join('')}</div>
@@ -6160,7 +6199,7 @@ function resultCard(kind) {
 <div class="rrow"><span>napsáno <b>${s.n}</b></span><span>úspěšnost <b>${Math.round(100 * s.pass / s.n)} %</b></span><span>nejlepší <b>${s.best}</b></span></div>${scoreChart(kind, s.last)}<span class="muted small">Zelené sloupce jsou úspěšné, čára je hranice ${kind === 'zk' ? 'víc než 25' : T.pass} bodů.</span></div>`;
 }
 function resultsBand(cls = 'alt') {
-  return band(cls, `<div class="row-h"><h2 class="h2">Moje výsledky.</h2><span class="muted small">${store.ok ? 'Ukládá se v tomto prohlížeči.' : 'Tvůj prohlížeč ukládání blokuje (např. anonymní okno), body vydrží jen do zavření stránky.'}</span></div><div class="rgrid">${['p2', 'h2', 'p3', 'h3', 'zk'].filter(k => TESTDEF[k]).map(resultCard).join('')}</div>`);
+  return band(cls, `<div class="row-h"><h2 class="h2">Moje výsledky</h2><span class="muted small">${store.ok ? 'Ukládá se v tomto prohlížeči.' : 'Tvůj prohlížeč ukládání blokuje (např. anonymní okno), body vydrží jen do zavření stránky.'}</span></div><div class="rgrid">${['p2', 'h2', 'p3', 'h3', 'zk'].filter(k => TESTDEF[k]).map(resultCard).join('')}</div>`);
 }
 function testCards(kind) {
   const T = TESTDEF[kind], out = [];
@@ -6171,7 +6210,7 @@ function testCards(kind) {
   return out.join('');
 }
 function viewTests() {
-  const hardSub = (kind, desc) => { const T = TESTDEF[kind]; return R`<div class="hardsub"><div class="row-h"><h3 class="h3"><span class="hard-dot" aria-hidden="true"></span>Extra těžké.</h3><span class="muted">${doneCount(kind)}/${T.n} hotovo</span></div><p class="muted">${desc}</p><div class="grid">${testCards(kind)}</div><div class="ctas"><button class="more" data-act="random" data-kind="${kind}">Náhodná extra těžká</button></div></div>`; };
+  const hardSub = (kind, desc) => { const T = TESTDEF[kind]; return R`<div class="hardsub"><div class="row-h"><h3 class="h3"><span class="hard-dot" aria-hidden="true"></span>Extra těžké</h3><span class="muted">${doneCount(kind)}/${T.n} hotovo</span></div><p class="muted">${desc}</p><div class="grid">${testCards(kind)}</div><div class="ctas"><button class="more" data-act="random" data-kind="${kind}">Náhodná extra těžká</button></div></div>`; };
   const sec = (kind, desc, cls, hk, hdesc, ttl) => { const T = TESTDEF[kind]; return band(cls, R`<div id="sec-${kind}"></div><div class="row-h"><h2 class="h2">${ttl || T.title + '.'}</h2><span class="muted">${doneCount(kind)}/${T.n} hotovo</span></div><p class="muted">${desc}</p><div class="grid">${testCards(kind)}</div><div class="ctas"><button class="more" data-act="random" data-kind="${kind}">Náhodná písemka tohoto typu</button></div>${hk ? hardSub(hk, hdesc) : ''}`); };
   const nx = EVENTS.find(e => daysTo(e.d) >= 0), first = nx ? kindOf(nx) : 'zk';
   const order = first === 'p3' ? ['p3', 'zk', 'p2'] : first === 'zk' ? ['zk', 'p3', 'p2'] : ['p2', 'p3', 'zk'];
@@ -6183,11 +6222,11 @@ function viewTests() {
   const fk = (state.view.match(/^pisemky-(p2|p3|zk)$/) || [])[1];
   if (fk) {
     const T = TESTDEF[fk], fo = firstOpenTest(fk), hk = SEC[fk][2];
-    return band('', R`<span class="eyebrow">Cvičné písemky</span><h1 class="h1">${T.title}.</h1><p class="sub">${SEC[fk][1]}</p>${segNav}
+    return band('', R`<span class="eyebrow">Cvičné písemky</span><h1 class="h1">${T.title}</h1><p class="sub">${SEC[fk][1]}</p>${segNav}
 <div class="ctas"><button class="pill" data-go="${fk}-${pad(fo)}">Napsat písemku č. ${fo}</button><button class="pill ghost" data-act="random" data-kind="${fk}">Náhodná písemka</button></div>`, 'center')
       + sec(fk, '', 'alt', hk, SEC[fk][3], `Všech ${T.n} písemek.`) + (statsFor(fk).n || (hk && statsFor(hk).n) ? resultsBand('') : '');
   }
-  return band('', R`<span class="eyebrow">Cvičné písemky</span><h1 class="h1">${ALL_TESTS} písemek. Jedna po druhé.</h1>
+  return band('', R`<span class="eyebrow">Cvičné písemky</span><h1 class="h1">${ALL_TESTS} cvičných písemek</h1>
 <p class="sub">Každá ve formátu té skutečné. Spusť stopky, piš bez nahlížení, pak se oprav a zapiš si body. Z nich se počítá tvoje statistika.</p>
 ${segNav}`, 'center')
   + order.map((k, i) => sec(k, SEC[k][1], i % 2 ? '' : 'alt', SEC[k][2], SEC[k][3])).join('')
@@ -6211,7 +6250,7 @@ function viewTest(kind, i, seed) {
 <button class="pill sm end" data-act="endtest">Ukončit<span class="wide"> písemku</span></button>
 <label class="tb-score">Body ${scoreInput(typeof s.score === 'number' ? 'is-saved' : '')} / ${T.max}<span class="saved-tag" data-saved>${typeof s.score === 'number' ? '✓ uloženo' : ''}</span></label></div></div>
 <div id="endslot" class="endslot"></div>`
-  + band(T.hard ? 'hard' : '', R`<span class="eyebrow">${T.title} · ${isRandom ? 'náhodná' : 'cvičná'}</span><h1 class="h1">${isRandom ? 'Náhodná písemka.' : 'Písemka ' + i + '.'}</h1>
+  + band(T.hard ? 'hard' : '', R`<span class="eyebrow">${T.title} · ${isRandom ? 'náhodná' : 'cvičná'}</span><h1 class="h1">${isRandom ? 'Náhodná písemka' : 'Písemka ' + i}</h1>
 <p class="sub">${T.pts.length} příklady · ${T.max} bodů · na úspěch ${kind === 'zk' ? 'víc než 25' : T.pass} bodů${kind === 'zk' ? ' · stopky na 120 minut jsou orientační, délku zkoušky si ověř' : ' · 30 minut'}. Zdůvodňuj každý krok.</p>
 <div class="ctas no-print"><button class="pill ghost sm" data-act="print">Vytisknout zadání</button></div>`, 'center')
   + band('alt', R`<div class="list">${probs.map((p, k) => probHTML(p, `${k + 1}.`, { pts: T.pts[k] + ' bodů' })).join('')}</div>
@@ -6243,11 +6282,11 @@ document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.ma
 /* ---------- Důkazy ---------- */
 /* ---------- Ústní ---------- */
 function viewOral() {
-  return band('', R`<span class="eyebrow">Ústní zkouška</span><h1 class="h1">Ústní zkouška.</h1>
+  return band('', R`<span class="eyebrow">Ústní zkouška</span><h1 class="h1">Ústní zkouška</h1>
 <p class="sub">Vylosuješ si sadu otázek, 40 minut si odpovědi bez pomůcek písemně připravíš a pak je vysvětlíš zkoušejícímu. Potřebuješ víc než 25 z 50 bodů.</p>
 <div class="ctas"><a class="more" href="https://www2.karlin.mff.cuni.cz/~barta/FSV/mat1/mat1_pozadavky.html" target="_blank" rel="noopener">Oficiální seznam požadavků</a></div>`, 'center')
   + band('alt', oralTiles())
-  + band('dark', R`<h2 class="h1">Jak vypadá zadání.</h2>
+  + band('dark', R`<h2 class="h1">Jak vypadá zadání</h2>
 <p class="sub">Body jsou podle přednášejícího orientační. Důkaz smíš vést jakkoli, pokud je správný a používá jen věty dokázané nebo zformulované na přednášce dřív.</p>
 <div class="oral-fmt">
  <button class="step3" data-go="ustni-pojmy"><span class="n">1 · klíčový pojem</span><b class="opts">0 b.</b><p class="muted">Body za něj nejsou, ale podstatná neznalost znamená automaticky F.</p><span class="more">Klíčové pojmy</span></button>
@@ -6257,7 +6296,7 @@ function viewOral() {
  <div class="step3"><span class="n">5 · bonus</span><b class="opts">10 b.</b><p class="muted">Dobrovolná teoretická úloha. Losuje se zvlášť, jen když už máš víc než 25 bodů.</p></div>
 </div>
 <p class="muted small">Věty jen se zněním najdeš v Důkazech pod filtrem „Jen znění“.</p>`)
-  + band('', R`<h2 class="h2">Vyzkoušej si teoretickou úlohu.</h2>
+  + band('', R`<h2 class="h2">Vyzkoušej si teoretickou úlohu</h2>
 <p class="muted">Typ úlohy ze starších ročníků. Takhle může vypadat třeba bonus: rozhodnout, které implikace platí, a zdůvodnit to.</p>
 <article class="card"><p>Nechť \(f\) je definovaná na \((-1,1)\). Které implikace mezi následujícími tvrzeními platí?</p>
 <ol class="steps"><li>\(\lim_{x\to0}f(x)=3\)</li><li>\(\lim_{x\to0}|f(x)|=3\)</li><li>\(\lim_{x\to0}|f(x)|=3\) a existuje \(\delta\in(0,1)\) takové, že \(f(x)>0\) pro \(x\in P(0,\delta)\)</li><li>\(f\) je spojitá v 0 a \(f(0)=3\)</li></ol>
@@ -6346,7 +6385,7 @@ function endTest(timeUp = false) {
   document.querySelectorAll('details.res').forEach(d => d.open = true);
   const slot = document.getElementById('endslot');
   if (slot) {
-    slot.innerHTML = `<div class="endpanel"><div><span class="eyebrow">${timeUp ? 'Čas vypršel' : 'Písemka ukončena'}</span><h2 class="h2">${timer.started ? `Čas psaní ${mm}:${ss}.` : 'Hotovo.'}</h2><p class="muted">Výsledky jsou rozbalené u každého příkladu. Můžeš se opravit i sám (sama) podle nich a body zapsat ručně.</p></div><div class="ctas"><button class="pill" data-act="toscore">Zapsat body ručně</button><button class="more" data-act="showsol">Rozbalit i řešení</button></div></div>`;
+    slot.innerHTML = `<div class="endpanel"><div><span class="eyebrow">${timeUp ? 'Čas vypršel' : 'Písemka ukončena'}</span><h2 class="h2">${timer.started ? `Čas psaní ${mm}:${ss}` : 'Hotovo'}</h2><p class="muted">Výsledky jsou rozbalené u každého příkladu. Můžeš se opravit i sám (sama) podle nich a body zapsat ručně.</p></div><div class="ctas"><button class="pill" data-act="toscore">Zapsat body ručně</button><button class="more" data-act="showsol">Rozbalit i řešení</button></div></div>`;
     revealEl(slot);
   }
   toast(timeUp ? 'Čas vypršel. Výsledky jsou rozbalené.' : 'Písemka ukončena. Výsledky jsou rozbalené.');
