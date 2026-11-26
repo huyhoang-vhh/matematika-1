@@ -3186,6 +3186,304 @@ TESTDEF.zk.lists2[1] = ['Y4', 'Y2', 'X6', 'Y3', 'Y1', 'X2', 'Y6', 'Y5', 'X4'];
 /* 3. zápočtová písemka: o něco těžší varianty ve stejném formátu (podíl odmocnin/polynomů, známé limity a složená funkce) */
 TESTDEF.p3.lists = [['L14', 'HL4', 'L2', 'HL5'], ['L15', 'HL2', 'L4', 'X1', 'L3'], ['X4', 'L11', 'HL6', 'L7', 'L16']];
 
+/* ---------- Limity funkcí podle listu ze cvičení 7.–9. (oddíly 6.2–6.7) ----------
+   Vlastní parametrizované varianty typů z listu (zadání z listu se nekopírují). Každý typ má řešení a numerickou kontrolu. */
+Object.assign(TOPICS, { cvf: { name: 'Limity funkcí podle cvičení', short: 'limita funkce · cvičení' } });
+const sinT = s => R`\sin ${s}`;
+
+/* 6.2 Podíl polynomů */
+fam('C1', 'fl', r => {
+  const a = ri(r, 1, 4), b = ri(r, 1, 4), c = ri(r, 1, 4), s = a + b + c, q = a * b + b * c + c * a, p = a * b * c;
+  return {
+    task: D(R`\lim_{x\to0}\frac{(1+${cx(a)})(1+${cx(b)})(1+${cx(c)})-1}{x}`), ans: '' + s,
+    sol: R`<p>Dosazením ${I(R`\frac00`)}. Roznásobíme čitatel, jednička se odečte:</p>
+${D(R`(1+${cx(a)})(1+${cx(b)})(1+${cx(c)})-1=${s}x+${q}x^2+${p}x^3`)}
+<p>Pro ${I(R`x\neq0`)} krátíme ${I('x')}: zbude polynom ${I(R`${s}+${q}x+${p}x^2`)}, který je spojitý, takže dosadíme ${I('x=0')}: limita je ${I(s)}.</p>
+<p>Zkratka: koeficient u ${I('x')} je součet ${I(R`${a}+${b}+${c}`)}, vyšší mocniny se po vydělení ${I('x')} vynulují.</p>`,
+    f0: x => ((1 + a * x) * (1 + b * x) * (1 + c * x) - 1) / x, at: 0, val: s
+  };
+});
+fam('C2', 'fl', r => {
+  const m = ri(r, 2, 7); let n = ri(r, 2, 7); if (n === m) n = m === 7 ? 2 : m + 1;
+  const sum = k => k === 2 ? 'x+1' : R`x^{${k - 1}}+\dots+x+1`;
+  return {
+    task: D(R`\lim_{x\to1}\frac{x^{${m}}-1}{x^{${n}}-1}`), ans: fr(m, n),
+    sol: R`<p>Typ ${I(R`\frac00`)}, oba polynomy mají kořen 1. Použijeme rozklad ${I(R`x^k-1=(x-1)(x^{k-1}+\dots+x+1)`)} (nebo Hornerovo schéma):</p>
+${D(R`\frac{x^{${m}}-1}{x^{${n}}-1}=\frac{(x-1)(${sum(m)})}{(x-1)(${sum(n)})}=\frac{${sum(m)}}{${sum(n)}}`)}
+<p>Po zkrácení ${I('x-1')} je výraz spojitý v 1. Dosadíme: v čitateli je ${I(m)} jedniček, ve jmenovateli ${I(n)}. Limita je ${I(fr(m, n))}.</p>`,
+    f0: x => (x ** m - 1) / (x ** n - 1), at: 1, val: m / n
+  };
+});
+fam('C3', 'fl', r => {
+  const n = ri(r, 3, 8), S = n * (n + 1) / 2;
+  return {
+    task: D(R`\lim_{x\to1}\frac{x+x^2+\dots+x^{${n}}-${n}}{x-1}`), ans: '' + S,
+    sol: R`<p>Typ ${I(R`\frac00`)}. Číslo ${I(n)} rozdělíme na ${I(n)} jedniček a každou přiřadíme k jedné mocnině:</p>
+${D(R`\frac{(x-1)+(x^2-1)+\dots+(x^{${n}}-1)}{x-1}=\sum_{k=1}^{${n}}\frac{x^k-1}{x-1}=\sum_{k=1}^{${n}}\left(x^{k-1}+\dots+x+1\right)`)}
+<p>Každý zlomek ${I(R`\frac{x^k-1}{x-1}`)} jde k ${I('k')} (je to součet ${I('k')} mocnin, v jedničce každá rovna 1). Podle AL je limita ${I(R`1+2+\dots+${n}=\frac{${n}\cdot${n + 1}}{2}=${S}`)}.</p>`,
+    f0: x => { let s = -n; for (let k = 1; k <= n; k++) s += x ** k; return s / (x - 1); }, at: 1, val: S
+  };
+});
+fam('C4', 'fl', r => {
+  const c = ri(r, 1, 2), a = ri(r, 1, 3), b = ri(r, 1, 4), m = pick(r, [2, 3, 5]);
+  const N = poly([[1, 'x^2'], [a - c, 'x'], [-a * c, '']]), Dn = poly([[1, 'x^3'], [b - 2 * c, 'x^2'], [c * c - 2 * b * c, 'x'], [b * c * c, '']]);
+  const base = fr((c + a) ** 2, c + b), val = ((c + a) ** 2 / (c + b)) ** m;
+  return {
+    task: D(R`\lim_{x\to ${c}}\frac{\left(${N}\right)^{${2 * m}}}{\left(${Dn}\right)^{${m}}}`), ans: R`\left(${base}\right)^{${m}}`,
+    sol: R`<p>Dosazením ${I(R`\frac00`)}. Oba polynomy rozložíme (kořen ${I(c)} najdeš dosazením, zbytek Hornerovým schématem):</p>
+${D(R`${N}=(x-${c})(x+${a}),\qquad ${Dn}=(x-${c})^2(x+${b})`)}
+<p>Kořen ${I(c)} je ve jmenovateli <b>dvojnásobný</b>, ale jmenovatel je jen na ${I(m)}. Mocniny ${I(R`(x-${c})`)} se tedy přesně zkrátí:</p>
+${D(R`\frac{(x-${c})^{${2 * m}}(x+${a})^{${2 * m}}}{(x-${c})^{${2 * m}}(x+${b})^{${m}}}=\left(\frac{(x+${a})^2}{x+${b}}\right)^{${m}}\ \longrightarrow\ \left(\frac{${(c + a) ** 2}}{${c + b}}\right)^{${m}}=\left(${base}\right)^{${m}}`)}`,
+    f0: x => (x * x + (a - c) * x - a * c) ** (2 * m) / (x ** 3 + (b - 2 * c) * x * x + (c * c - 2 * b * c) * x + b * c * c) ** m, at: c, val, h: 1e-4
+  };
+});
+fam('C5', 'fl', r => {
+  const c = ri(r, 1, 5);
+  return {
+    task: D(R`\lim_{x\to ${c}}\left(\frac{1}{x-${c}}-\frac{${2 * c}}{x^2-${c * c}}\right)`), ans: fr(1, 2 * c),
+    sol: R`<p>Každý zlomek zvlášť jde k nekonečnu: typ ${I(R`\infty-\infty`)}. Převedeme na společného jmenovatele ${I(R`x^2-${c * c}=(x-${c})(x+${c})`)}:</p>
+${D(R`\frac{(x+${c})-${2 * c}}{(x-${c})(x+${c})}=\frac{x-${c}}{(x-${c})(x+${c})}=\frac{1}{x+${c}}\quad(x\neq ${c})`)}
+<p>Zbylý zlomek je spojitý v ${I(c)}: limita je ${I(fr(1, 2 * c))}.</p>`,
+    f0: x => 1 / (x - c) - 2 * c / (x * x - c * c), at: c, val: 1 / (2 * c), h: 1e-4
+  };
+});
+
+/* 6.3 Rozdíl odmocnin */
+fam('C6', 'fl', r => {
+  const n = ri(r, 3, 5), a = ri(r, 1, 6), A = cx(a);
+  return {
+    task: D(R`\lim_{x\to0}\frac{\sqrt[${n}]{1+${A}}-1}{x}`), ans: fr(a, n),
+    sol: R`<p>Typ ${I(R`\frac00`)}. Označíme ${I(R`u=\sqrt[${n}]{1+${A}}`)}, takže ${I(R`u^{${n}}=1+${A}`)}, a použijeme ${I(R`u-1=\frac{u^{${n}}-1}{u^{${n - 1}}+\dots+u+1}`)}:</p>
+${D(R`\frac{u-1}{x}=\frac{${A}}{x\left(u^{${n - 1}}+\dots+u+1\right)}=\frac{${a}}{u^{${n - 1}}+\dots+u+1}`)}
+<p>Odmocnina je spojitá, ${I(R`u\to1`)}, ve jmenovateli je ${I(n)} sčítanců jdoucích k 1. Limita je ${I(fr(a, n))}.</p>`,
+    f0: x => ((1 + a * x) ** (1 / n) - 1) / x, at: 0, val: a / n, h: 1e-5
+  };
+});
+fam('C7', 'fl', r => {
+  const rr = ri(r, 1, 3), q = ri(r, 2, 5), a = ri(r, 1, 3), c = rr ** 3, p = q * q - a * c;
+  const P = poly([[a, 'x'], [p, '']]);
+  return {
+    task: D(R`\lim_{x\to ${c}}\frac{\sqrt{${P}}-${q}}{\sqrt[3]{x}-${rr}}`), ans: fr(3 * a * rr * rr, 2 * q),
+    sol: R`<p>Dosazením ${I(R`\frac{\sqrt{${q * q}}-${q}}{\sqrt[3]{${c}}-${rr}}=\frac00`)}. Odstraníme obě odmocniny: čitatel rozšíříme ${I(R`\sqrt{${P}}+${q}`)}, jmenovatel výrazem ${I(R`\sqrt[3]{x^2}+${rr === 1 ? '' : rr}\sqrt[3]{x}+${rr * rr}`)} (vzorec ${I(R`a^3-b^3`)}):</p>
+${D(R`\frac{\big(${P}-${q * q}\big)\Big(\sqrt[3]{x^2}+${rr === 1 ? '' : rr}\sqrt[3]{x}+${rr * rr}\Big)}{\big(x-${c}\big)\Big(\sqrt{${P}}+${q}\Big)}=\frac{${a === 1 ? '' : a}\Big(\sqrt[3]{x^2}+${rr === 1 ? '' : rr}\sqrt[3]{x}+${rr * rr}\Big)}{\sqrt{${P}}+${q}}`)}
+<p>Použili jsme ${I(R`${P}-${q * q}=${a === 1 ? '' : a}(x-${c})`)} a zkrátili ${I(R`x-${c}`)}. Zbytek je spojitý v ${I(c)}: ${I(R`\frac{${a}\cdot${3 * rr * rr}}{${2 * q}}=${fr(3 * a * rr * rr, 2 * q)}`)}.</p>`,
+    f0: x => (Math.sqrt(a * x + p) - q) / (Math.cbrt(x) - rr), at: c, val: 3 * a * rr * rr / (2 * q), h: 1e-5
+  };
+});
+
+/* 6.4 Dva policajti s celou částí */
+fam('C8', 'fl', r => {
+  const v = ri(r, 0, 1);
+  if (v === 0) {
+    const a = ri(r, 1, 6), A = a === 1 ? '\\frac1x' : `\\frac{${a}}{x}`;
+    return {
+      task: D(R`\lim_{x\to0}x\left[${A}\right]`), ans: '' + a,
+      sol: R`<p>Celou část odhadneme nerovností ${I(R`t-1\lt[t]\le t`)} pro ${I(R`t=${A}`)}. Pak násobíme ${I('x')} a pozor na znaménko:</p>
+<p>Pro ${I(R`x>0`)}: ${I(R`${a}-x\lt x\left[${A}\right]\le ${a}`)}. Pro ${I(R`x\lt0`)} se nerovnosti otočí: ${I(R`${a}\le x\left[${A}\right]\lt ${a}-x`)}.</p>
+<p>V obou případech jdou krajní výrazy k ${I(a)}, takže podle věty o dvou policajtech (pro jednostranné limity zvlášť a pak (JL)) je limita ${I(a)}.</p>`,
+      f0: x => x * Math.floor(a / x), at: 0, val: a
+    };
+  }
+  const k = ri(r, 1, 5);
+  return {
+    task: D(R`\lim_{x\to ${k}}\big([x]-x\big)`), ansHtml: 'neexistuje (zleva −1, zprava 0)',
+    sol: R`<p>V celém čísle ${I(k)} skáče celá část, porovnáme jednostranné limity (JL).</p>
+<p><b>Zprava</b> (${I(R`x\in(${k},${k + 1})`)}): ${I(R`[x]=${k}`)}, tedy ${I(R`[x]-x=${k}-x\to0`)}.</p>
+<p><b>Zleva</b> (${I(R`x\in(${k - 1},${k})`)}): ${I(R`[x]=${k - 1}`)}, tedy ${I(R`[x]-x=${k - 1}-x\to-1`)}.</p>
+<p>Jednostranné limity se liší, takže limita <b>neexistuje</b>.</p>`,
+    ok: () => { const f = x => Math.floor(x) - x; return Math.abs(f(k + 1e-7)) < 1e-6 && Math.abs(f(k - 1e-7) + 1) < 1e-6; }
+  };
+});
+
+/* 6.5 VLSF a elementární funkce */
+fam('C9', 'fl', r => {
+  const a = ri(r, 1, 3), b = ri(r, 1, 3), cosv = r() < .5, fn = cosv ? '\\cos' : '\\sin', pt = cosv ? '\\frac\\pi3' : '\\frac\\pi6';
+  const t2 = R`2${fn}^2x`, N = R`${t2}${a === 1 ? '+' : `+${2 * a - 1}`}${fn} x-${a}`, Dn = R`${t2}-${2 * b + 1}${fn} x+${b}`;
+  const F = cosv ? Math.cos : Math.sin, x0 = cosv ? Math.PI / 3 : Math.PI / 6;
+  return {
+    task: D(R`\lim_{x\to${pt}}\frac{${N}}{${Dn}}`), ans: fr(1 + 2 * a, 1 - 2 * b),
+    sol: R`<p>${I(R`${fn}${pt}=\frac12`)}, dosazením ${I(R`\frac00`)}. Substituce ${I(R`t=${fn} x\to\frac12`)}: vznikne podíl kvadratických polynomů v ${I('t')}, oba s kořenem ${I(R`\frac12`)}:</p>
+${D(R`\frac{2t^2${a === 1 ? '+' : `+${2 * a - 1}`}t-${a}}{2t^2-${2 * b + 1}t+${b}}=\frac{(2t-1)(t+${a})}{(2t-1)(t-${b})}=\frac{t+${a}}{t-${b}}\quad\left(t\neq\tfrac12\right)`)}
+<p>Podle ${VLSF} (vnitřní funkce ${I(R`${fn} x`)} je na okolí bodu ${I(pt)} prostá, tedy ${I(R`t\neq\frac12`)} na prstencovém okolí, podmínka P; nebo rovnou podmínka S, protože ${I(R`\frac{t+${a}}{t-${b}}`)} je spojitá v ${I(R`\frac12`)}):</p>
+${D(R`\frac{\frac12+${a}}{\frac12-${b}}=${fr(1 + 2 * a, 1 - 2 * b)}`)}`,
+    f0: x => { const t = F(x); return (2 * t * t + (2 * a - 1) * t - a) / (2 * t * t - (2 * b + 1) * t + b); }, at: x0, val: (1 + 2 * a) / (1 - 2 * b)
+  };
+});
+fam('C10', 'fl', r => {
+  const k = ri(r, 1, 4), K = k === 1 ? '' : k, ans = k === 3 ? R`\sqrt3` : R`\frac{${K}\sqrt3}{3}`;
+  return {
+    task: D(R`\lim_{x\to\frac\pi3}\frac{\sin\left(${K}\left(x-\frac\pi3\right)\right)}{1-2\cos x}`), ans,
+    sol: R`<p>Typ ${I(R`\frac00`)}. Posuneme bod do nuly: ${I(R`t=x-\frac\pi3\to0`)}. Součtový vzorec dává ${I(R`2\cos\left(\frac\pi3+t\right)=\cos t-\sqrt3\sin t`)}, takže</p>
+${D(R`\frac{\sin(${K}t)}{1-\cos t+\sqrt3\sin t}=\frac{\frac{\sin(${K}t)}{t}}{\frac{1-\cos t}{t}+\sqrt3\,\frac{\sin t}{t}}`)}
+<p>Známé limity: ${I(R`\frac{\sin(${K}t)}{t}\to${k}`)}, ${I(R`\frac{1-\cos t}{t}=t\cdot\frac{1-\cos t}{t^2}\to0\cdot\frac12=0`)}, ${I(R`\frac{\sin t}{t}\to1`)}. Podle AL: ${I(R`\frac{${k}}{\sqrt3}=${ans}`)}.</p>`,
+    f0: x => Math.sin(k * (x - Math.PI / 3)) / (1 - 2 * Math.cos(x)), at: Math.PI / 3, val: k / Math.sqrt(3), h: 1e-5
+  };
+});
+fam('C11', 'fl', r => {
+  if (r() < .5) {
+    const a = ri(r, 2, 7); let b = ri(r, 1, 6); if (b >= a) b = a - 1;
+    return {
+      task: D(R`\lim_{x\to0}\frac{\sin(${cx(a)})-\sin(${cx(b)})}{\sin x}`), ans: '' + (a - b),
+      sol: R`<p>Typ ${I(R`\frac00`)}. Zlomek rozdělíme a každý sinus doplníme na známou limitu:</p>
+${D(R`\frac{\sin(${cx(a)})}{\sin x}-\frac{\sin(${cx(b)})}{\sin x}=\left(${a}\cdot\frac{\sin(${cx(a)})}{${cx(a)}}-${b === 1 ? '' : b + R`\cdot`}\frac{\sin(${cx(b)})}{${cx(b)}}\right)\cdot\frac{x}{\sin x}`)}
+<p>Všechny tři zlomky jdou k 1 (${VLSF}, podmínka P). Podle AL: ${I(R`${a}-${b}=${a - b}`)}.</p>`,
+      f0: x => (Math.sin(a * x) - Math.sin(b * x)) / Math.sin(x), at: 0, val: a - b
+    };
+  }
+  const a = ri(r, 1, 4), b = ri(r, 1, 4), A = cx(a), B = cx(b);
+  return {
+    task: D(R`\lim_{x\to0}\frac{1+\sin(${A})-\cos(${A})}{1-\sin(${B})-\cos(${B})}`), ans: fr(-a, b),
+    sol: R`<p>Typ ${I(R`\frac00`)}. Čitatel i jmenovatel vydělíme ${I('x')} a rozdělíme na známé limity:</p>
+${D(R`\frac{\frac{\sin(${A})}{x}+\frac{1-\cos(${A})}{x}}{-\frac{\sin(${B})}{x}+\frac{1-\cos(${B})}{x}}`)}
+<p>${I(R`\frac{\sin(${A})}{x}\to${a}`)}, ${I(R`\frac{\sin(${B})}{x}\to${b}`)} a ${I(R`\frac{1-\cos(y)}{x}=x\cdot\frac{1-\cos y}{x^2}\to0`)}. Podle AL: ${I(R`\frac{${a}+0}{-${b}+0}=${fr(-a, b)}`)}.</p>`,
+    f0: x => (1 + Math.sin(a * x) - Math.cos(a * x)) / (1 - Math.sin(b * x) - Math.cos(b * x)), at: 0, val: -a / b, h: 1e-5
+  };
+});
+fam('C12', 'fl', r => {
+  const a = ri(r, 1, 3), b = ri(r, 1, 3), A = a === 1 ? '' : a, B = cx(b), ans = fr(4, 2 * a + b * b);
+  return {
+    task: D(R`\lim_{x\to0}\frac{x^2}{\sqrt{1+${A}x\sin x}-\sqrt{\cos(${B})}}`), ans,
+    sol: R`<p>Typ ${I(R`\frac00`)}. Rozšíříme součtem odmocnin (RO):</p>
+${D(R`\frac{x^2\left(\sqrt{1+${A}x\sin x}+\sqrt{\cos(${B})}\right)}{1+${A}x\sin x-\cos(${B})}=\frac{\sqrt{1+${A}x\sin x}+\sqrt{\cos(${B})}}{${A}\frac{\sin x}{x}+${b * b}\cdot\frac{1-\cos(${B})}{(${B})^2}}`)}
+<p>(Čitatel i jmenovatel jsme vydělili ${I('x^2')}.) Odmocniny jdou k 1, ${I(R`\frac{\sin x}{x}\to1`)}, ${I(R`\frac{1-\cos y}{y^2}\to\frac12`)}. Podle AL: ${I(R`\frac{2}{${a}+\frac{${b * b}}{2}}=${ans}`)}.</p>`,
+    f0: x => x * x / (Math.sqrt(1 + a * x * Math.sin(x)) - Math.sqrt(Math.cos(b * x))), at: 0, val: 4 / (2 * a + b * b), h: 1e-3
+  };
+});
+fam('C13', 'fl', r => {
+  const a = ri(r, 1, 4); let b = ri(r, 1, 4); if (b === a) b = a === 4 ? 1 : a + 1;
+  const A = cx(a), B = cx(b);
+  return {
+    task: D(R`\lim_{x\to0}\frac{e^{\sin(${A})}-e^{\arcsin(${B})}}{\mathrm{tg}\,x}`), ans: '' + (a - b),
+    sol: R`<p>Typ ${I(R`\frac00`)}. Vytkneme ${I(R`e^{\arcsin(${B})}`)} a označíme ${I(R`u=\sin(${A})-\arcsin(${B})`)}:</p>
+${D(R`e^{\arcsin(${B})}\cdot\frac{e^{u}-1}{u}\cdot\left(\frac{\sin(${A})}{x}-\frac{\arcsin(${B})}{x}\right)\cdot\frac{x}{\mathrm{tg}\,x}`)}
+<p>${I(R`\frac ux\to${a}-${b}\neq0`)}, takže ${I(R`u\neq0`)} na prstencovém okolí nuly a podle ${VLSF} (P) je ${I(R`\frac{e^u-1}{u}\to1`)}. Dál ${I(R`e^{\arcsin(${B})}\to1`)}, ${I(R`\frac{\sin(${A})}{x}\to${a}`)}, ${I(R`\frac{\arcsin(${B})}{x}\to${b}`)}, ${I(R`\frac{x}{\mathrm{tg}\,x}\to1`)}. Podle AL: ${I(a - b)}.</p>`,
+    f0: x => (Math.exp(Math.sin(a * x)) - Math.exp(Math.asin(b * x))) / Math.tan(x), at: 0, val: a - b, h: 1e-5
+  };
+});
+fam('C14', 'fl', r => {
+  const a = ri(r, 1, 4), b = ri(r, 1, 4), A = cx(a), B = cx(b);
+  return {
+    task: D(R`\lim_{x\to0}\frac{\ln\big(\cos(${A})+\sin(${B})\big)}{\mathrm{tg}\,x}`), ans: '' + b,
+    sol: R`<p>Typ ${I(R`\frac00`)}. Argument logaritmu zapíšeme jako ${I('1+w')}, ${I(R`w=\cos(${A})-1+\sin(${B})\to0`)}:</p>
+${D(R`\frac{\ln(1+w)}{w}\cdot\left(\frac{\cos(${A})-1}{x}+\frac{\sin(${B})}{x}\right)\cdot\frac{x}{\mathrm{tg}\,x}`)}
+<p>${I(R`\frac wx\to0+${b}\neq0`)}, takže ${I(R`w\neq0`)} na prstencovém okolí a ${I(R`\frac{\ln(1+w)}{w}\to1`)} (${VLSF}, P). ${I(R`\frac{\cos(${A})-1}{x}=x\cdot\frac{\cos(${A})-1}{x^2}\to0`)}, ${I(R`\frac{\sin(${B})}{x}\to${b}`)}. Limita je ${I(b)}.</p>`,
+    f0: x => Math.log(Math.cos(a * x) + Math.sin(b * x)) / Math.tan(x), at: 0, val: b, h: 1e-5
+  };
+});
+fam('C15', 'fl', r => {
+  if (r() < .5) {
+    const p = ri(r, 2, 6); let q = ri(r, 2, 10); if (q === p) q = p + 2;
+    return {
+      task: D(R`\lim_{x\to+\infty}\frac{\ln\left(x^{${p}}-x+1\right)}{\ln\left(x^{${q}}+x+1\right)}`), ans: fr(p, q),
+      sol: R`<p>Typ ${I(R`\frac\infty\infty`)}. V logaritmu vytkneme nejrychleji rostoucí člen a použijeme ${I(R`\ln(ab)=\ln a+\ln b`)}:</p>
+${D(R`\frac{${p}\ln x+\ln\left(1-x^{${1 - p}}+x^{-${p}}\right)}{${q}\ln x+\ln\left(1+x^{${1 - q}}+x^{-${q}}\right)}=\frac{${p}+\frac{\ln(1+\dots)}{\ln x}}{${q}+\frac{\ln(1+\dots)}{\ln x}}`)}
+<p>Logaritmy v závorkách jdou k ${I(R`\ln1=0`)} a ${I(R`\ln x\to+\infty`)}, takže zlomky s nimi jdou k 0. Podle AL: ${I(fr(p, q))}.</p>`,
+      f0: x => Math.log(x ** p - x + 1) / Math.log(x ** q + x + 1), at: Infinity, val: p / q, big: 1e12
+    };
+  }
+  const b = pick(r, [2, 3, 5]), c = ri(r, 1, 5);
+  return {
+    task: D(R`\lim_{x\to+\infty}\ln\left(1+${b}^x\right)\ln\left(1+\frac{${c}}{x}\right)`), ans: R`${c === 1 ? '' : c}\ln ${b}`,
+    sol: R`<p>Typ ${I(R`\infty\cdot0`)}. V prvním logaritmu vytkneme ${I(R`${b}^x`)}, druhý doplníme na známou limitu:</p>
+${D(R`\Big(x\ln ${b}+\ln\big(1+${b}^{-x}\big)\Big)\cdot\frac{${c}}{x}\cdot\frac{\ln\left(1+\frac{${c}}{x}\right)}{\frac{${c}}{x}}=\Big(\ln ${b}+\frac{\ln(1+${b}^{-x})}{x}\Big)\cdot ${c}\cdot\frac{\ln(1+y)}{y}`)}
+<p>${I(R`y=\frac{${c}}{x}\to0`)}, ${I(R`y\neq0`)}: ${I(R`\frac{\ln(1+y)}{y}\to1`)} (${VLSF}). ${I(R`${b}^{-x}\to0`)}, takže ${I(R`\frac{\ln(1+${b}^{-x})}{x}\to0`)}. Limita je ${I(R`${c === 1 ? '' : c}\ln ${b}`)}.</p>`,
+    f0: x => (x * Math.log(b) + Math.log1p(b ** -x)) * Math.log1p(c / x), at: Infinity, val: c * Math.log(b)
+  };
+});
+
+/* 6.6 Funkce na funkci: (f − 1)·g */
+const fg = R`(f-1)\,g`;
+const fgNote = R`<p>Typ ${I(R`1^\infty`)}: ${I(R`f^g=e^{g\ln f}`)} a ${I(R`g\ln f=\frac{\ln f}{f-1}\cdot(f-1)\,g`)}. Protože ${I(R`f\to1`)} a ${I(R`f\neq1`)} na prstencovém okolí (P), je ${I(R`\frac{\ln f}{f-1}\to1`)}, takže stačí spočítat limitu ${I(fg)}.</p>`;
+fam('C16', 'fl', r => {
+  const a = ri(r, 1, 3), b = ri(r, 1, 3), A = a === 1 ? 'x' : `${a}x`;
+  return {
+    task: D(R`\lim_{x\to0}\left(${A}+e^{${cx(b)}}\right)^{1/x}`), ans: R`e^{${a + b}}`,
+    sol: R`${fgNote}<p>Tady ${I(R`f=${A}+e^{${cx(b)}}`)}, ${I(R`g=\frac1x`)}:</p>
+${D(R`(f-1)\,g=\frac{${A}+e^{${cx(b)}}-1}{x}=${a}+${b === 1 ? '' : b + R`\cdot`}\frac{e^{${cx(b)}}-1}{${cx(b)}}\ \longrightarrow\ ${a}+${b}=${a + b}`)}
+<p>(Odtud i ${I(R`f\neq1`)} poblíž nuly, protože ${I(R`\frac{f-1}{x}\to${a + b}\neq0`)}.) Ze spojitosti exponenciály je limita ${I(R`e^{${a + b}}`)}.</p>`,
+    f0: x => Math.pow(a * x + Math.exp(b * x), 1 / x), at: 0, val: Math.exp(a + b), h: 1e-6
+  };
+});
+fam('C17', 'fl', r => {
+  const k = ri(r, 1, 3), K = k === 1 ? '' : k;
+  return {
+    task: D(R`\lim_{x\to\frac\pi4}\left(\mathrm{tg}\,x\right)^{${K}\,\mathrm{tg}\,2x}`), ans: R`e^{-${k}}`,
+    sol: R`${fgNote}<p>Tady ${I(R`f=\mathrm{tg}\,x\to1`)} a ${I(R`g=${K}\,\mathrm{tg}\,2x=\frac{${2 * k}\,\mathrm{tg}\,x}{1-\mathrm{tg}^2x}`)} (vzorec pro dvojnásobný úhel):</p>
+${D(R`(f-1)\,g=\frac{${2 * k}\,\mathrm{tg}\,x\,(\mathrm{tg}\,x-1)}{(1-\mathrm{tg}\,x)(1+\mathrm{tg}\,x)}=-\frac{${2 * k}\,\mathrm{tg}\,x}{1+\mathrm{tg}\,x}\ \longrightarrow\ -\frac{${2 * k}}{2}=-${k}`)}
+<p>Limita je ${I(R`e^{-${k}}`)}.</p>`,
+    f0: x => Math.pow(Math.tan(x), k * Math.tan(2 * x)), at: Math.PI / 4, val: Math.exp(-k)
+  };
+});
+fam('C18', 'fl', r => {
+  const a = ri(r, 2, 5); let b = ri(r, 2, 5); if (b === a) b = a === 5 ? 2 : a + 1;
+  return {
+    task: D(R`\lim_{x\to0}\left(\frac{1+x\cdot${a}^x}{1+x\cdot${b}^x}\right)^{1/x^2}`), ans: fr(a, b),
+    sol: R`${fgNote}<p>Tady ${I(R`f-1=\frac{x\left(${a}^x-${b}^x\right)}{1+x\cdot${b}^x}`)} a ${I(R`g=\frac1{x^2}`)}:</p>
+${D(R`(f-1)\,g=\frac{\frac{${a}^x-1}{x}-\frac{${b}^x-1}{x}}{1+x\cdot${b}^x}\ \longrightarrow\ \ln ${a}-\ln ${b}`)}
+<p>Použili jsme ${I(R`\frac{c^x-1}{x}=\ln c\cdot\frac{e^{x\ln c}-1}{x\ln c}\to\ln c`)}. Limita je ${I(R`e^{\ln ${a}-\ln ${b}}=${fr(a, b)}`)}.</p>`,
+    f0: x => Math.pow((1 + x * a ** x) / (1 + x * b ** x), 1 / (x * x)), at: 0, val: a / b, h: 1e-4
+  };
+});
+fam('C19', 'fl', r => {
+  const a = ri(r, 1, 3), b = ri(r, 1, 3), A = a === 1 ? '' : a, B = cx(b), E = fr(a, b * b);
+  return {
+    task: D(R`\lim_{x\to0}\left(1+${A}x^2\right)^{\mathrm{cotg}^2(${B})}`), ans: R`e^{${E}}`,
+    sol: R`${fgNote}<p>Tady ${I(R`f-1=${A}x^2`)} a ${I(R`g=\mathrm{cotg}^2(${B})=\frac{1}{\mathrm{tg}^2(${B})}`)}:</p>
+${D(R`(f-1)\,g=\frac{${a}}{${b * b}}\cdot\left(\frac{${B}}{\mathrm{tg}(${B})}\right)^2\ \longrightarrow\ ${E}`)}
+<p>Limita je ${I(R`e^{${E}}`)}.</p>`,
+    f0: x => Math.pow(1 + a * x * x, 1 / Math.tan(b * x) ** 2), at: 0, val: Math.exp(a / (b * b)), h: 1e-4
+  };
+});
+
+/* 6.7 Zkouškové a jiné zajímavé příklady */
+fam('C20', 'zfl', r => {
+  if (r() < .5) {
+    const a = ri(r, 1, 3);
+    return {
+      task: D(R`\lim_{x\to+\infty}\left(\cos\sqrt{x+${a}}-\cos\sqrt{x-${a}}\right)`), ans: '0',
+      sol: R`<p>Každý kosinus zvlášť limitu nemá (kmitá), proto rozdíl převedeme na součin: ${I(R`\cos u-\cos v=-2\sin\frac{u+v}2\sin\frac{u-v}2`)}.</p>
+${D(R`-2\,\underbrace{\sin\frac{\sqrt{x+${a}}+\sqrt{x-${a}}}{2}}_{\text{omezené}}\cdot\sin\frac{${2 * a}}{2\left(\sqrt{x+${a}}+\sqrt{x-${a}}\right)}`)}
+<p>Rozdíl odmocnin jsme rozšířili (RO): ${I(R`\sqrt{x+${a}}-\sqrt{x-${a}}=\frac{${2 * a}}{\sqrt{x+${a}}+\sqrt{x-${a}}}\to0`)}, takže druhý sinus jde k ${I(R`\sin0=0`)}. Omezená krát nulová: limita je ${I(0)}.</p>`,
+      f0: x => Math.cos(Math.sqrt(x + a)) - Math.cos(Math.sqrt(x - a)), at: Infinity, val: 0, big: 1e10
+    };
+  }
+  const k = ri(r, 1, 5);
+  return {
+    task: D(R`\lim_{n\to\infty}\sin\left(2\pi\sqrt{n^2+${k}}\right)`), ans: '0',
+    sol: R`<p>Argument jde k nekonečnu, ale sinus má periodu ${I(R`2\pi`)} a ${I('n')} je celé číslo, takže smíme odečíst ${I(R`2\pi n`)}:</p>
+${D(R`\sin\left(2\pi\sqrt{n^2+${k}}\right)=\sin\Big(2\pi\big(\sqrt{n^2+${k}}-n\big)\Big)=\sin\frac{${2 * k}\pi}{\sqrt{n^2+${k}}+n}`)}
+<p>(RO) Argument jde k 0 a sinus je spojitý: limita je ${I(0)}.</p>`,
+    f0: x => Math.sin(2 * Math.PI * Math.sqrt(x * x + k)), at: Infinity, val: 0
+  };
+});
+fam('C21', 'zfl', r => {
+  const a = ri(r, 1, 4), A = cx(a);
+  const f = x => Math.acos((1 - x * x) / (1 + x * x)) / Math.sin(a * x);
+  return {
+    task: D(R`\lim_{x\to0^+}\frac{\arccos\frac{1-x^2}{1+x^2}}{\sin(${A})}`), ans: fr(2, a),
+    sol: R`<p>Typ ${I(R`\frac00`)}. Klíč: pro ${I(R`x>0`)} platí ${I(R`\arccos\frac{1-x^2}{1+x^2}=2\,\mathrm{arctg}\,x`)}. Ověření: pro ${I(R`t=\mathrm{arctg}\,x\in(0,\frac\pi2)`)} je ${I(R`\cos2t=\frac{1-\mathrm{tg}^2t}{1+\mathrm{tg}^2t}=\frac{1-x^2}{1+x^2}`)} a ${I(R`2t\in(0,\pi)`)}, kde je kosinus prostý.</p>
+${D(R`\frac{2\,\mathrm{arctg}\,x}{\sin(${A})}=2\cdot\frac{\mathrm{arctg}\,x}{x}\cdot\frac{${A}}{\sin(${A})}\cdot\frac{1}{${a}}\ \longrightarrow\ ${fr(2, a)}`)}
+<p>Pro ${I(R`x\lt0`)} by vyšlo ${I(R`-2\,\mathrm{arctg}\,x`)}, proto je limita jen zprava.</p>`,
+    ok: () => near(f(1e-6), 2 / a, 1e-4) && near(f(1e-4), 2 / a, 1e-3)
+  };
+});
+fam('C22', 'zfl', r => {
+  const v = r() < .5, F = v ? R`\arccos x` : R`\frac\pi2-\arcsin x`, fn = v ? Math.acos : (x => Math.PI / 2 - Math.asin(x));
+  return {
+    task: R`<p>V závislosti na parametru ${I(R`\alpha\in\mathbb R`)} spočtěte</p>${D(R`\lim_{x\to1^-}\frac{${F}}{(1-x)^{\alpha}}.`)}`, ansHtml: '0 pro α < 1/2; √2 pro α = 1/2; +∞ pro α > 1/2',
+    sol: R`<p>${v ? '' : R`Nejdřív ${I(R`\frac\pi2-\arcsin x=\arccos x`)}. `}Označíme ${I(R`t=\arccos x\to0^+`)}, takže ${I(R`x=\cos t`)} a ${I(R`1-x=1-\cos t`)}. Nejdřív případ ${I(R`\alpha=\frac12`)}:</p>
+${D(R`\frac{t}{\sqrt{1-\cos t}}=\frac{1}{\sqrt{\frac{1-\cos t}{t^2}}}\ \longrightarrow\ \frac{1}{\sqrt{1/2}}=\sqrt2`)}
+<p>(${VLSF}: ${I(R`t\to0`)} a ${I(R`t\neq0`)} pro ${I(R`x\neq1`)}.) Obecně ${I(R`\frac{\arccos x}{(1-x)^{\alpha}}=\frac{\arccos x}{\sqrt{1-x}}\cdot(1-x)^{\frac12-\alpha}`)} a druhý činitel jde k ${I(0)} pro ${I(R`\alpha\lt\frac12`)}, je roven ${I(1)} pro ${I(R`\alpha=\frac12`)} a jde k ${I(R`+\infty`)} pro ${I(R`\alpha>\frac12`)}.</p>
+<p><b>Výsledek:</b> ${I(0)} pro ${I(R`\alpha\lt\frac12`)}, ${I(R`\sqrt2`)} pro ${I(R`\alpha=\frac12`)}, ${I(R`+\infty`)} pro ${I(R`\alpha>\frac12`)}.</p>`,
+    ok: () => { const g = (e, al) => fn(1 - e) / e ** al; return near(g(1e-8, .5), Math.SQRT2, 1e-3) && g(1e-12, .2) < g(1e-8, .2) / 5 && g(1e-12, .8) > 5 * g(1e-8, .8); }
+  };
+});
+
+/* 3. zápočtová písemka: typy z listu ze cvičení 7.–9. jdou i do cvičných písemek (formát podle ohlášení přednášejícího:
+   1. podíl odmocnin či polynomů, 2. a 3. známé limity a složená funkce). Písemek je 20. */
+TESTDEF.p3.n = 20;
+TESTDEF.p3.lists = [['L14', 'C4', 'HL4', 'C7', 'C2', 'HL5', 'C6', 'C3'], ['C13', 'L15', 'C10', 'HL2', 'C12', 'X1', 'C14', 'C11'], ['C16', 'X4', 'C18', 'HL6', 'C17', 'C19', 'L16', 'C9']];
+
 /* ---------- obsah: teorie ---------- */
 const THEORY = [
   { id: 'vyroky', title: 'Výroky, množiny, důkazy', ready: true, html: R`
@@ -6166,13 +6464,13 @@ function viewTheory() {
 
 /* ---------- Sbírka ---------- */
 const PGROUPS = [
-  { id: 'zap', l: 'Zápočtové', d: 'Typy příkladů ze zápočtových písemek.', sec: [['2. písemka', ['odm', 'nte', 'skala']], ['3. písemka', ['fl']]] },
+  { id: 'zap', l: 'Zápočtové', d: 'Typy příkladů ze zápočtových písemek.', sec: [['2. písemka', ['odm', 'nte', 'skala']], ['3. písemka', ['fl', 'cvf']]] },
   { id: 'zk', l: 'Zkouškové', d: 'Čtyři příklady písemné části zkoušky.', sec: [['1. příklad · 10 b.', ['zk']], ['2. příklad · 15 b.', ['zfl']], ['3. příklad · 10 b.', ['der']], ['4. příklad · 15 b.', ['pr']]] }
 ];
-const PLABEL = { odm: 'Rozdíl odmocnin', nte: 'n-tá odmocnina a policajti', skala: 'Růstová škála', fl: 'Limity funkcí', zk: 'Limity posloupností', zfl: 'Limity funkcí', der: 'Spojitost a derivace', pr: 'Průběh funkce' };
-const TOPIC_FAMS = { zfl: ['Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'Y6', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'L7', 'L13', 'L15', 'L10', 'L11'] };
+const PLABEL = { odm: 'Rozdíl odmocnin', nte: 'n-tá odmocnina a policajti', skala: 'Růstová škála', fl: 'Limity funkcí', cvf: 'Limity podle cvičení 7.–9.', zk: 'Limity posloupností', zfl: 'Limity funkcí', der: 'Spojitost a derivace', pr: 'Průběh funkce' };
+const TOPIC_FAMS = { cvf: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18', 'C19', 'C20', 'C21', 'C22'], zfl: ['Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'Y6', 'C20', 'C21', 'C22', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'L7', 'L13', 'L15', 'L10', 'L11'] };
 const famIds = tk => TOPIC_FAMS[tk] || Object.keys(FAM).filter(id => FAM[id].topic === tk && !FAM[id].hard);
-const TOPIC_LETTER = { odm: 'A', nte: 'B', skala: 'C', fl: 'D', zk: 'E', zfl: 'F', der: 'G', pr: 'H' };
+const TOPIC_LETTER = { odm: 'A', nte: 'B', skala: 'C', fl: 'D', cvf: 'I', zk: 'E', zfl: 'F', der: 'G', pr: 'H' };
 const topicSec = tk => { for (const g of PGROUPS) for (const [sl, ks] of g.sec) if (ks.includes(tk)) return [g, sl]; return [PGROUPS[0], '']; };
 const PER_TOPIC = 30;
 function genProblems(tk, b, from, to) {
