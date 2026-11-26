@@ -1201,6 +1201,7 @@ a.tag, a.qlink.tag { display: inline-flex; align-items: center; min-height: 24px
 html { accent-color: var(--blue); caret-color: var(--blue); scrollbar-color: color-mix(in srgb, var(--ink) 30%, transparent) transparent; }
 a { text-underline-offset: .18em; }
 .stat b, .hp-when, .hp-stat b, .meter + *, .badge, time, .tl-n, .cd, .num { font-variant-numeric: tabular-nums; }
+summary:not(.pf-open)::after { margin-left: .3em; }
 
 </style>
 
@@ -4973,8 +4974,8 @@ function viewProofs() {
   const list = PROOFS.filter(p => (state.pch === 'all' || (state.pch === 'todo' ? !p.nop && !known[p.id] : state.pch.startsWith('req-') ? reqOf(p) === state.pch.slice(4) : p.ch === state.pch)) && (!q || (p.no + ' ' + p.name + ' ' + (p.plain || '') + ' ' + (p.method || []).join(' ')).toLowerCase().includes(q)));
   const kc = knownCount(), lp = proofById(store.get('lastProof', '') || '');
   const groups = Object.keys(PROOF_CH).map(ch => [ch, list.filter(p => p.ch === ch)]).filter(([, l]) => l.length);
-  return band('dark', R`<span class="eyebrow">Ústní zkouška</span><h1 class="display"><span class="grad">Důkazy.</span></h1>
-<p class="sub">Všech ${PROOFS.length} vět z přednášky. Každá má stejnou stavbu, takže se v nich neztratíš.</p>
+  return band('dark', R`<span class="eyebrow">Ústní zkouška</span><h1 class="display"><span class="grad">Důkazy</span></h1>
+<p class="sub">Všech ${PROOFS.length} vět z přednášky, ${PROOF_TOTAL} z nich s důkazem. Každý má stejnou stavbu.</p>
 <div class="progress" style="max-width:520px;width:100%"><div class="meter"><i style="width:${100 * kc / PROOF_TOTAL}%"></i></div><span class="muted small">Umíš ${kc} z ${PROOF_TOTAL} důkazů</span></div>
 <div class="ctas"><button class="pill" data-act="randproof">Zkoušej mě z náhodné věty</button>${lp ? `<button class="pill ghost" data-ref="${lp.id}">Pokračovat: ${lp.no} ${lp.name}</button>` : ''}</div>`, 'center')
     + band('alt', R`
@@ -5932,7 +5933,7 @@ let SOLS = [];
 function probHTML(p, label, opts = {}) {
   const k = SOLS.push(p.sol) - 1;
   return R`<article class="card">
-<div class="card-h"><span class="pid">${label}</span><span class="tag">${TOPICS[p.topic].short}${p.proof ? ' · důkaz' : ''}</span>${p.hard ? '<span class="tag hard">extra těžký</span>' : p.star ? '<span class="tag hot">těžší</span>' : ''}${opts.pts ? `<span class="pts">${opts.pts}</span>` : ''}</div>
+<div class="card-h"><span class="pid">${label}</span><span class="tag">${opts.pts ? TOPICS[p.topic].short.replace(/ · \d+ b\.$/, '') : TOPICS[p.topic].short}${p.proof ? ' · důkaz' : ''}</span>${p.hard ? '<span class="tag hard">extra těžký</span>' : p.star ? '<span class="tag hot">těžší</span>' : ''}${opts.pts ? `<span class="pts">${opts.pts}</span>` : ''}</div>
 <div class="task">${p.task}</div>
 ${p.proof ? '' : R`<details class="res"><summary>Výsledek</summary><div class="ans">${p.ansHtml ? `<div class="txt">${p.ansHtml}</div>` : I(p.ans)}</div></details>`}
 <details class="sol" data-k="${k}"><summary>${p.proof ? 'Důkaz' : 'Řešení'}</summary><div></div></details>
