@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Neoficiální studijní web k Matematice I na IES FSV UK: důkazy, pojmy, generované příklady, cvičné písemky a termíny."><meta name="theme-color" content="#0071e3"><meta property="og:type" content="website"><meta property="og:title" content="Matematika I · IES"><meta property="og:description" content="Neoficiální studijní web k Matematice I na IES FSV UK: důkazy, pojmy, generované příklady, cvičné písemky a termíny."><meta property="og:url" content="https://huyhoang-vhh.github.io/matematika-1/"><meta property="og:locale" content="cs_CZ"><link rel="canonical" href="https://huyhoang-vhh.github.io/matematika-1/"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2715%27 fill=%27%230071e3%27/%3E%3Ctext x=%2732%27 y=%2744%27 font-family=%27-apple-system,Helvetica,Arial%27 font-size=%2734%27 font-weight=%27700%27 fill=%27%23fff%27 text-anchor=%27middle%27%3EM%3C/text%3E%3C/svg%3E"></head><body>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Neoficiální studijní web k Matematice I na IES FSV UK: důkazy, pojmy, generované příklady, cvičné písemky a termíny."><meta name="theme-color" content="#0071e3"><meta property="og:type" content="website"><meta property="og:title" content="Matematika I · IES"><meta property="og:description" content="Neoficiální studijní web k Matematice I na IES FSV UK: důkazy, pojmy, generované příklady, cvičné písemky a termíny."><meta property="og:url" content="https://huyhoang-vhh.github.io/matematika-1/"><meta property="og:image" content="https://huyhoang-vhh.github.io/matematika-1/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta property="og:locale" content="cs_CZ"><link rel="canonical" href="https://huyhoang-vhh.github.io/matematika-1/"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2715%27 fill=%27%230071e3%27/%3E%3Ctext x=%2732%27 y=%2744%27 font-family=%27-apple-system,Helvetica,Arial%27 font-size=%2734%27 font-weight=%27700%27 fill=%27%23fff%27 text-anchor=%27middle%27%3EM%3C/text%3E%3C/svg%3E"></head><body>
 <title>MATEMATIKA I</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
@@ -1202,6 +1202,13 @@ html { accent-color: var(--blue); caret-color: var(--blue); scrollbar-color: col
 a { text-underline-offset: .18em; }
 .stat b, .hp-when, .hp-stat b, .meter + *, .badge, time, .tl-n, .cd, .num { font-variant-numeric: tabular-nums; }
 summary:not(.pf-open)::after { margin-left: .3em; }
+/* mobil: u písemky a důkazu drží nahoře jen jejich lišta, hlavička webu odjede (porota 2026-11-26) */
+@media (max-width: 734px) {
+  body:has(.testbar) .gnav, body:has(.pbar) .gnav { position: relative; }
+  body:has(.testbar) .testbar, body:has(.pbar) .pbar { top: env(safe-area-inset-top, 0px); }
+}
+/* úvod MAT: stejný centrovaný nadpis jako rozcestník a EKO (porota 2026-11-26) */
+.home-h { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; margin-bottom: 8px; }
 
 </style>
 
@@ -6011,6 +6018,7 @@ function viewTitle(v) {
   const n = NAV.find(x => x.id === navCur(v)); return n ? n.l : null;
 }
 const scrollMem = {};
+let PREV_LAST = null; /* při neplatné adrese se vrátí předchozí „kde jsi skončil“ */
 function go(token, push = true, restore = false) {
   token = String(token || '');
   if (!/^[a-z0-9-]{1,80}$/i.test(token)) token = 'domu'; /* bezpečnost: do stavu a úložiště jen platné cesty (ne HTML z adresy) */
@@ -6021,7 +6029,7 @@ function go(token, push = true, restore = false) {
   const from = state.view;
   state.view = token;
   if (push) { try { history.pushState({ v: token }, '', '#' + token); } catch { } }
-  store.set('last', token);
+  PREV_LAST = store.get('last', null); store.set('last', token);
   if (TEST_RE.test(token)) store.set('resume', { v: token, t: Date.now() });
   const doIt = () => {
     state.fxAnim = true;
@@ -6111,7 +6119,7 @@ ${st.n ? `<p class="hp-stat">Tvůj průměr z ${st.n} ${st.n === 1 ? 'cvičné' 
   }
   const written = Object.keys(TESTDEF).reduce((a, k) => a + statsFor(k).n, 0), zs = statsFor('zk');
   const known = knownCount(), kp = kdCount('pojmy'), kd = kdCount('definice');
-  return band('dark', R`<h1 class="vh">Matematika I</h1><div class="hsplit${showW ? '' : ' solo'}">${w}${examPanel()}</div>${nextStepHTML()}${resumeHTML()}${wHidden && next ? '<button type="button" class="hp-hide hp-unhide" data-act="wshow">Zobrazit i zápočet</button>' : ''}`)
+  return band('dark', R`<div class="home-h"><span class="eyebrow">IES FSV UK · ZS 2026/27</span><h1 class="h1">Matematika I</h1></div><div class="hsplit${showW ? '' : ' solo'}">${w}${examPanel()}</div>${nextStepHTML()}${resumeHTML()}${wHidden && next ? '<button type="button" class="hp-hide hp-unhide" data-act="wshow">Zobrazit i zápočet</button>' : ''}`)
     + band('', R`<div class="row-h"><h2 class="h2">Tvoje čísla</h2><span class="muted small">${store.ok ? 'Ukládá se jen v tomto prohlížeči.' : 'Prohlížeč ukládání blokuje, data vydrží jen do zavření stránky.'}</span></div>
 <div class="stats"><div class="stat"><b>${written}</b><span>cvičných písemek s body</span></div><div class="stat"><b>${zs.n ? fmt1(zs.avg) : '–'}</b><span>průměr zkouškových (z 50)</span></div><div class="stat"><b>${known + kp + kd}</b><span>důkazů, pojmů a definic umíš (z ${PROOF_TOTAL + KEYS.length + DEFS.length})</span></div></div>
 ${written ? '<div class="ctas"><button class="more" data-go="pisemky">Všechny výsledky a grafy</button></div>' : ''}
@@ -6333,6 +6341,12 @@ function viewOral() {
 }
 
 /* ---------- render ---------- */
+/* neplatná adresa: vlastní stránka místo tichého přesměrování (porota 2026-11-26) */
+function viewNotFound() {
+  if (PREV_LAST) store.set('last', PREV_LAST); else { try { localStorage.removeItem('mat1:last'); } catch { } delete store.mem.last; }
+  return band('', R`<span class="eyebrow">Chyba 404</span><h1 class="h1">Tahle stránka neexistuje</h1><p class="sub">Odkaz je asi starý nebo neúplný. Pokračuj jednou z hlavních částí.</p>
+<div class="ctas"><button class="pill" data-go="domu">Na úvod</button><button class="pill ghost" data-go="dukazy">Důkazy</button><button class="pill ghost" data-go="pisemky">Písemky</button><button class="pill ghost" data-go="teorie">Teorie</button></div>`, 'center');
+}
 function render() {
   SOLS = [];
   const v = state.view;
@@ -6351,10 +6365,10 @@ function render() {
   else if (KC_RE.test(v)) html = viewKDCards(v.match(KC_RE)[1]);
   else if (v === 'nahodna') html = viewTest(state.randomKind, 0, state.randomSeed ?? (state.randomSeed = Math.floor(Math.random() * 1e9)));
   else if (TEST_RE.test(v) && +v.match(TEST_RE)[2] >= 1 && +v.match(TEST_RE)[2] <= TESTDEF[v.match(TEST_RE)[1]].n) { const m = v.match(TEST_RE); html = viewTest(m[1], +m[2]); }
-  else { state.view = 'domu'; html = viewHome(); }
+  else { html = viewNotFound(); }
   $view.innerHTML = html;
   renderNav();
-  { const vt = viewTitle(state.view); document.title = vt ? `${vt} · MATEMATIKA I` : 'MATEMATIKA I'; }
+  { const vt = viewTitle(state.view); document.title = html.includes('Tahle stránka neexistuje') ? 'Stránka nenalezena · MATEMATIKA I' : vt ? `${vt} · MATEMATIKA I` : 'MATEMATIKA I'; }
   typesetAll();
   const pm = state.view.match(PROOF_RE); if (pm) initProofPage(proofById(pm[1]));
   if (state.fxAnim && typeof fxReveal === 'function') fxReveal($view);
