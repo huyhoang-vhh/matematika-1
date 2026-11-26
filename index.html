@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Neoficiální studijní web k Matematice I na IES FSV UK: důkazy, pojmy, generované příklady, cvičné písemky a termíny."><meta name="theme-color" content="#0071e3"><meta property="og:type" content="website"><meta property="og:title" content="Matematika I · IES"><meta property="og:description" content="Neoficiální studijní web k Matematice I na IES FSV UK: důkazy, pojmy, generované příklady, cvičné písemky a termíny."><meta property="og:url" content="https://huyhoang-vhh.github.io/matematika-1/"><meta property="og:locale" content="cs_CZ"><link rel="canonical" href="https://huyhoang-vhh.github.io/matematika-1/"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2715%27 fill=%27%230071e3%27/%3E%3Ctext x=%2732%27 y=%2744%27 font-family=%27-apple-system,Helvetica,Arial%27 font-size=%2734%27 font-weight=%27700%27 fill=%27%23fff%27 text-anchor=%27middle%27%3EM%3C/text%3E%3C/svg%3E"></head><body>
 <title>MATEMATIKA I</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
@@ -1182,6 +1182,25 @@ span.dd-i[aria-current] { cursor: default; }
 .dd-h { font-size: 13px; }
 .tag, .prow-no small, th { text-transform: none; letter-spacing: 0; }
 .prow-no small { font-size: 11px; }
+
+/* ===== kontrast, dotykové cíle a plochy prohlížeče (2026-11-26, videa Awards + Impeccable) =====
+   Bílý text na tlačítku musí mít kontrast aspoň 4,5 : 1 i v tmavém režimu → tlačítka mají vlastní tmavší odstín.
+   Každý klikací prvek má na dotyk aspoň 24 px. Výběr textu, kurzor, posuvník a zaškrtávátka nesou barvu webu. */
+:root { --btn: #0071e3; --btn-warm: #b64400; --ok: #187a33; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ok: #32d74b; } }
+:root[data-theme="dark"] { --ok: #32d74b; }
+.pill, summary.pf-open, .tl-n { background-color: var(--btn); }
+.pill.end { background-color: var(--btn-warm); }
+.more, .linkbtn { display: inline-flex; align-items: center; min-height: 24px; }
+.hp-hide, summary, .back { min-height: 24px; min-width: 24px; }
+.hp-hide { display: inline-flex; align-items: center; }
+summary:not(.pf-open) { line-height: 24px; }
+a.tag, a.qlink.tag { display: inline-flex; align-items: center; min-height: 24px; }
+.vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+::selection { background: color-mix(in srgb, var(--blue) 30%, transparent); }
+html { accent-color: var(--blue); caret-color: var(--blue); scrollbar-color: color-mix(in srgb, var(--ink) 30%, transparent) transparent; }
+a { text-underline-offset: .18em; }
+.stat b, .hp-when, .hp-stat b, .meter + *, .badge, time, .tl-n, .cd, .num { font-variant-numeric: tabular-nums; }
 
 </style>
 
@@ -6091,7 +6110,7 @@ ${st.n ? `<p class="hp-stat">Tvůj průměr z ${st.n} ${st.n === 1 ? 'cvičné' 
   }
   const written = Object.keys(TESTDEF).reduce((a, k) => a + statsFor(k).n, 0), zs = statsFor('zk');
   const known = knownCount(), kp = kdCount('pojmy'), kd = kdCount('definice');
-  return band('dark', R`<div class="hsplit${showW ? '' : ' solo'}">${w}${examPanel()}</div>${nextStepHTML()}${resumeHTML()}${wHidden && next ? '<button type="button" class="hp-hide hp-unhide" data-act="wshow">Zobrazit i zápočet</button>' : ''}`)
+  return band('dark', R`<h1 class="vh">Matematika I</h1><div class="hsplit${showW ? '' : ' solo'}">${w}${examPanel()}</div>${nextStepHTML()}${resumeHTML()}${wHidden && next ? '<button type="button" class="hp-hide hp-unhide" data-act="wshow">Zobrazit i zápočet</button>' : ''}`)
     + band('', R`<div class="row-h"><h2 class="h2">Tvoje čísla</h2><span class="muted small">${store.ok ? 'Ukládá se jen v tomto prohlížeči.' : 'Prohlížeč ukládání blokuje, data vydrží jen do zavření stránky.'}</span></div>
 <div class="stats"><div class="stat"><b>${written}</b><span>cvičných písemek s body</span></div><div class="stat"><b>${zs.n ? fmt1(zs.avg) : '–'}</b><span>průměr zkouškových (z 50)</span></div><div class="stat"><b>${known + kp + kd}</b><span>důkazů, pojmů a definic umíš (z ${PROOF_TOTAL + KEYS.length + DEFS.length})</span></div></div>
 ${written ? '<div class="ctas"><button class="more" data-go="pisemky">Všechny výsledky a grafy</button></div>' : ''}
