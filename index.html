@@ -3435,6 +3435,41 @@ ${D(R`(f-1)\,g=\frac{${a}}{${b * b}}\cdot\left(\frac{${B}}{\mathrm{tg}(${B})}\ri
   };
 });
 
+/* f^g, které NENÍ neurčitý výraz (podle cvičení 9: nejdřív zjistit typ, teprve pak (f − 1)·g) */
+const notIndet = R`<p><b>Nejdřív typ.</b> Píšeme ${I(R`f^g=e^{g\ln f}`)}. Je-li ${I(R`f\to A\in(0,\infty)`)} a ${I(R`g\to B\in\mathbb R`)}, pak ${I(R`g\ln f\to B\ln A`)} a ze spojitosti exponenciály ${I(R`f^g\to A^B`)}. Neurčité jsou jen typy ${I(R`1^{\pm\infty}`)}, ${I(R`0^0`)} a ${I(R`\infty^0`)}.</p>`;
+fam('C23', 'fl', r => {
+  const v = r();
+  if (v < 1 / 3) {
+    const a = ri(r, 1, 4); let b = ri(r, 1, 4); if (b === a) b = a === 4 ? 1 : a + 1;
+    const Q = fr(a + 1, b + 1);
+    return {
+      task: D(R`\lim_{x\to1}\left(\frac{${a}+x}{${b}+x}\right)^{\frac{1-\sqrt x}{1-x}}`), ans: R`\sqrt{${Q}}`,
+      sol: R`${notIndet}<p>Základ jde k ${I(R`\frac{${a + 1}}{${b + 1}}`)}, tedy ne k 1. Exponent je typ ${I(R`\frac00`)}, ale ${I(R`1-x=(1-\sqrt x)(1+\sqrt x)`)}, takže pro ${I(R`x\neq1`)}</p>
+${D(R`\frac{1-\sqrt x}{1-x}=\frac{1}{1+\sqrt x}\ \longrightarrow\ \frac12`)}
+<p>Jde o typ ${I(R`A^B`)} s ${I(R`A=${Q}>0`)}, ${I(R`B=\frac12`)}: limita je ${I(R`\left(${Q}\right)^{1/2}=\sqrt{${Q}}`)}. Metoda ${I(fg)} by tu byla chybou, protože ${I(R`f\not\to1`)}.</p>`,
+      f0: x => Math.pow((a + x) / (b + x), (1 - Math.sqrt(x)) / (1 - x)), at: 1, val: Math.sqrt((a + 1) / (b + 1))
+    };
+  }
+  if (v < 2 / 3) {
+    const p = ri(r, 2, 5); let q = ri(r, 2, 5); if (q === p) q = p === 5 ? 2 : p + 1;
+    const big = p > q, Q = fr(p, q);
+    return {
+      task: D(R`\lim_{x\to+\infty}\left(\frac{${p}x^2-x+1}{${q}x^2+x+1}\right)^{\frac{x^3}{1-x}}`), ans: big ? '0' : R`+\infty`,
+      sol: R`${notIndet}<p>Základ jde k ${I(R`${Q}`)} (vytkneme ${I(R`x^2`)}), exponent ${I(R`\frac{x^3}{1-x}=\frac{x^2}{\frac1x-1}\to-\infty`)}. Tedy ${I(R`g\ln f\to-\infty\cdot\ln${Q}`)}, kde ${I(R`\ln ${Q}${big ? '>' : R`\lt`}0`)}:</p>
+${D(R`g\ln f\ \longrightarrow\ ${big ? R`-\infty` : R`+\infty`}\qquad\Longrightarrow\qquad f^g=e^{g\ln f}\ \longrightarrow\ ${big ? '0' : R`+\infty`}`)}
+<p>Nejde o neurčitý výraz: ${I(R`\left(${Q}\right)^{-\infty}`)} je ${big ? R`0, protože základ je větší než 1` : R`${I(R`+\infty`)}, protože základ je menší než 1`}.</p>`,
+      ok: () => { const f = x => Math.pow((p * x * x - x + 1) / (q * x * x + x + 1), x ** 3 / (1 - x)); return big ? f(10) < 1e-3 && f(20) <= f(10) : f(10) > 1e3 && f(20) >= f(10); }
+    };
+  }
+  const k = ri(r, 2, 5), a = ri(r, 1, 4);
+  return {
+    task: D(R`\lim_{x\to+\infty}\left(\frac{${k}x+1}{x+${a}}\right)^{\frac{\sqrt x}{x+1}}`), ans: '1',
+    sol: R`${notIndet}<p>Základ jde k ${I(k)}, exponent ${I(R`\frac{\sqrt x}{x+1}=\frac{1/\sqrt x}{1+1/x}\to0`)}. Typ ${I(R`${k}^0`)} není neurčitý: ${I(R`g\ln f\to0\cdot\ln${k}=0`)}, takže limita je ${I(R`e^0=1`)}.</p>
+<p>Pozor: výsledek 1 tu nevznikl z typu ${I(R`1^\infty`)}, ale z nulového exponentu u kladného základu.</p>`,
+    ok: () => { const f = x => Math.pow((k * x + 1) / (x + a), Math.sqrt(x) / (x + 1)); return near(f(1e12), 1, 1e-4) && Math.abs(f(1e12) - 1) < Math.abs(f(1e6) - 1); }
+  };
+});
+
 /* 6.7 Zkouškové a jiné zajímavé příklady */
 fam('C20', 'zfl', r => {
   if (r() < .5) {
@@ -6426,7 +6461,7 @@ ${written ? '<div class="ctas"><button class="more" data-go="pisemky">Všechny v
 
 /* ---------- Termíny ---------- */
 function viewTerms() {
-  return band('', R`<span class="eyebrow">Organizace</span><h1 class="h1">Termíny a zkouška</h1><p class="sub">Podle stránky přednášejícího, zkontrolováno 24. 11. 2026.</p>`, 'center')
+  return band('', R`<span class="eyebrow">Organizace</span><h1 class="h1">Termíny a zkouška</h1><p class="sub">Podle stránky přednášejícího, zkontrolováno 27. 11. 2026.</p>`, 'center')
   + band('alt', R`
 <div class="tbl"><table><thead><tr><th>Datum</th><th>Co</th><th>Poznámka</th></tr></thead><tbody>
 ${EVENTS.map(e => { const dn = daysTo(e.d); return `<tr class="${dn < 0 ? 'past' : ''}"><td style="white-space:nowrap">${fmtY(e.d)}<br>${dn < 0 ? '<span class="badge ok">proběhlo</span>' : dn <= 7 ? `<span class="badge soon">za ${dn} ${dayWord(dn)}</span>` : ''}</td><td>${e.key ? '<b>' + e.what + '</b>' : e.what}</td><td>${e.note}</td></tr>`; }).join('')}
@@ -6468,7 +6503,7 @@ const PGROUPS = [
   { id: 'zk', l: 'Zkouškové', d: 'Čtyři příklady písemné části zkoušky.', sec: [['1. příklad · 10 b.', ['zk']], ['2. příklad · 15 b.', ['zfl']], ['3. příklad · 10 b.', ['der']], ['4. příklad · 15 b.', ['pr']]] }
 ];
 const PLABEL = { odm: 'Rozdíl odmocnin', nte: 'n-tá odmocnina a policajti', skala: 'Růstová škála', fl: 'Limity funkcí', cvf: 'Limity podle cvičení 7.–9.', zk: 'Limity posloupností', zfl: 'Limity funkcí', der: 'Spojitost a derivace', pr: 'Průběh funkce' };
-const TOPIC_FAMS = { cvf: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18', 'C19', 'C20', 'C21', 'C22'], zfl: ['Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'Y6', 'C20', 'C21', 'C22', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'L7', 'L13', 'L15', 'L10', 'L11'] };
+const TOPIC_FAMS = { cvf: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18', 'C19', 'C23', 'C20', 'C21', 'C22'], zfl: ['Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'Y6', 'C20', 'C21', 'C22', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'L7', 'L13', 'L15', 'L10', 'L11'] };
 const famIds = tk => TOPIC_FAMS[tk] || Object.keys(FAM).filter(id => FAM[id].topic === tk && !FAM[id].hard);
 const TOPIC_LETTER = { odm: 'A', nte: 'B', skala: 'C', fl: 'D', cvf: 'I', zk: 'E', zfl: 'F', der: 'G', pr: 'H' };
 const topicSec = tk => { for (const g of PGROUPS) for (const [sl, ks] of g.sec) if (ks.includes(tk)) return [g, sl]; return [PGROUPS[0], '']; };
