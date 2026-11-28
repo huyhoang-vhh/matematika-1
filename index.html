@@ -3678,7 +3678,7 @@ ${D(R`\lim_{x\to b^-}f(x)=\sup f\big((a,b)\big),\qquad \lim_{x\to a^+}f(x)=\inf 
 <li>„Dokázat“ existenci limity Heineho větou pomocí <b>jedné</b> posloupnosti. Jedna posloupnost stačí jen k důkazu <b>neexistence</b> (dvě různé hodnoty), ne existence.</li>
 <li>U Heineho věty vybrat posloupnost, která bodu ${I('c')} nabývá (${I(R`x_n=c`)}), nebo v něm vůbec nekonverguje.</li></ul></div>` },
   { id: 'derivace', title: 'Spojitost a derivace', ready: false, html: R`
-<p class="lead">Ve zkoušce je za to třetí příklad (10 bodů). Zatím jsou tu věty o spojitých funkcích, elementární funkce (13.–15. přednáška) a derivace: definice, vztah ke spojitosti, aritmetika a derivace složené funkce (16. přednáška), derivace inverzní a elementárních funkcí a nutná podmínka lokálního extrému (17. přednáška). Věty o střední hodnotě, monotonii a l’Hospitalovo pravidlo (18. přednáška) doplníme, až budou probrané.</p>
+<p class="lead">Ve zkoušce je za to třetí příklad (10 bodů). Zatím jsou tu věty o spojitých funkcích, elementární funkce (13.–15. přednáška) a derivace: definice, vztah ke spojitosti, aritmetika a derivace složené funkce (16. přednáška), derivace inverzní a elementárních funkcí a nutná podmínka lokálního extrému (17. přednáška), věty o střední hodnotě, monotonie, výpočet jednostranné derivace limitou a l’Hospitalovo pravidlo (18. přednáška). Konvexita a inflexe (19.–20. přednáška) přibudou, až budou probrané.</p>
 <h3>Spojité funkce na intervalu</h3>
 <div class="thm"><span class="lbl">Nabývání mezihodnot (Bolzano, Věta 29)</span>
 <p>Je-li ${I('f')} spojitá na ${I(R`\langle a,b\rangle`)} a ${I(R`f(a)\lt f(b)`)}, pak pro každé ${I(R`y\in\big(f(a),f(b)\big)`)} existuje ${I(R`\xi\in(a,b)`)} s ${I(R`f(\xi)=y`)}. (Totéž pro ${I(R`f(a)>f(b)`)}.)</p>
@@ -3743,7 +3743,7 @@ ${D(R`\lim_{x\to b^-}f(x)=\sup f\big((a,b)\big),\qquad \lim_{x\to a^+}f(x)=\inf 
 <li>Je-li funkce spojitá, spočítej z <b>definice</b> obě jednostranné derivace: ${I(R`f'_\pm(a)=\lim_{x\to a^\pm}\frac{f(x)-f(a)}{x-a}`)}, vždy s předpisem platným na dané straně.</li>
 <li>Rovnají-li se, je to ${I(R`f'(a)`)}; jinak derivace v ${I('a')} neexistuje.</li>
 <li>Příklad: ${I(R`f(x)=x^2`)} pro ${I(R`x\le1`)}, ${I(R`f(x)=2x-1`)} pro ${I(R`x>1`)}. Spojitá v 1 (obě strany dají 1); ${I(R`f'_-(1)=\lim_{x\to1^-}\frac{x^2-1}{x-1}=2`)}, ${I(R`f'_+(1)=\lim_{x\to1^+}\frac{2x-2}{x-1}=2`)}, tedy ${I(R`f'(1)=2`)}.</li>
-<li>Mimo podezřelé body stačí pravidla (Věty 37, 38). Rychlejší cestu přes limitu derivace (Věta 44) přidáme, až bude probraná.</li></ol></div>
+<li>Mimo podezřelé body stačí pravidla (Věty 37, 38). Rychlejší cesta přes limitu derivace (Věta 44) je popsaná níž u 18. přednášky.</li></ol></div>
 <h3>Derivace inverzní a elementárních funkcí, lokální extrémy (17. přednáška)</h3>
 <div class="thm"><span class="lbl">Derivace inverzní funkce (Věta 39)</span>
 <p>Nechť ${I('f')} je na otevřeném intervalu ${I('J')} spojitá a ryze monotónní, ${I(R`a\in J`)} a ${I(R`f'(a)`)} je vlastní a <b>nenulová</b>. Pak inverzní funkce ${I(R`f^{-1}`)} má v bodě ${I(R`b=f(a)`)} derivaci</p>
@@ -3783,6 +3783,46 @@ ${D(R`\lim_{x\to b^-}f(x)=\sup f\big((a,b)\big),\qquad \lim_{x\to a^+}f(x)=\inf 
 <li>Sepiš <b>kandidáty</b>: krajní body ${I('a')}, ${I('b')}; body z ${I(R`(a,b)`)}, kde ${I(R`f'(x)=0`)} (stacionární body); body z ${I(R`(a,b)`)}, kde ${I(R`f'`)} neexistuje.</li>
 <li>Spočítej ve všech kandidátech funkční hodnotu. Největší je maximum, nejmenší minimum. Jinde extrém být nemůže (Věta 40).</li>
 <li>Příklad: ${I(R`f(x)=x^3-3x`)} na ${I(R`\langle0,2\rangle`)}: ${I(R`f'(x)=3x^2-3=0`)} dává ${I(R`x=1`)}. Hodnoty ${I(R`f(0)=0`)}, ${I(R`f(1)=-2`)}, ${I(R`f(2)=2`)}: minimum ${I(R`-2`)} v bodě 1, maximum ${I('2')} v bodě 2.</li></ol></div>
+<h3>Věty o střední hodnotě, monotonie a l’Hospitalovo pravidlo (18. přednáška)</h3>
+<div class="thm"><span class="lbl">Rolleova věta (Věta 41)</span>
+<p>Nechť ${I('f')} je (i) spojitá na ${I(R`\langle a,b\rangle`)}, (ii) má derivaci (vlastní nebo nevlastní) v každém bodě ${I(R`(a,b)`)} a (iii) ${I(R`f(a)=f(b)`)}. Pak existuje ${I(R`\xi\in(a,b)`)} s ${I(R`f'(\xi)=0`)}.</p>
+<p>Názorně: začne-li graf a skončí ve stejné výšce, má někde mezi tím vodorovnou tečnu. Idea důkazu: podle Věty 31 nabývá ${I('f')} na ${I(R`\langle a,b\rangle`)} maxima i minima. Je-li ${I('f')} konstantní, je derivace nulová všude; jinak leží aspoň jeden z extrémů uvnitř ${I(R`(a,b)`)} a tam je podle Věty 40 ${I(R`f'=0`)}.</p>
+<p>Žádný předpoklad nejde vynechat: ${I(R`|x|`)} na ${I(R`\langle-1,1\rangle`)} splňuje (i) a (iii), ale v 0 nemá derivaci, a bod s ${I(R`f'=0`)} neexistuje.</p></div>
+<div class="thm"><span class="lbl">Lagrangeova věta o střední hodnotě (Věta 42)</span>
+<p>Je-li ${I('f')} spojitá na ${I(R`\langle a,b\rangle`)} a má derivaci v každém bodě ${I(R`(a,b)`)}, pak existuje ${I(R`\xi\in(a,b)`)} takové, že</p>
+<p>${D(R`f'(\xi)=\frac{f(b)-f(a)}{b-a},\qquad\text{neboli}\qquad f(b)-f(a)=f'(\xi)\,(b-a).`)}</p>
+<p>Někde je tedy tečna rovnoběžná se sečnou spojující konce grafu. Důkaz: od ${I('f')} odečteš sečnu, ${I(R`g(x)=f(x)-\frac{f(b)-f(a)}{b-a}(x-a)`)}; pak ${I(R`g(a)=g(b)`)} a Rolleova věta dá ${I(R`g'(\xi)=0`)}.</p>
+<p>Věta neříká, <b>kde</b> ${I(R`\xi`)} leží, jen že existuje. Přesto stačí na odhady: ze ${I(R`|\cos\xi|\le1`)} plyne ${I(R`|\sin x-\sin y|\le|x-y|`)} pro všechna ${I('x,y')}. Je to také první krok skoro všech dalších důkazů (Věty 43, 44, 47–49).</p></div>
+<div class="thm"><span class="lbl">Znaménko derivace a monotonie (Věta 43)</span>
+<p>Nechť ${I('J')} je interval, ${I('f')} je spojitá na ${I('J')} a má derivaci v každém <b>vnitřním</b> bodě ${I('J')}. Pak:</p>
+<ul class="plain"><li>${I(R`f'>0`)} uvnitř ${I('J')} ⇒ ${I('f')} je na ${I('J')} rostoucí; ${I(R`f'\lt0`)} ⇒ klesající;</li>
+<li>${I(R`f'\ge0`)} ⇒ neklesající; ${I(R`f'\le0`)} ⇒ nerostoucí.</li></ul>
+<p>Důkaz je Lagrange na ${I(R`\langle x,y\rangle\subset J`)}: ${I(R`f(y)-f(x)=f'(\xi)(y-x)`)} a ${I(R`y-x>0`)}, takže o znaménku rozhodne ${I(R`f'(\xi)`)}.</p>
+<p>Krajní body se počítají: stačí znaménko derivace <b>uvnitř</b> a spojitost na celém ${I('J')}. Proto ${I(R`x^2`)} klesá na ${I(R`(-\infty,0\rangle`)} a roste na ${I(R`\langle0,+\infty)`)}, včetně nuly. Obrácení pro ostrou nerovnost neplatí: ${I(R`x^3`)} je rostoucí, a přitom ${I(R`f'(0)=0`)}.</p>
+<p>Důsledek: je-li ${I(R`f'=0`)} na celém intervalu, je ${I('f')} konstantní. Tak se dokazují identity: ${I(R`(\arcsin x+\arccos x)'=0`)} na ${I(R`(-1,1)`)}, takže součet je konstanta, a dosazením ${I('x=0')} vyjde ${I(R`\frac\pi2`)}.</p></div>
+<div class="thm"><span class="lbl">Jak určit intervaly monotonie a lokální extrémy</span><ol class="steps">
+<li>Urči ${I('D_f')} a kde je ${I('f')} spojitá. Spočítej ${I("f'")} a uprav ji na <b>součin nebo podíl</b>.</li>
+<li>Najdi nulové body ${I("f'")} a body, kde ${I("f'")} neexistuje. Ty spolu s „dírami“ v ${I('D_f')} rozdělí osu na intervaly.</li>
+<li>Na každém intervalu urči znaménko ${I("f'")} (dosazením jednoho bodu nebo ze znamének činitelů) a použij Větu 43.</li>
+<li>Kde se v bodě spojitosti mění růst na klesání, je lokální maximum; kde klesání na růst, lokální minimum. Nemění-li se znaménko, extrém tam není.</li>
+<li>Příklad: ${I(R`f(x)=x\,e^{-x}`)}, ${I(R`f'(x)=(1-x)e^{-x}`)}. Protože ${I(R`e^{-x}>0`)}, je ${I(R`f'>0`)} pro ${I(R`x\lt1`)} a ${I(R`f'\lt0`)} pro ${I(R`x>1`)}: ${I('f')} roste na ${I(R`(-\infty,1\rangle`)}, klesá na ${I(R`\langle1,+\infty)`)} a v bodě 1 má maximum ${I(R`f(1)=\frac1e`)} (dokonce globální).</li></ol></div>
+<div class="thm"><span class="lbl">Výpočet jednostranné derivace limitou (Věta 44)</span>
+<p>Je-li ${I('f')} <b>spojitá zprava</b> v bodě ${I('a')}, má vlastní derivaci na nějakém ${I(R`(a,a+\eta)`)} a existuje ${I(R`A=\lim_{x\to a^+}f'(x)`)}, pak ${I(R`f'_+(a)=A`)}. Stejně zleva.</p>
+<p>V bodě, kde se mění předpis, tedy nemusíš počítat limitu z definice: zderivuješ předpis vpravo od bodu podle vzorců a spočítáš limitu derivace. Příklad: ${I(R`f(x)=x^2`)} pro ${I(R`x\le1`)}, ${I(R`f(x)=2x-1`)} pro ${I(R`x>1`)} je v 1 spojitá; ${I(R`\lim_{x\to1^-}2x=2`)}, ${I(R`\lim_{x\to1^+}2=2`)}, tedy ${I(R`f'(1)=2`)}.</p>
+<p>Dvě věci hlídej. <b>Spojitost</b> v bodě je předpoklad: ${I(R`\mathrm{sgn}\,x`)} má pro ${I(R`x\neq0`)} derivaci 0, limita derivace v nule je 0, ale derivace v nule není 0 (funkce tam není spojitá). A když limita derivace <b>neexistuje</b>, věta neříká nic, derivace existovat může: ${I(R`f(x)=x^2\sin\frac1x`)}, ${I(R`f(0)=0`)}, má ${I(R`f'(0)=0`)} z definice, ale ${I(R`\lim_{x\to0}f'(x)`)} neexistuje. Pak se vrať k definici.</p></div>
+<div class="thm"><span class="lbl">L’Hospitalovo pravidlo (Věta 45, bez důkazu)</span>
+<p>Nechť ${I('f')} a ${I('g')} mají vlastní derivace na nějakém prstencovém okolí ${I(R`P(a,\eta)`)} bodu ${I(R`a\in\mathbb R^*`)}, ${I(R`g'\neq0`)} na něm, a <b>existuje</b> ${I(R`L=\lim_{x\to a}\frac{f'(x)}{g'(x)}`)} (vlastní nebo nevlastní). Platí-li navíc</p>
+<ul class="plain"><li>(i) ${I(R`\lim_{x\to a}f(x)=\lim_{x\to a}g(x)=0`)}, nebo</li>
+<li>(ii) ${I(R`\lim_{x\to a}|g(x)|=+\infty`)},</li></ul>
+<p>pak ${I(R`\lim_{x\to a}\frac{f(x)}{g(x)}=L`)}. Platí i pro jednostranné limity a pro ${I(R`a=\pm\infty`)}. V případě (ii) se o čitateli nic nepředpokládá.</p>
+<p>Derivuje se <b>zvlášť čitatel a zvlášť jmenovatel</b>, ne podíl jako celek. Příklady: ${I(R`\lim_{x\to0}\frac{e^x-1-x}{x^2}=\lim_{x\to0}\frac{e^x-1}{2x}=\frac12`)}; ${I(R`\lim_{x\to+\infty}\frac{\ln x}{x}=\lim_{x\to+\infty}\frac{1/x}{1}=0`)}.</p></div>
+<div class="thm"><span class="lbl">Jak používat l’Hospitalovo pravidlo</span><ol class="steps">
+<li>Nejdřív <b>ověř typ</b>: ${I(R`\frac00`)} nebo jmenovatel jdoucí do ${I(R`\pm\infty`)}. Do řešení to napiš. Bez toho pravidlo dává nesmysly: ${I(R`\lim_{x\to0}\frac{x+1}{x+2}=\frac12`)}, kdežto podíl derivací dá 1.</li>
+<li>Než začneš derivovat, <b>zjednoduš</b>: činitele s nenulovou vlastní limitou vytkni před limitu (aritmetika limit), známé limity použij rovnou. Derivuje se pak jen to, co je opravdu neurčité.</li>
+<li>Spočítej ${I(R`\lim\frac{f'}{g'}`)}. Vyjde-li zase neurčitý výraz, můžeš pravidlo použít znovu, pokaždé s novou kontrolou typu.</li>
+<li>Zapisuj to „odzadu“: rovnost ${I(R`\lim\frac fg=\lim\frac{f'}{g'}`)} platí, <b>pokud limita vpravo existuje</b>. Když neexistuje, pravidlo nic neříká: ${I(R`\lim_{x\to+\infty}\frac{x+\sin x}{x}=1`)}, ale ${I(R`\lim_{x\to+\infty}\frac{1+\cos x}{1}`)} neexistuje.</li>
+<li>Jiné neurčité výrazy nejdřív převeď na podíl: ${I(R`0\cdot\infty`)} jako ${I(R`f\cdot g=\frac{f}{1/g}`)}, např. ${I(R`\lim_{x\to0^+}x\ln x=\lim_{x\to0^+}\frac{\ln x}{1/x}=\lim_{x\to0^+}\frac{1/x}{-1/x^2}=\lim_{x\to0^+}(-x)=0`)}; ${I(R`\infty-\infty`)} na společného jmenovatele; ${I(R`1^\infty,\ 0^0,\ \infty^0`)} přes ${I(R`f^g=e^{g\ln f}`)} a limitu exponentu.</li>
+<li>U posloupností pravidlo přímo použít nejde (posloupnost se nederivuje). Spočítej limitu funkce v ${I(R`+\infty`)} a přejdi k posloupnosti Heineho větou.</li></ol></div>
 <h3>Postup</h3>
 <div class="thm"><span class="lbl">Jak dokázat, že rovnice má řešení</span><ol class="steps">
 <li>Převeď rovnici na tvar ${I(R`h(x)=0`)} a ověř, že ${I('h')} je spojitá na zvoleném ${I(R`\langle a,b\rangle`)}.</li>
@@ -3801,7 +3841,12 @@ ${D(R`\lim_{x\to b^-}f(x)=\sup f\big((a,b)\big),\qquad \lim_{x\to a^+}f(x)=\inf 
 <li>U složené funkce zapomenout vynásobit derivací vnitřní funkce: ${I(R`(\sin 3x)'=3\cos 3x`)}, ne ${I(R`\cos 3x`)}.</li>
 <li>Derivovat ${I(R`a^x`)} jako mocninu (${I(R`x\,a^{x-1}`)}) nebo ${I(R`x^x`)} jen jedním ze vzorců. U ${I(R`f^g`)} vždy přes ${I(R`e^{g\ln f}`)}.</li>
 <li>U derivace inverzní funkce dosadit do ${I(R`f'`)} špatný bod: ${I(R`(f^{-1})'(b)=\frac{1}{f'(a)}`)}, kde ${I(R`f(a)=b`)}, ne ${I(R`\frac{1}{f'(b)}`)}.</li>
-<li>Usoudit z ${I(R`f'(a)=0`)}, že v ${I('a')} je extrém (${I(R`x^3`)} v 0), nebo při hledání extrémů vynechat krajní body intervalu a body, kde derivace neexistuje.</li></ul></div>` },
+<li>Usoudit z ${I(R`f'(a)=0`)}, že v ${I('a')} je extrém (${I(R`x^3`)} v 0), nebo při hledání extrémů vynechat krajní body intervalu a body, kde derivace neexistuje.</li>
+<li>Použít Rolleovu nebo Lagrangeovu větu bez ověření spojitosti na <b>uzavřeném</b> intervalu a derivace uvnitř.</li>
+<li>Psát monotonii „na sjednocení“ intervalů: Věta 43 platí jen na intervalu. ${I(R`\frac1x`)} má všude zápornou derivaci, a na ${I(R`\mathbb R\setminus\{0\}`)} klesající není.</li>
+<li>Použít l’Hospitalovo pravidlo bez kontroly typu, nebo derivovat podíl jako celek místo čitatele a jmenovatele zvlášť.</li>
+<li>Usoudit z toho, že ${I(R`\lim\frac{f'}{g'}`)} neexistuje, že neexistuje ani ${I(R`\lim\frac fg`)}.</li>
+<li>Použít Větu 44 v bodě, kde funkce není spojitá.</li></ul></div>` },
   { id: 'prubeh', title: 'Průběh funkce', ready: false, html: R`
 <p class="lead">Ve zkoušce je za to čtvrtý příklad (15 bodů). Konvexitu, inflexi a asymptoty probírá 19.–21. přednáška; postup níž si můžeš osvojit už teď na příkladech ze sbírky. Body se dávají za každý krok zvlášť, takže i neúplné řešení se vyplatí sepsat celé a pořádně.</p>
 <h3>Postup krok za krokem</h3>
@@ -6461,7 +6506,7 @@ ${written ? '<div class="ctas"><button class="more" data-go="pisemky">Všechny v
 
 /* ---------- Termíny ---------- */
 function viewTerms() {
-  return band('', R`<span class="eyebrow">Organizace</span><h1 class="h1">Termíny a zkouška</h1><p class="sub">Podle stránky přednášejícího, zkontrolováno 27. 11. 2026.</p>`, 'center')
+  return band('', R`<span class="eyebrow">Organizace</span><h1 class="h1">Termíny a zkouška</h1><p class="sub">Podle stránky přednášejícího, zkontrolováno 28. 11. 2026.</p>`, 'center')
   + band('alt', R`
 <div class="tbl"><table><thead><tr><th>Datum</th><th>Co</th><th>Poznámka</th></tr></thead><tbody>
 ${EVENTS.map(e => { const dn = daysTo(e.d); return `<tr class="${dn < 0 ? 'past' : ''}"><td style="white-space:nowrap">${fmtY(e.d)}<br>${dn < 0 ? '<span class="badge ok">proběhlo</span>' : dn <= 7 ? `<span class="badge soon">za ${dn} ${dayWord(dn)}</span>` : ''}</td><td>${e.key ? '<b>' + e.what + '</b>' : e.what}</td><td>${e.note}</td></tr>`; }).join('')}
