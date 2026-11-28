@@ -5362,7 +5362,7 @@ function viewProofs() {
   return band('dark', R`<span class="eyebrow">Ústní zkouška</span><h1 class="display"><span class="grad">Důkazy</span></h1>
 <p class="sub">Všech ${PROOFS.length} vět z přednášky, ${PROOF_TOTAL} z nich s důkazem. Každý má stejnou stavbu.</p>
 <div class="progress" style="max-width:520px;width:100%"><div class="meter"><i style="width:${100 * kc / PROOF_TOTAL}%"></i></div><span class="muted small">Umíš ${kc} z ${PROOF_TOTAL} důkazů</span></div>
-<div class="ctas"><button class="pill" data-act="randproof">Zkoušej mě z náhodné věty</button>${lp ? `<button class="pill ghost" data-ref="${lp.id}">Pokračovat: ${lp.no} ${lp.name}</button>` : ''}</div>`, 'center')
+<div class="ctas"><button class="pill" data-act="randproof">Zkoušej mě z náhodné věty</button>${lp ? `<button class="pill ghost" data-ref="${lp.id}">Pokračovat: ${/\d/.test(lp.no) ? lp.no : lp.name}</button>` : ''}</div>`, 'center')
     + band('alt', R`
 <ol class="plearn" aria-label="Jak se učit důkaz">
  <li><b>Znění</b><span>Co přesně věta tvrdí a za jakých předpokladů.</span></li>
@@ -6436,7 +6436,7 @@ function resumeHTML() {
   const m = r && r.v.match(TEST_RE);
   if (m && TESTDEF[m[1]] && !store.get(TESTDEF[m[1]].key(+m[2]), {}).done) out.push(`<button class="chip" data-go="${r.v}">↺ Dopsat: ${TESTDEF[m[1]].title}, č. ${+m[2]}</button>`);
   const p = lp && proofById(lp);
-  if (p) out.push(`<button class="chip" data-ref="${p.id}">↺ Naposledy: ${p.no} ${p.name}</button>`);
+  if (p) out.push(`<button class="chip" data-ref="${p.id}">↺ Naposledy: ${/\d/.test(p.no) ? p.no : p.name}</button>`);
   return out.length ? `<div class="resume"><span class="muted small">Pokračuj, kde jsi skončil(a):</span><div class="chips">${out.join('')}</div></div>` : '';
 }
 const PLANS = {
